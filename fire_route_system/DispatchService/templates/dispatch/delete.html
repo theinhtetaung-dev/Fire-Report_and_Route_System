@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}Delete Dispatch - Fire Route System{% endblock %}
+{% block title %}Delete Dispatch - Fire Department CAD{% endblock %}
+{% block breadcrumb %}Dispatch Removal Authorization{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="disp-del-title">Delete Dispatch Operation</h1>
-
-    <div class="card" style="border-color: var(--btn-red);">
-        <h3 style="color: var(--btn-red); margin-bottom: 1rem;" id="disp-del-warning">⚠️ Warning: This action cannot be undone!</h3>
-        <p style="margin-bottom: 1.5rem; font-size: 1.05rem;" id="disp-del-desc">
-            Are you sure you want to delete **Dispatch #{{ dispatch.id }}** (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?
-        </p>
-
-        <form method="post">
-            {% csrf_token %}
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-red" id="disp-del-confirm">Delete Permanently</button>
-                <a href="{% url 'dispatch_list' %}" class="btn btn-outline" id="disp-del-cancel">Cancel</a>
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="cad-panel" style="border: 2px solid var(--cad-red-primary);">
+        <div class="cad-panel-header" style="background-color: var(--cad-red-subtle);">
+            <div class="cad-panel-title" style="color: var(--cad-red-primary);">
+                <span>⚠️</span>
+                <span id="disp-del-title">Delete Dispatch Operation</span>
             </div>
-        </form>
+            <span class="cad-badge cad-badge-scale-5">DESTRUCTIVE ACTION</span>
+        </div>
+
+        <div class="cad-panel-body">
+            <h4 style="color: var(--cad-red-primary); margin-bottom: 0.75rem;" id="disp-del-warning">⚠️ Warning: This action cannot be undone!</h4>
+            <p style="margin-bottom: 1.5rem; font-size: 0.95rem; color: var(--cad-text-secondary);" id="disp-del-desc">
+                Are you sure you want to permanently delete <strong>Dispatch #{{ dispatch.id }}</strong> (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; border-top: 1px solid var(--cad-border); padding-top: 1.25rem;">
+                    <a href="{% url 'dispatch_list' %}" class="cad-btn cad-btn-outline" id="disp-del-cancel">Cancel</a>
+                    <button type="submit" class="cad-btn cad-btn-emergency" id="disp-del-confirm">Delete Permanently</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -28,7 +37,7 @@
         en: {
             title: "Delete Dispatch Operation",
             warning: "⚠️ Warning: This action cannot be undone!",
-            desc: "Are you sure you want to delete Dispatch #{{ dispatch.id }} (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?",
+            desc: "Are you sure you want to permanently delete Dispatch #{{ dispatch.id }} (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?",
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },

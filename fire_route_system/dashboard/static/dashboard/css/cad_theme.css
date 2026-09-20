@@ -1,0 +1,944 @@
+/* ==========================================================================
+   FIRE DEPARTMENT CAD & EMERGENCY COMMAND CENTER — CORE DESIGN SYSTEM
+   Palette:
+     - Emergency Red: #FD0001
+     - Deep Navy / Command Black: #071119
+     - Fire Gold / Amber: #F59E0B / #D97706
+     - Neutral surfaces: Slate / White
+   ========================================================================== */
+
+:root {
+    /* Brand Colors */
+    --cad-red-primary: #FD0001;
+    --cad-red-hover: #D50000;
+    --cad-red-glow: rgba(253, 0, 1, 0.35);
+    --cad-red-subtle: rgba(253, 0, 1, 0.08);
+
+    --cad-navy-deep: #071119;
+    --cad-navy-surface: #0E1A27;
+    --cad-navy-surface-2: #16273B;
+    --cad-navy-border: #1E3650;
+
+    --cad-gold-primary: #F59E0B;
+    --cad-gold-hover: #D97706;
+    --cad-gold-subtle: rgba(245, 158, 11, 0.12);
+    --cad-gold-glow: rgba(245, 158, 11, 0.35);
+
+    --cad-green-active: #10B981;
+    --cad-green-subtle: rgba(16, 185, 129, 0.12);
+
+    --cad-blue-info: #2563EB;
+    --cad-blue-subtle: rgba(37, 99, 235, 0.12);
+
+    /* Light Theme (Default) */
+    --cad-bg-canvas: #F4F6F9;
+    --cad-card-bg: #FFFFFF;
+    --cad-card-header-bg: #F8FAFC;
+    --cad-border: #E2E8F0;
+    --cad-border-subtle: #F1F5F9;
+    --cad-text-main: #071119;
+    --cad-text-secondary: #475569;
+    --cad-text-muted: #64748B;
+    --cad-table-header-bg: #F1F5F9;
+    --cad-table-hover-bg: #F8FAFC;
+    --cad-input-bg: #FFFFFF;
+    --cad-input-border: #CBD5E1;
+    --cad-shadow-sm: 0 1px 2px rgba(7, 17, 25, 0.05);
+    --cad-shadow-md: 0 4px 12px rgba(7, 17, 25, 0.07);
+    --cad-shadow-lg: 0 10px 25px rgba(7, 17, 25, 0.10);
+
+    /* Sidebar Variables (Always Dark Command Surface) */
+    --sidebar-bg: #071119;
+    --sidebar-surface: #0E1A27;
+    --sidebar-border: #16273B;
+    --sidebar-text: #E2E8F0;
+    --sidebar-muted: #8092A7;
+    --sidebar-width: 270px;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CAD Dark Mode (Tactical Night / 24/7 Operations) */
+[data-theme="dark"] {
+    --cad-bg-canvas: #071119;
+    --cad-card-bg: #0E1A27;
+    --cad-card-header-bg: #122133;
+    --cad-border: #1E3650;
+    --cad-border-subtle: #142436;
+    --cad-text-main: #F8FAFC;
+    --cad-text-secondary: #CBD5E1;
+    --cad-text-muted: #8092A7;
+    --cad-table-header-bg: #122133;
+    --cad-table-hover-bg: #16273B;
+    --cad-input-bg: #0A1420;
+    --cad-input-border: #223B57;
+    --cad-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --cad-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
+    --cad-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Base Reset & Layout */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: var(--font-sans);
+    background-color: var(--cad-bg-canvas);
+    color: var(--cad-text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Tabular Numbers for Data & Telemetry */
+.font-numeric, table td, .kpi-value, .badge {
+    font-feature-settings: 'tnum' 1;
+}
+
+/* Custom Tactical Scrollbars */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.3);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.5);
+}
+
+/* App Shell Layout */
+.cad-app-shell {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Sidebar Navigation */
+.cad-sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    z-index: 100;
+    transition: var(--transition);
+}
+
+.cad-brand-container {
+    padding: 1.25rem 1.25rem 1rem 1.25rem;
+    border-bottom: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: linear-gradient(180deg, rgba(253, 0, 1, 0.08) 0%, transparent 100%);
+}
+
+.cad-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+.cad-brand-emblem {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px var(--cad-red-glow));
+}
+
+.cad-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.cad-brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    line-height: 1.1;
+}
+
+.cad-brand-title span {
+    color: var(--cad-gold-primary);
+}
+
+.cad-brand-subtitle {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--sidebar-muted);
+    margin-top: 3px;
+}
+
+.cad-status-telemetry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--sidebar-surface);
+    border: 1px solid var(--sidebar-border);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.65rem;
+}
+
+.cad-live-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--cad-green-active);
+    text-transform: uppercase;
+}
+
+.cad-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--cad-green-active);
+    box-shadow: 0 0 8px var(--cad-green-active);
+    animation: cadPulse 2s infinite;
+}
+
+@keyframes cadPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.cad-live-clock {
+    font-size: 0.72rem;
+    font-family: monospace;
+    color: var(--sidebar-muted);
+    font-weight: 600;
+}
+
+/* Sidebar Nav Scroll Area */
+.cad-nav-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.cad-nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.cad-nav-section-title {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--sidebar-muted);
+    padding: 0 0.65rem 0.35rem 0.65rem;
+}
+
+.cad-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: var(--sidebar-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.cad-nav-item:hover {
+    background-color: var(--sidebar-surface);
+    color: #FFFFFF;
+    border-color: var(--sidebar-border);
+}
+
+.cad-nav-item.active {
+    background-color: var(--cad-navy-surface-2);
+    color: #FFFFFF;
+    border-left: 3px solid var(--cad-gold-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cad-nav-item-content {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.cad-nav-icon {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Emergency Callout in Nav */
+.cad-nav-emergency {
+    background: linear-gradient(135deg, var(--cad-red-primary) 0%, #A80000 100%);
+    color: #FFFFFF !important;
+    font-weight: 800;
+    box-shadow: 0 4px 14px var(--cad-red-glow);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.25rem;
+}
+.cad-nav-emergency:hover {
+    background: linear-gradient(135deg, #FF1A1A 0%, var(--cad-red-primary) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--cad-red-glow);
+}
+
+.cad-notification-pill {
+    background-color: var(--cad-red-primary);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-full);
+    min-width: 20px;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 0 10px var(--cad-red-glow);
+    animation: cadBlink 2.5s infinite;
+}
+
+@keyframes cadBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Sidebar Footer (Toggles) */
+.cad-sidebar-footer {
+    padding: 1rem 0.85rem;
+    border-top: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: var(--sidebar-bg);
+}
+
+.cad-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--sidebar-surface);
+    border: 1px solid var(--sidebar-border);
+    border-radius: var(--radius-sm);
+    color: var(--sidebar-text);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cad-toggle-btn:hover {
+    background-color: var(--cad-navy-surface-2);
+    color: #FFFFFF;
+    border-color: var(--cad-gold-primary);
+}
+
+/* Main Content Wrapper */
+.cad-main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cad-bg-canvas);
+}
+
+/* CAD Top Command Bar */
+.cad-topbar {
+    height: 56px;
+    background-color: var(--cad-card-bg);
+    border-bottom: 1px solid var(--cad-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.75rem;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.cad-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cad-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--cad-text-main);
+    font-size: 1.35rem;
+    cursor: pointer;
+}
+
+.cad-breadcrumb {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cad-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cad-breadcrumb-active {
+    color: var(--cad-text-main);
+    font-weight: 700;
+}
+
+.cad-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.cad-operator-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    background-color: var(--cad-bg-canvas);
+    border: 1px solid var(--cad-border);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.cad-operator-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--cad-gold-primary);
+    color: #071119;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+
+/* Content Area */
+.cad-content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ==========================================================================
+   CAD UI COMPONENTS (Buttons, Badges, Panels, Tables, Forms)
+   ========================================================================== */
+
+/* Panels & Cards */
+.cad-panel {
+    background-color: var(--cad-card-bg);
+    border: 1px solid var(--cad-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--cad-shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.cad-panel-header {
+    padding: 1rem 1.25rem;
+    background-color: var(--cad-card-header-bg);
+    border-bottom: 1px solid var(--cad-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.cad-panel-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--cad-text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cad-panel-body {
+    padding: 1.25rem;
+}
+
+/* Buttons */
+.cad-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--transition);
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.cad-btn-emergency {
+    background-color: var(--cad-red-primary);
+    color: #FFFFFF !important;
+    border-color: var(--cad-red-primary);
+    box-shadow: 0 2px 10px var(--cad-red-glow);
+}
+.cad-btn-emergency:hover {
+    background-color: var(--cad-red-hover);
+    box-shadow: 0 4px 16px var(--cad-red-glow);
+    transform: translateY(-1px);
+}
+
+.cad-btn-gold {
+    background-color: var(--cad-gold-primary);
+    color: #071119 !important;
+    border-color: var(--cad-gold-primary);
+    font-weight: 700;
+}
+.cad-btn-gold:hover {
+    background-color: var(--cad-gold-hover);
+    color: #071119 !important;
+    transform: translateY(-1px);
+}
+
+.cad-btn-navy {
+    background-color: var(--cad-navy-deep);
+    color: #FFFFFF !important;
+    border-color: var(--cad-navy-border);
+}
+.cad-btn-navy:hover {
+    background-color: var(--cad-navy-surface);
+}
+
+.cad-btn-outline {
+    background-color: transparent;
+    color: var(--cad-text-main);
+    border-color: var(--cad-border);
+}
+.cad-btn-outline:hover {
+    background-color: var(--cad-table-hover-bg);
+    border-color: var(--cad-text-muted);
+}
+
+.cad-btn-sm {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.78rem;
+    border-radius: var(--radius-sm);
+}
+
+.cad-btn-danger-outline {
+    background-color: transparent;
+    color: var(--cad-red-primary);
+    border-color: rgba(253, 0, 1, 0.3);
+}
+.cad-btn-danger-outline:hover {
+    background-color: var(--cad-red-subtle);
+    border-color: var(--cad-red-primary);
+}
+
+/* Status & Severity Badges */
+.cad-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-radius: var(--radius-sm);
+    line-height: 1.2;
+    border: 1px solid transparent;
+}
+
+/* Fire Severity Scales (0 to 5) */
+.cad-badge-scale-0 {
+    background-color: rgba(37, 99, 235, 0.12);
+    color: #2563EB;
+    border-color: rgba(37, 99, 235, 0.25);
+}
+.cad-badge-scale-1 {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    border-color: rgba(16, 185, 129, 0.25);
+}
+.cad-badge-scale-2 {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: #D97706;
+    border-color: rgba(234, 179, 8, 0.3);
+}
+.cad-badge-scale-3 {
+    background-color: rgba(249, 115, 22, 0.15);
+    color: #EA580C;
+    border-color: rgba(249, 115, 22, 0.3);
+}
+.cad-badge-scale-4 {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #DC2626;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+.cad-badge-scale-5 {
+    background-color: var(--cad-red-primary);
+    color: #FFFFFF;
+    border-color: var(--cad-red-primary);
+    box-shadow: 0 0 10px var(--cad-red-glow);
+    font-weight: 800;
+    animation: cadScale5Pulse 2s infinite ease-in-out;
+}
+
+@keyframes cadScale5Pulse {
+    0%, 100% { box-shadow: 0 0 6px var(--cad-red-glow); }
+    50% { box-shadow: 0 0 14px var(--cad-red-glow); transform: scale(1.02); }
+}
+
+/* Incident / Station Status Badges */
+.cad-badge-pending {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--cad-gold-primary);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+.cad-badge-confirmed {
+    background-color: rgba(37, 99, 235, 0.15);
+    color: #2563EB;
+    border-color: rgba(37, 99, 235, 0.3);
+}
+.cad-badge-dispatched {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #DC2626;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+.cad-badge-under-control {
+    background-color: rgba(14, 165, 233, 0.15);
+    color: #0284C7;
+    border-color: rgba(14, 165, 233, 0.3);
+}
+.cad-badge-resolved {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+.cad-badge-active {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+.cad-badge-inactive {
+    background-color: rgba(100, 116, 139, 0.15);
+    color: var(--cad-text-muted);
+    border-color: rgba(100, 116, 139, 0.3);
+}
+.cad-badge-maintenance {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--cad-gold-primary);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* Tables */
+.cad-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.cad-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+}
+
+.cad-table th {
+    background-color: var(--cad-table-header-bg);
+    color: var(--cad-text-secondary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--cad-border);
+    white-space: nowrap;
+}
+
+.cad-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--cad-border);
+    color: var(--cad-text-main);
+    vertical-align: middle;
+}
+
+.cad-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.cad-table tbody tr:hover {
+    background-color: var(--cad-table-hover-bg);
+}
+
+.cad-table tbody tr.row-urgent {
+    background-color: var(--cad-red-subtle);
+}
+
+.cad-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+/* Forms */
+.cad-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.15rem;
+}
+
+.cad-label {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--cad-text-main);
+}
+
+.cad-input,
+.cad-select,
+.cad-textarea,
+.cad-form-control {
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    background-color: var(--cad-input-bg);
+    color: var(--cad-text-main);
+    border: 1px solid var(--cad-input-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.cad-input:focus,
+.cad-select:focus,
+.cad-textarea:focus {
+    outline: none;
+    border-color: var(--cad-gold-primary);
+    box-shadow: 0 0 0 3px var(--cad-gold-subtle);
+}
+
+.cad-input-hint {
+    font-size: 0.75rem;
+    color: var(--cad-text-muted);
+}
+
+.cad-input-error {
+    font-size: 0.78rem;
+    color: var(--cad-red-primary);
+    font-weight: 600;
+    margin-top: 0.2rem;
+}
+
+/* Tactical Search & Filter Bars */
+.cad-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background-color: var(--cad-card-bg);
+    border: 1px solid var(--cad-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--cad-shadow-sm);
+}
+
+.cad-search-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 240px;
+    max-width: 480px;
+}
+
+.cad-search-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: var(--cad-text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.cad-search-input {
+    padding-left: 2.25rem;
+}
+
+/* Empty State */
+.cad-empty-state {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    color: var(--cad-text-muted);
+}
+
+.cad-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 0.85rem;
+    display: inline-block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.cad-empty-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cad-text-main);
+    margin-bottom: 0.35rem;
+}
+
+.cad-empty-desc {
+    font-size: 0.875rem;
+    max-width: 420px;
+    margin: 0 auto 1.25rem auto;
+}
+
+/* Modal Overlay */
+.cad-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(7, 17, 25, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.cad-modal-container {
+    background-color: var(--cad-card-bg);
+    border: 1px solid var(--cad-border);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--cad-shadow-lg);
+    position: relative;
+}
+
+.cad-modal-header {
+    padding: 1.1rem 1.35rem;
+    border-bottom: 1px solid var(--cad-border);
+    background-color: var(--cad-card-header-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cad-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.35rem;
+    color: var(--cad-text-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.cad-modal-close:hover {
+    color: var(--cad-red-primary);
+}
+
+.cad-modal-body {
+    padding: 1.35rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cad-sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .cad-sidebar.open {
+        left: 0;
+    }
+
+    .cad-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 17, 25, 0.6);
+        z-index: 99;
+    }
+
+    .cad-sidebar-overlay.active {
+        display: block;
+    }
+
+    .cad-mobile-toggle {
+        display: block;
+    }
+
+    .cad-content-area {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .cad-topbar {
+        padding: 0 1rem;
+    }
+}

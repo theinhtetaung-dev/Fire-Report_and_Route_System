@@ -3,20 +3,36 @@
 {% block title %}Delete User Account - Fire Route System{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="user-del-title">Delete User Account</h1>
+<div style="max-width: 580px; margin: 2rem auto;">
+    <div class="cad-panel" style="border: 2px solid var(--cad-red); box-shadow: var(--cad-glow-red);">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--cad-red); flex-shrink: 0;">
+                ⚠️
+            </div>
+            <div>
+                <h1 id="user-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
+                    Delete User Account
+                </h1>
+                <span style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Permanent Revocation</span>
+            </div>
+        </div>
 
-    <div class="card" style="border-color: var(--btn-red);">
-        <h3 style="color: var(--btn-red); margin-bottom: 1rem;" id="user-del-warning">⚠️ Warning: This action cannot be undone!</h3>
-        <p style="margin-bottom: 1.5rem; font-size: 1.05rem;" id="user-del-desc">
-            Are you sure you want to delete the user account <strong>"{{ user.username }}"</strong> (ID: #{{ user.id }}, Role: {{ user.role.role_name }})?
-        </p>
+        <div style="background: var(--cad-surface-hover); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--cad-red); margin-bottom: 1.5rem;">
+            <h3 style="color: var(--cad-red); margin: 0 0 0.5rem 0; font-size: 1rem;" id="user-del-warning">
+                ⚠️ Warning: This action cannot be undone!
+            </h3>
+            <p style="margin: 0; font-size: 0.95rem; color: var(--cad-text); line-height: 1.5;" id="user-del-desc">
+                Are you sure you want to delete the user account <strong>"{{ user.username }}"</strong> (ID: #{{ user.id }}, Role: {{ user.role.role_name }})?
+            </p>
+        </div>
 
         <form method="post">
             {% csrf_token %}
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-red" id="user-del-confirm">Delete Permanently</button>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end;">
                 <a href="{% url 'user_list' %}" class="btn btn-outline" id="user-del-cancel">Cancel</a>
+                <button type="submit" class="btn btn-red" id="user-del-confirm" style="background: var(--cad-red); color: #ffffff; font-weight: 700;">
+                    Delete Permanently
+                </button>
             </div>
         </form>
     </div>

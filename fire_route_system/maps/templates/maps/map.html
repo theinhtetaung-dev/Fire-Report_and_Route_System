@@ -10,55 +10,70 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
+        background-color: var(--cad-bg);
     }
     .landmark-sidebar {
         width: 380px;
         min-width: 320px;
-        background-color: var(--bg-white);
-        border-right: 1px solid var(--gray-medium);
+        background-color: var(--cad-surface);
+        border-right: 1px solid var(--cad-border);
         display: flex;
         flex-direction: column;
-        padding: 2rem;
+        padding: 1.5rem;
         box-sizing: border-box;
         height: 100%;
         overflow: hidden;
         transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        z-index: 10;
     }
     .landmark-list {
         flex: 1;
         overflow-y: auto;
         padding-right: 0.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
     }
     .location-item-card {
         transition: all 0.2s ease;
         padding: 1rem;
-        border: 1px solid var(--gray-medium);
-        border-radius: 8px;
+        border: 1px solid var(--cad-border);
+        border-radius: var(--cad-radius-md);
         cursor: pointer;
-        background-color: var(--bg-white);
-        margin-bottom: 0.75rem;
+        background-color: var(--cad-surface);
+        box-shadow: var(--cad-shadow-sm);
     }
     .location-item-card:hover {
-        border-color: var(--btn-orange) !important;
+        border-color: var(--cad-amber) !important;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(226, 82, 37, 0.08);
+        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
+        background-color: var(--cad-surface-hover);
     }
     .status-badge {
         display: inline-block;
-        padding: 0.15rem 0.6rem;
+        padding: 0.2rem 0.65rem;
         border-radius: 50px;
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.4px;
-        margin-top: 0.4rem;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
     }
-    .status-active { background-color: rgba(46,125,50,0.12); color: #2e7d32; }
-    .status-inactive { background-color: rgba(55,71,79,0.1); color: #37474f; }
+    .status-active { 
+        background-color: rgba(16, 185, 129, 0.12); 
+        color: #10B981; 
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-inactive { 
+        background-color: rgba(100, 116, 139, 0.12); 
+        color: #64748B; 
+        border: 1px solid rgba(100, 116, 139, 0.3);
+    }
     .map-container {
         flex: 1;
         height: 100%;
         position: relative;
+        background: #0f172a;
     }
 
     @media (max-width: 900px) {
@@ -67,14 +82,14 @@
         }
         .landmark-sidebar {
             width: 100%;
-            height: 40vh;
+            height: 42vh;
             border-right: none;
-            border-top: 1px solid var(--gray-medium);
-            padding: 1.5rem;
+            border-top: 1px solid var(--cad-border);
+            padding: 1.25rem;
         }
         .map-container {
             width: 100%;
-            height: 60vh;
+            height: 58vh;
         }
     }
 </style>
@@ -84,10 +99,17 @@
 <div class="map-page-layout">
     <!-- Fire Station Sidebar Panel -->
     <aside class="landmark-sidebar">
-        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
-            <h2 style="margin-bottom: 0; font-size: 1.5rem;" id="map-sidebar-title">🚒 Fire Stations</h2>
-            <p style="font-size: 0.9rem; color: var(--gray-dark); line-height: 1.4; margin: 0;" id="map-sidebar-subtitle">
-                All fire stations in the Mandalay city area.
+        <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--cad-border);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h2 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;" id="map-sidebar-title">
+                    🚒 Fire Stations
+                </h2>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); font-weight: 700; font-size: 0.75rem;">
+                    {{ stations|length }} Stations
+                </span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--cad-text-muted); line-height: 1.4; margin: 0;" id="map-sidebar-subtitle">
+                All fire stations in the Mandalay city area. Click any station to focus on map.
             </p>
         </div>
         <div class="landmark-list">
@@ -95,10 +117,16 @@
                 {% for station in stations %}
                 {% if station.latitude and station.longitude %}
                 <div class="location-item-card" onclick="flyToCoordinates({{ station.latitude }}, {{ station.longitude }})">
-                    <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700;">🚒 {{ station.name }}</h4>
-                    <p style="margin: 0 0 0.25rem 0; font-size: 0.85rem; color: var(--gray-dark); line-height: 1.4;">{{ station.address }}</p>
-                    <p style="margin: 0 0 0.25rem 0; font-size: 0.8rem; color: var(--gray-dark);">📞 {{ station.contact_number }}</p>
-                    <span style="font-family: monospace; font-size: 0.75rem; color: var(--btn-orange);">
+                    <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem; font-weight: 700; color: var(--cad-text);">
+                        🚒 {{ station.name }}
+                    </h4>
+                    <p style="margin: 0 0 0.35rem 0; font-size: 0.825rem; color: var(--cad-text-muted); line-height: 1.4;">
+                        {{ station.address }}
+                    </p>
+                    <p style="margin: 0 0 0.35rem 0; font-size: 0.825rem; color: var(--cad-amber); font-weight: 600;">
+                        📞 {{ station.contact_number }}
+                    </p>
+                    <span style="font-family: monospace; font-size: 0.75rem; color: var(--cad-text-muted);">
                         Lat: {{ station.latitude|floatformat:4 }}, Lng: {{ station.longitude|floatformat:4 }}
                     </span>
                     <br>
@@ -109,7 +137,7 @@
                 {% endif %}
                 {% endfor %}
             {% else %}
-                <div style="text-align: center; padding: 2rem 0; color: var(--gray-dark);">
+                <div style="text-align: center; padding: 2rem 0; color: var(--cad-text-muted);">
                     <p>No fire stations found.</p>
                 </div>
             {% endif %}

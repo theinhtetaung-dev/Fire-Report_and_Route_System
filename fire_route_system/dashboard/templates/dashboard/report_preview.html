@@ -7,15 +7,16 @@
 <style>
     .filter-card {
         padding: 1.5rem;
-        margin-bottom: 2rem;
-        background-color: var(--gray-light);
-        border: 1px solid var(--gray-medium);
-        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        background-color: var(--cad-surface);
+        border: 1px solid var(--cad-border);
+        border-radius: var(--cad-radius-md);
+        box-shadow: var(--cad-shadow-sm);
     }
     .filter-form {
         display: flex;
         flex-wrap: wrap;
-        gap: 1.5rem;
+        gap: 1.25rem;
         align-items: flex-end;
     }
     .filter-group {
@@ -23,38 +24,51 @@
         min-width: 150px;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
     .filter-group label {
         font-weight: 700;
-        font-size: 0.9rem;
-        color: var(--color-black);
+        font-size: 0.85rem;
+        color: var(--cad-text);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
     }
     .filter-group select, .filter-group input {
-        padding: 0.5rem 1rem;
+        padding: 0.55rem 1rem;
         border-radius: 6px;
-        border: 1px solid var(--gray-medium);
-        background-color: var(--bg-white);
-        color: var(--color-black);
+        border: 1px solid var(--cad-border);
+        background-color: var(--cad-surface);
+        color: var(--cad-text);
         font-family: var(--font-family);
-        height: 38px;
+        height: 40px;
+        box-sizing: border-box;
+    }
+    .filter-group select:focus, .filter-group input:focus {
+        border-color: var(--cad-amber);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
     }
     .export-btn-container {
         display: flex;
         gap: 0.75rem;
         margin-bottom: 1.5rem;
+        flex-wrap: wrap;
     }
 </style>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 id="portal-title" style="margin: 0; font-size: 2rem;">📋 Command Report Portal</h1>
-        <p id="portal-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--gray-dark);">Filter, analyze, and download fire incident records.</p>
+        <h1 id="portal-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
+            📋 Command Report Portal
+        </h1>
+        <p id="portal-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
+            Filter, analyze, and download fire incident records.
+        </p>
     </div>
 </div>
 
 <!-- Filter Card -->
-<div class="card filter-card">
+<div class="filter-card">
     <form method="GET" action="" class="filter-form" style="display: flex !important; flex-direction: row !important; width: 100%;">
         <!-- Time Period -->
         <div class="filter-group">
@@ -91,7 +105,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-black" id="btn-filter" style="height: 38px; font-weight: 700; padding: 0 1.5rem;">
+        <button type="submit" class="btn btn-orange" id="btn-filter" style="height: 40px; font-weight: 700; padding: 0 1.5rem; display: inline-flex; align-items: center; gap: 0.4rem;">
             🔍 Filter
         </button>
     </form>
@@ -99,21 +113,21 @@
 
 <!-- Export Buttons -->
 <div class="export-btn-container">
-    <a href="{% url 'export_csv' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="btn btn-orange" id="btn-export-csv" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+    <a href="{% url 'export_csv' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="btn btn-orange" id="btn-export-csv" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
         📄 Export CSV
     </a>
-    <a href="{% url 'export_pdf' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="btn btn-black" id="btn-export-pdf" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; background-color: var(--btn-red); color: white;">
+    <a href="{% url 'export_pdf' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="cad-btn cad-btn-emergency" id="btn-export-pdf" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
         📕 Export PDF
     </a>
 </div>
 
 <!-- Preview Table -->
-<div class="card" style="padding: 1.5rem;">
+<div class="cad-panel">
     <div class="table-responsive">
-        <table>
+        <table class="cad-table">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th style="width: 50px;">No</th>
                     <th id="th-phone">Reporter Phone</th>
                     <th id="th-scale">Fire Scale</th>
                     <th id="th-status">Status</th>
@@ -125,27 +139,43 @@
                 {% for report in reports %}
                 <tr>
                     <td><strong>{{ forloop.counter }}</strong></td>
-                    <td>{{ report.reporter_phone|default:"Anonymous" }}</td>
+                    <td style="font-weight: 600;">
+                        {% if report.reporter_phone %}
+                        <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-amber); text-decoration: none;">
+                            📞 {{ report.reporter_phone }}
+                        </a>
+                        {% else %}
+                        <span style="color: var(--cad-text-muted);">Anonymous</span>
+                        {% endif %}
+                    </td>
                     <td>
-                        <span class="badge" style="background-color: {% if report.fire_scale == 5 %}#ffebee{% elif report.fire_scale == 4 %}#fbe9e7{% elif report.fire_scale == 3 %}#fff3e0{% elif report.fire_scale == 2 %}#fff8e1{% elif report.fire_scale == 1 %}#e8f5e9{% else %}#e3f2fd{% endif %}; color: {% if report.fire_scale == 5 %}var(--btn-red){% elif report.fire_scale == 4 %}#bf360c{% elif report.fire_scale == 3 %}var(--btn-orange){% elif report.fire_scale == 2 %}#f9a825{% elif report.fire_scale == 1 %}#2e7d32{% else %}#1565c0{% endif %}; border: 1px solid currentColor;">
+                        <span class="badge cad-badge-scale-{{ report.fire_scale }}">
                             {% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}
                         </span>
                     </td>
-                    <td>{{ report.status }}</td>
+                    <td>
+                        <span class="badge badge-{% if report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'resolved' or report.status|lower == 'verified' %}active{% else %}pending{% endif %}">
+                            {{ report.status }}
+                        </span>
+                    </td>
                     <td>
                         {% if report.latitude and report.longitude %}
-                        <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--color-black); text-decoration: underline;">
+                        <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--cad-text); text-decoration: underline; font-family: monospace; font-size: 0.85rem;">
                             {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
                         </a>
                         {% else %}
-                        {{ report.address|default:"N/A" }}
+                        <span style="color: var(--cad-text-muted);">{{ report.address|default:"N/A" }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ report.reported_at|date:"d-m-Y h:i A" }}</td>
+                    <td style="color: var(--cad-text-muted); font-size: 0.85rem;">
+                        {{ report.reported_at|date:"d-m-Y h:i A" }}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align: center; color: var(--gray-dark); padding: 3rem 0;" id="td-empty">No records match the filter criteria.</td>
+                    <td colspan="6" style="text-align: center; color: var(--cad-text-muted); padding: 3rem 0;" id="td-empty">
+                        No records match the filter criteria.
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

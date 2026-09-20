@@ -1,206 +1,122 @@
 {% extends 'base.html' %}
 
-{% block title %}🚨 Report Fire - Fire Route System{% endblock %}
+{% block title %}Emergency Fire Report - Fire Route System{% endblock %}
+{% block breadcrumb %}Emergency Fire Intake{% endblock %}
 
 {% block content %}
-<div class="card emergency-card">
-    <button class="lang-btn" id="langToggle" onclick="window.toggleLanguage && window.toggleLanguage()">English</button>
+<div class="cad-panel" style="max-width: 680px; margin: 1rem auto; border: 2px solid var(--cad-red-primary); box-shadow: 0 8px 30px var(--cad-red-glow);">
+    <!-- Top Emergency Accent Banner -->
+    <div style="background: linear-gradient(90deg, var(--cad-red-primary) 0%, var(--cad-gold-primary) 100%); height: 6px; width: 100%;"></div>
 
-    <div id="form-content">
-        {% if success %}
-        <div class="success-container">
-            <div class="success-icon">✅</div>
-            <h2 id="success-title">သတင်းပို့ခြင်း အောင်မြင်ပါသည်</h2>
-            <p id="success-desc" style="font-size: 1.1rem; margin-bottom: 2rem;">မီးသတ်ကားများနှင့် ကယ်ဆယ်ရေးအဖွဲ့များ ချက်ချင်း စေလွှတ်ပါမည်။</p>
-            <a href="{% url 'report_fire' %}" id="success-btn" class="btn btn-black">သတင်းအသစ် ထပ်ပို့ရန်</a>
-        </div>
-        {% else %}
-        <h2 id="title-text" style="padding-right: 6rem; margin-bottom: 1rem;">🔥 အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်</h2>
-        
-        {% if error %}
-        <div class="card" style="padding: 1rem; border-left: 5px solid var(--btn-red); background-color: rgba(195, 0, 16, 0.05); color: var(--btn-red); font-weight: 600; margin-bottom: 1.5rem;">
-            ⚠️ {{ error }}
-        </div>
-        {% endif %}
+    <div style="padding: 1.75rem 2rem; position: relative;">
+        <!-- Language Switcher in Card -->
+        <button type="button" class="cad-btn cad-btn-navy cad-btn-sm" id="langToggle" onclick="window.toggleLanguage && window.toggleLanguage()" style="position: absolute; top: 1.5rem; right: 2rem; font-weight: 700;">
+            English
+        </button>
 
-        <form method="POST" action="" enctype="multipart/form-data">
-            {% csrf_token %}
+        <div id="form-content">
+            {% if success %}
+            <div class="cad-empty-state" style="padding: 2.5rem 1rem;">
+                <div style="font-size: 3.5rem; margin-bottom: 1rem;">🚒</div>
+                <h2 id="success-title" style="font-size: 1.5rem; font-weight: 800; color: var(--cad-green-active); margin-bottom: 0.5rem;">
+                    သတင်းပို့ခြင်း အောင်မြင်ပါသည်
+                </h2>
+                <p id="success-desc" style="font-size: 1rem; color: var(--cad-text-muted); margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+                    မီးသတ်ကားများနှင့် ကယ်ဆယ်ရေးအဖွဲ့များ ချက်ချင်း စေလွှတ်ပါမည်။
+                </p>
+                <a href="{% url 'report_fire' %}" id="success-btn" class="cad-btn cad-btn-emergency" style="font-size: 1rem; padding: 0.75rem 1.75rem;">
+                    သတင်းအသစ် ထပ်ပို့ရန်
+                </a>
+            </div>
+            {% else %}
             
-            <style>
-                .emergency-card {
-                    max-width: 600px;
-                    margin: 2rem auto;
-                    border: 2px solid var(--btn-red);
-                    box-shadow: 0 8px 30px rgba(195, 0, 16, 0.08);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .emergency-card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 6px;
-                    background: linear-gradient(90deg, var(--btn-red), var(--btn-orange));
-                }
-
-                .lang-btn {
-                    position: absolute;
-                    top: 1.5rem;
-                    right: 1.5rem;
-                    padding: 0.5rem 1rem;
-                    font-weight: 700;
-                    background-color: var(--color-black);
-                    color: var(--bg-white);
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 0.85rem;
-                    transition: all var(--transition-speed);
-                }
-
-                .lang-btn:hover {
-                    background-color: var(--btn-orange);
-                }
-
-                .gps-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    color: var(--btn-red);
-                    background-color: #ffebee;
-                    padding: 0.5rem 1rem;
-                    border-radius: 50px;
-                    margin-bottom: 1.5rem;
-                }
-
-                .gps-badge.ready {
-                    color: #2e7d32;
-                    background-color: #e8f5e9;
-                }
-
-                .success-container {
-                    text-align: center;
-                    padding: 2rem 0;
-                }
-
-                .success-icon {
-                    font-size: 4rem;
-                    margin-bottom: 1rem;
-                }
-
-                .big-emergency-btn {
-                    width: 100%;
-                    font-size: 1.25rem;
-                    padding: 1.25rem;
-                    border-radius: 6px;
-                    text-transform: uppercase;
-                    font-weight: 800;
-                    border: none;
-                    transition: all 0.3s ease;
-                    background-color: var(--btn-red);
-                    color: var(--bg-white);
-                    box-shadow: 0 6px 20px rgba(195, 0, 16, 0.3);
-                    cursor: pointer;
-                }
-
-                .big-emergency-btn:hover {
-                    background-color: var(--color-black);
-                    transform: translateY(-3px);
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-                }
-
-                .location-tabs {
-                    display: flex;
-                    gap: 0.5rem;
-                    margin-bottom: 1.5rem;
-                    border-bottom: 2px solid var(--gray-medium);
-                    padding-bottom: 0.5rem;
-                }
-
-                .loc-tab-btn {
-                    flex: 1;
-                    background: none;
-                    border: 1px solid var(--gray-medium);
-                    padding: 0.6rem 1rem;
-                    font-family: var(--font-family);
-                    font-weight: 700;
-                    font-size: 0.9rem;
-                    color: var(--gray-dark);
-                    cursor: pointer;
-                    border-radius: 6px;
-                    transition: all 0.2s ease;
-                }
-
-                .loc-tab-btn.active {
-                    background-color: var(--btn-orange);
-                    color: white;
-                    border-color: var(--btn-orange);
-                }
-            </style>
-            
-            <div class="form-group">
-                <label id="location-choice-label" style="font-weight:700;">သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:</label>
-                <div class="location-tabs">
-                    <button type="button" id="btn-tab-gps" class="loc-tab-btn active" onclick="switchLocationMode('gps')">📡 GPS တည်နေရာ</button>
-                    <button type="button" id="btn-tab-addr" class="loc-tab-btn" onclick="switchLocationMode('address')">✍️ လိပ်စာ အသေးစိတ်</button>
-                </div>
+            <div style="margin-bottom: 1.5rem; padding-right: 5.5rem;">
+                <h2 id="title-text" style="font-size: 1.45rem; font-weight: 800; color: var(--cad-red-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.35rem 0;">
+                    <span>🔥</span>
+                    <span>အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်</span>
+                </h2>
+                <p style="font-size: 0.85rem; color: var(--cad-text-muted); margin: 0;">
+                    Emergency Fire Incident Rapid Reporting Console | One-Click Response
+                </p>
             </div>
 
-            <!-- GPS Mode block -->
-            <div id="gps-block">
-                <button type="button" id="btn-gps-fetch" class="btn btn-black" onclick="fetchGPS()" style="width:100%; margin-bottom:1rem; font-weight:700; height:38px;">
-                    📡 လက်ရှိတည်နေရာကို ရယူမည်
+            {% if error %}
+            <div style="padding: 0.85rem 1.25rem; border-left: 4px solid var(--cad-red-primary); background-color: var(--cad-red-subtle); color: var(--cad-red-primary); font-weight: 700; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.875rem;">
+                ⚠️ {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Reporter Phone Input -->
+                <div class="cad-form-group">
+                    <label id="phone-label" for="phone-input" class="cad-label">သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):</label>
+                    <input type="tel" name="reporter_phone" id="phone-input" value="{{ reporter_phone|default:'' }}" placeholder="e.g. 09xxxxxxxxx" class="cad-input">
+                </div>
+
+                <!-- Location Mode Selector -->
+                <div class="cad-form-group" style="margin-top: 1.25rem;">
+                    <label id="location-choice-label" class="cad-label">သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:</label>
+                    <div style="display: flex; gap: 0.75rem; margin-top: 0.35rem;">
+                        <button type="button" id="btn-tab-gps" class="cad-btn cad-btn-navy" style="flex: 1; justify-content: center;" onclick="switchLocationMode('gps')">
+                            📡 GPS တည်နေရာ
+                        </button>
+                        <button type="button" id="btn-tab-addr" class="cad-btn cad-btn-outline" style="flex: 1; justify-content: center;" onclick="switchLocationMode('address')">
+                            ✍️ လိပ်စာ အသေးစိတ်
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GPS Acquisition Block -->
+                <div id="gps-block" style="background-color: var(--cad-table-header-bg); border: 1px solid var(--cad-border); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1.25rem;">
+                    <button type="button" id="btn-gps-fetch" class="cad-btn cad-btn-gold" onclick="fetchGPS()" style="width: 100%; margin-bottom: 0.85rem; font-size: 0.95rem; padding: 0.65rem 1rem;">
+                        📡 လက်ရှိတည်နေရာကို ရယူမည်
+                    </button>
+                    <div id="gps-status" class="cad-badge cad-badge-pending" style="width: 100%; justify-content: center; padding: 0.5rem; font-size: 0.82rem; border-radius: var(--radius-sm);">
+                        <span>📍</span> <span id="gps-text">တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...</span>
+                    </div>
+                </div>
+
+                <!-- Address Input Block -->
+                <div id="address-block" style="display: none;" class="cad-form-group">
+                    <label id="address-label" for="address-input" class="cad-label">မီးလောင်မှု တည်နေရာ လိပ်စာ:</label>
+                    <textarea name="address" id="address-input" rows="3" class="cad-textarea" placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ...">{{ address|default:'' }}</textarea>
+                </div>
+
+                <!-- Optional Photo Upload -->
+                <div class="cad-form-group">
+                    <label id="photo-label" class="cad-label">မီးလောင်မှု အခြေအနေ ဓာတ်ပုံတင်ရန် (ရွေးချယ်နိုင်သည်):</label>
+                    <input type="file" name="fire_image" accept="image/*" class="cad-input" style="padding: 0.4rem;">
+                </div>
+
+                <input type="hidden" id="lat" name="latitude" value="{{ latitude|default:'' }}">
+                <input type="hidden" id="lng" name="longitude" value="{{ longitude|default:'' }}">
+                <input type="hidden" id="location_mode" name="location_mode" value="gps">
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="cad-btn cad-btn-emergency" style="width: 100%; padding: 0.9rem; font-size: 1.15rem; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; letter-spacing: 0.5px;">
+                    🚨 အခုချက်ချင်း သတင်းပို့မည်
                 </button>
-                <div id="gps-status" class="gps-badge" style="width: 100%; box-sizing: border-box; justify-content: center; margin-bottom: 0;">
-                    <span class="dot">📍</span> <span id="gps-text">တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...</span>
-                </div>
-            </div>
-
-            <!-- Address Mode block -->
-            <div id="address-block" style="display: none;">
-                <div class="form-group">
-                    <label id="address-label">မီးလောင်မှု တည်နေရာ လိပ်စာ:</label>
-                    <textarea name="address" id="address-input" placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ..." rows="3" style="width: 100%; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--gray-medium); background-color: var(--bg-white); color: var(--color-black); font-family: var(--font-family); resize: vertical; box-sizing: border-box;">{{ address|default:'' }}</textarea>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 1rem;">
-                <label id="photo-label">မီးလောင်မှု အခြေအနေ ဓာတ်ပုံတင်ရန် (ရွေးချယ်နိုင်သည်):</label>
-                <input type="file" name="fire_image" accept="image/*" class="file-input">
-            </div>
-
-            <input type="hidden" id="lat" name="latitude" value="{{ latitude|default:'' }}">
-            <input type="hidden" id="lng" name="longitude" value="{{ longitude|default:'' }}">
-            <input type="hidden" id="location_mode" name="location_mode" value="gps">
-
-            <button type="submit" id="submitBtn" class="big-emergency-btn" style="margin-top: 1.5rem;">
-                🚨 အခုချက်ချင်း သတင်းပို့မည်
-            </button>
-
-            <!-- Script trigger when accessing the page directly -->
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    if (typeof window.updateUI === "function") window.updateUI();
-                    if (typeof window.fetchGPS === "function") window.fetchGPS();
-
-                    // Sync the local lang button text with global lang state
-                    const currentLang = localStorage.getItem("lang") || "my";
-                    const langBtn = document.getElementById("langToggle");
-                    if (langBtn) langBtn.innerText = currentLang === "my" ? "English" : "မြန်မာ";
-                });
-
-                window.addEventListener("languageChanged", function(e) {
-                    const langBtn = document.getElementById("langToggle");
-                    if (langBtn) langBtn.innerText = e.detail.lang === "my" ? "English" : "မြန်မာ";
-                });
-            </script>
-        </form>
-        {% endif %}
+            </form>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof window.updateUI === "function") window.updateUI();
+        if (typeof window.fetchGPS === "function") window.fetchGPS();
+
+        const currentLang = localStorage.getItem("lang") || "my";
+        const langBtn = document.getElementById("langToggle");
+        if (langBtn) langBtn.innerText = currentLang === "my" ? "English" : "မြန်မာ";
+    });
+
+    window.addEventListener("languageChanged", function(e) {
+        const langBtn = document.getElementById("langToggle");
+        if (langBtn) langBtn.innerText = e.detail.lang === "my" ? "English" : "မြန်မာ";
+    });
+</script>
 {% endblock %}

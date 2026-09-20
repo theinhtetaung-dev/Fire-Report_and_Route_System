@@ -1,103 +1,231 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Emergency Dispatch Dashboard - Fire Route System{% endblock %}
+{% block title %}CAD Command Dashboard - Fire Department Route System{% endblock %}
+{% block breadcrumb %}CAD Operations Command{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-header">
-    <div>
-        <h1 class="dashboard-title" id="dash-title">🚒 CAD Control Dashboard</h1>
-        <p class="dashboard-subtitle" id="dash-subtitle">Emergency Response and Computer-Aided Dispatch System | Mandalay Region Command</p>
+<!-- Dashboard Header -->
+<div class="cad-dash-header">
+    <div class="cad-dash-title-group">
+        <h1 class="cad-dash-title" id="dash-title">
+            <span>🚒</span>
+            <span>CAD Operations Command</span>
+        </h1>
+        <p class="cad-dash-subtitle" id="dash-subtitle">Real-Time Computer-Aided Dispatch & Emergency Telemetry | Mandalay Regional Headquarters</p>
     </div>
-    <div class="live-indicator">
-        <span class="blink-dot"></span>
-        <span class="live-text" id="dash-live">SYSTEM LIVE</span>
-    </div>
-</div>
-
-<!-- Top Row: KPI Cards -->
-<div class="kpi-grid">
-    <!-- Card 1: Active Fires -->
-    <div class="kpi-card danger-card">
-        <div class="kpi-icon">🔥</div>
-        <div class="kpi-data">
-            <span class="kpi-label" id="kpi-active-label">Active Incidents</span>
-            <h2 class="kpi-value">{{ total_active_fires }}</h2>
-            <span class="kpi-trend" id="kpi-active-trend">Pending or Dispatched</span>
-        </div>
-    </div>
-    <!-- Card 2: High Severity -->
-    <div class="kpi-card warning-card">
-        <div class="kpi-icon">⚠️</div>
-        <div class="kpi-data">
-            <span class="kpi-label" id="kpi-severity-label">High Severity</span>
-            <h2 class="kpi-value">{{ high_severity_fires }}</h2>
-            <span class="kpi-trend" id="kpi-severity-trend">Level 5 Active Reports</span>
-        </div>
-    </div>
-    <!-- Card 3: Available Stations -->
-    <div class="kpi-card success-card">
-        <div class="kpi-icon">🛡️</div>
-        <div class="kpi-data">
-            <span class="kpi-label" id="kpi-stations-label">Active Stations</span>
-            <h2 class="kpi-value">{{ available_stations }}</h2>
-            <span class="kpi-trend" id="kpi-stations-trend">Online and Operational</span>
-        </div>
-    </div>
-    <!-- Card 4: Total Dispatches Today -->
-    <div class="kpi-card info-card">
-        <div class="kpi-icon">📋</div>
-        <div class="kpi-data">
-            <span class="kpi-label" id="kpi-dispatches-label">Today's Dispatches</span>
-            <h2 class="kpi-value">{{ total_dispatches_today }}</h2>
-            <span class="kpi-trend" id="kpi-dispatches-trend">Created calendar day</span>
-        </div>
+    <div class="cad-dash-live-badge">
+        <span class="cad-pulse-dot"></span>
+        <span class="cad-live-text" id="dash-live">CAD SYSTEM LIVE</span>
     </div>
 </div>
 
-<!-- Middle Row: Map & Analytics -->
-<div class="middle-grid">
+<!-- Top Row: KPI Metric Cards -->
+<div class="cad-kpi-grid">
+    <!-- Card 1: Active Incidents -->
+    <div class="cad-kpi-card cad-kpi-danger">
+        <div class="cad-kpi-icon-wrap">🔥</div>
+        <div class="cad-kpi-data">
+            <span class="cad-kpi-label" id="kpi-active-label">Active Incidents</span>
+            <div class="cad-kpi-value">{{ total_active_fires }}</div>
+            <span class="cad-kpi-trend" id="kpi-active-trend">Pending Triage / In Field</span>
+        </div>
+    </div>
+
+    <!-- Card 2: High Severity (Level 5) -->
+    <div class="cad-kpi-card cad-kpi-warning">
+        <div class="cad-kpi-icon-wrap">⚠️</div>
+        <div class="cad-kpi-data">
+            <span class="cad-kpi-label" id="kpi-severity-label">Critical Severity</span>
+            <div class="cad-kpi-value">{{ high_severity_fires }}</div>
+            <span class="cad-kpi-trend" id="kpi-severity-trend">Level 5 Emergency Scale</span>
+        </div>
+    </div>
+
+    <!-- Card 3: Active Stations -->
+    <div class="cad-kpi-card cad-kpi-success">
+        <div class="cad-kpi-icon-wrap">🛡️</div>
+        <div class="cad-kpi-data">
+            <span class="cad-kpi-label" id="kpi-stations-label">Online Stations</span>
+            <div class="cad-kpi-value">{{ available_stations }}</div>
+            <span class="cad-kpi-trend" id="kpi-stations-trend">Active & Mission Ready</span>
+        </div>
+    </div>
+
+    <!-- Card 4: Dispatches Today -->
+    <div class="cad-kpi-card cad-kpi-info">
+        <div class="cad-kpi-icon-wrap">📋</div>
+        <div class="cad-kpi-data">
+            <span class="cad-kpi-label" id="kpi-dispatches-label">Today's Dispatches</span>
+            <div class="cad-kpi-value">{{ total_dispatches_today }}</div>
+            <span class="cad-kpi-trend" id="kpi-dispatches-trend">Calendar Day Operations</span>
+        </div>
+    </div>
+</div>
+
+<!-- Middle Row: Tactical Map & Severity Analytics -->
+<div class="cad-middle-grid">
     <!-- Map Container -->
-    <div class="dashboard-card map-card">
-        <div class="card-header">
-            <h3 id="dash-map-title">📍 Live Incident & Station Map</h3>
-            <span class="card-action-hint" id="dash-map-hint">Double click to zoom, hover pin for summary</span>
+    <div class="cad-panel cad-map-panel">
+        <div class="cad-panel-header">
+            <div class="cad-panel-title">
+                <span id="dash-map-title">📍 Live Tactical Incident & Station Map</span>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="dash-map-hint">Interactive tactical map view</span>
         </div>
-        <div class="map-wrapper-inner">
+        <div class="cad-map-wrapper">
             <div id="dashboard-map"></div>
         </div>
     </div>
+
     <!-- Analytics Chart -->
-    <div class="dashboard-card chart-card">
-        <div class="card-header">
-            <h3 id="dash-chart-title">📊 Severity Scale Analysis</h3>
-            <span class="card-action-hint" id="dash-chart-hint">Historical breakdown of incident scales</span>
+    <div class="cad-panel cad-chart-panel">
+        <div class="cad-panel-header">
+            <div class="cad-panel-title">
+                <span id="dash-chart-title">📊 Incident Severity Distribution</span>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="dash-chart-hint">Scale 0 to 5</span>
         </div>
-        <div class="chart-wrapper-inner">
+        <div class="cad-chart-wrapper">
             <canvas id="severityChart"></canvas>
         </div>
     </div>
 </div>
 
+<!-- Bottom Row: Actionable CAD Operations Tables -->
+<div class="cad-tables-grid">
+    <!-- Immediate Action Needed: Pending Reports -->
+    <div class="cad-panel">
+        <div class="cad-panel-header">
+            <div class="cad-panel-title" style="color: var(--cad-red-primary);">
+                <span>🚨</span>
+                <span id="dash-pending-title">Immediate Dispatch Actions Required</span>
+            </div>
+            <span class="cad-badge cad-badge-pending" id="dash-pending-badge">PENDING</span>
+        </div>
+        <div class="cad-table-container">
+            {% if pending_reports %}
+            <table class="cad-table">
+                <thead>
+                    <tr>
+                        <th id="th-p-no">No</th>
+                        <th id="th-p-phone">Caller Contact</th>
+                        <th id="th-p-severity">Severity</th>
+                        <th id="th-p-location">Location</th>
+                        <th id="th-p-time">Reported</th>
+                        <th id="th-p-action" style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in pending_reports %}
+                    <tr class="row-urgent">
+                        <td><strong>#{{ forloop.counter }}</strong></td>
+                        <td>{{ report.reporter_phone|default:"Anonymous" }}</td>
+                        <td>
+                            <span class="cad-badge cad-badge-scale-{{ report.fire_scale }}">
+                                {% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if report.latitude and report.longitude %}
+                                <span style="font-family: monospace; font-size: 0.8rem;">
+                                    {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }}
+                                </span>
+                            {% else %}
+                                {{ report.address|default:"Location N/A"|truncatechars:20 }}
+                            {% endif %}
+                        </td>
+                        <td>{{ report.reported_at|date:"h:i A" }}</td>
+                        <td style="text-align: right;">
+                            <a href="{% url 'dispatch_create' %}?report_id={{ report.id }}" class="cad-btn cad-btn-emergency cad-btn-sm" data-en="Dispatch" data-my="စေလွှတ်မည်">
+                                🚒 Dispatch
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="cad-empty-state">
+                <span class="cad-empty-icon">✅</span>
+                <h4 class="cad-empty-title" id="dash-pending-empty">No pending reports requiring attention</h4>
+                <p class="cad-empty-desc">All incoming citizen emergency reports have been assigned or triaged.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Field Deployments -->
+    <div class="cad-panel">
+        <div class="cad-panel-header">
+            <div class="cad-panel-title">
+                <span>🚒</span>
+                <span id="dash-active-title">Active Field Deployments</span>
+            </div>
+            <span class="cad-badge cad-badge-dispatched" id="dash-active-badge">IN FIELD</span>
+        </div>
+        <div class="cad-table-container">
+            {% if active_dispatches %}
+            <table class="cad-table">
+                <thead>
+                    <tr>
+                        <th id="th-d-id">Disp ID</th>
+                        <th id="th-d-incident">Incident</th>
+                        <th id="th-d-station">Station</th>
+                        <th id="th-d-operator">Operator</th>
+                        <th id="th-d-time">Time</th>
+                        <th id="th-d-action" style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dispatch in active_dispatches %}
+                    <tr>
+                        <td><strong>#{{ dispatch.id }}</strong></td>
+                        <td>
+                            <span class="cad-badge cad-badge-scale-{{ dispatch.report.fire_scale }}">
+                                {% if dispatch.report.fire_scale == 0 %}နယ်မြေခံ{% else %}L{{ dispatch.report.fire_scale }}{% endif %}
+                            </span>
+                        </td>
+                        <td>{{ dispatch.station.name }}</td>
+                        <td>{{ dispatch.operator.username }}</td>
+                        <td>{{ dispatch.dispatched_at|date:"h:i A" }}</td>
+                        <td style="text-align: right;">
+                            <a href="{% url 'dispatch_update' dispatch.id %}" class="cad-btn cad-btn-outline cad-btn-sm" data-en="Manage" data-my="စီမံမည်">
+                                Manage
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="cad-empty-state">
+                <span class="cad-empty-icon">🛡️</span>
+                <h4 class="cad-empty-title" id="dash-active-empty">No active dispatches in command</h4>
+                <p class="cad-empty-desc">All fire units are currently standing by at their respective stations.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Leaflet Map Script (Unchanged functionality as instructed) -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // --- 1. Map Setup ---
-        // Setup Mandalay Region limits
+        // --- 1. Map Setup (DO NOT MODIFY FUNCTIONALITY) ---
         const southWest = L.latLng(21.7500, 95.9000);
         const northEast = L.latLng(22.2000, 96.2500);
         const bounds = L.latLngBounds(southWest, northEast);
 
-        // Initialize local Leaflet map
         const map = L.map('dashboard-map', {
             zoomControl: true,
             scrollWheelZoom: true,
@@ -125,10 +253,9 @@
         stations.forEach(st => {
             const popupHTML = `
                 <div class="map-popup-card">
-                    <h4 style="margin:0 0 0.5rem 0; color: #2e7d32;">🚒 Station Online</h4>
-                    <p style="margin:2px 0;"><strong>Name:</strong> ${st.name}</p>
+                    <h4 style="margin:0 0 0.5rem 0; color: #10B981;">🚒 ${st.name}</h4>
                     <p style="margin:2px 0;"><strong>Contact:</strong> ${st.contact_number}</p>
-                    <span class="badge badge-active" style="margin-top:0.25rem;">${st.status}</span>
+                    <span class="cad-badge cad-badge-active" style="margin-top:0.25rem;">${st.status}</span>
                 </div>
             `;
             const marker = L.marker([st.latitude, st.longitude], { icon: stationIcon }).bindPopup(popupHTML);
@@ -147,13 +274,13 @@
 
             const popupHTML = `
                 <div class="map-popup-card">
-                    <h4 style="margin:0 0 0.5rem 0; color: var(--btn-red);">🔥 Active Fire Incident</h4>
+                    <h4 style="margin:0 0 0.5rem 0; color: var(--cad-red-primary);">🔥 Active Fire Incident</h4>
                     <p style="margin:2px 0;"><strong>ID:</strong> Incident #${f.id}</p>
                     <p style="margin:2px 0;"><strong>Severity:</strong> Scale ${f.fire_scale}</p>
                     <p style="margin:2px 0;"><strong>Reported:</strong> ${f.reported_at}</p>
                     <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
-                        <span class="badge badge-pending">${f.status}</span>
-                        <a href="/dispatch/create/?report_id=${f.id}" class="btn-dispatch-action" style="padding: 2px 8px; font-size: 0.75rem; text-decoration: none; border-radius: 4px; display: inline-block;">Dispatch</a>
+                        <span class="cad-badge cad-badge-pending">${f.status}</span>
+                        <a href="/dispatch/create/?report_id=${f.id}" class="cad-btn cad-btn-emergency cad-btn-sm" style="text-decoration: none;">Dispatch</a>
                     </div>
                 </div>
             `;
@@ -163,12 +290,10 @@
 
         markerGroup.addTo(map);
 
-        // Auto-fit to pins
         if (markerGroup.getLayers().length > 0) {
             map.fitBounds(markerGroup.getBounds(), { padding: [50, 50] });
         }
 
-        // Avoid Leaflet grey box layout bugs on initial sizing
         setTimeout(function() {
             map.invalidateSize();
         }, 300);
@@ -177,17 +302,15 @@
             map.invalidateSize();
         });
 
-
         // --- 2. Chart.js Setup ---
         const severityData = {{ severity_breakdown_json|safe }};
         const ctx = document.getElementById('severityChart').getContext('2d');
         
-        // Read theme settings to establish starting labels and grid colors
         const getChartColors = () => {
             const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             return {
-                text: isDark ? "#ffffff" : "#111111",
-                grid: isDark ? "#2d2d2d" : "#e5e5e5"
+                text: isDark ? "#F8FAFC" : "#071119",
+                grid: isDark ? "#1E3650" : "#E2E8F0"
             };
         };
 
@@ -198,7 +321,7 @@
             data: {
                 labels: ['နယ်မြေခံ', 'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'],
                 datasets: [{
-                    label: 'Total Incidents',
+                    label: 'Active Incidents',
                     data: [
                         severityData.scale_0,
                         severityData.scale_1,
@@ -208,20 +331,20 @@
                         severityData.scale_5
                     ],
                     backgroundColor: [
-                        'rgba(21, 101, 192, 0.75)',  // Scale 0 - Blue (နယ်မြေခံ)
-                        'rgba(46, 125, 50, 0.75)',   // Scale 1 - Green
-                        'rgba(249, 168, 37, 0.75)',  // Scale 2 - Yellow-orange
-                        'rgba(226, 82, 37, 0.75)',   // Scale 3 - Orange
-                        'rgba(191, 54, 12, 0.75)',   // Scale 4 - Deep orange
-                        'rgba(195, 0, 16, 0.75)'     // Scale 5 - Red
+                        'rgba(37, 99, 235, 0.85)',   // Scale 0 - Blue (နယ်မြေခံ)
+                        'rgba(16, 185, 129, 0.85)',  // Scale 1 - Emerald
+                        'rgba(234, 179, 8, 0.85)',   // Scale 2 - Gold
+                        'rgba(249, 115, 22, 0.85)',  // Scale 3 - Orange
+                        'rgba(239, 68, 68, 0.85)',   // Scale 4 - Red-Orange
+                        'rgba(253, 0, 1, 0.95)'      // Scale 5 - Emergency Red
                     ],
                     borderColor: [
-                        '#1565c0',
-                        '#2e7d32',
-                        '#f9a825',
-                        '#e25225',
-                        '#bf360c',
-                        '#c30010'
+                        '#2563EB',
+                        '#10B981',
+                        '#EAB308',
+                        '#F97316',
+                        '#EF4444',
+                        '#FD0001'
                     ],
                     borderWidth: 1.5,
                     borderRadius: 6
@@ -258,7 +381,6 @@
             }
         });
 
-        // Sync chart text color dynamically when user toggles dark mode
         const themeObserver = new MutationObserver(function() {
             const updatedColors = getChartColors();
             severityChart.options.scales.y.ticks.color = updatedColors.text;
@@ -269,78 +391,78 @@
         themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     });
 
-    // --- Dashboard Page Language Translations ---
+    // --- Dashboard Bilingual Translations ---
     (function() {
         const dashTranslations = {
             en: {
-                title: "🚒 CAD Control Dashboard",
-                subtitle: "Emergency Response and Computer-Aided Dispatch System | Mandalay Region Command",
-                live: "SYSTEM LIVE",
+                title: "CAD Operations Command",
+                subtitle: "Real-Time Computer-Aided Dispatch & Emergency Telemetry | Mandalay Regional Headquarters",
+                live: "CAD SYSTEM LIVE",
                 kpiActiveLabel: "Active Incidents",
-                kpiActiveTrend: "Pending or Dispatched",
-                kpiSeverityLabel: "High Severity",
-                kpiSeverityTrend: "Level 5 Active Reports",
-                kpiStationsLabel: "Active Stations",
-                kpiStationsTrend: "Online and Operational",
+                kpiActiveTrend: "Pending Triage / In Field",
+                kpiSeverityLabel: "Critical Severity",
+                kpiSeverityTrend: "Level 5 Emergency Scale",
+                kpiStationsLabel: "Online Stations",
+                kpiStationsTrend: "Active & Mission Ready",
                 kpiDispatchesLabel: "Today's Dispatches",
-                kpiDispatchesTrend: "Created calendar day",
-                mapTitle: "📍 Live Incident & Station Map",
-                mapHint: "Double click to zoom, hover pin for summary",
-                chartTitle: "📊 Severity Scale Analysis",
-                chartHint: "Historical breakdown of incident scales",
-                pendingTitle: "🚨 Immediate Dispatch Actions Required",
+                kpiDispatchesTrend: "Calendar Day Operations",
+                mapTitle: "Live Tactical Incident & Station Map",
+                mapHint: "Interactive tactical map view",
+                chartTitle: "Incident Severity Distribution",
+                chartHint: "Scale 0 to 5",
+                pendingTitle: "Immediate Dispatch Actions Required",
                 pendingBadge: "PENDING",
                 thNoP: "No",
-                thPhoneP: "Reporter Phone",
+                thPhoneP: "Caller Contact",
                 thSeverity: "Severity",
                 thLocationP: "Location",
-                thTimeP: "Reported Time",
+                thTimeP: "Reported",
                 thActionP: "Action",
-                pendingEmpty: "No pending reports requiring attention.",
-                activeTitle: "🚒 Active Dispatches",
+                pendingEmpty: "No pending reports requiring attention",
+                activeTitle: "Active Field Deployments",
                 activeBadge: "IN FIELD",
-                thDispatchId: "Dispatch ID",
+                thDispatchId: "Disp ID",
                 thIncident: "Incident",
-                thStation: "Responding Station",
+                thStation: "Station",
                 thOperator: "Operator",
-                thTimeD: "Dispatched Time",
+                thTimeD: "Time",
                 thActionD: "Action",
-                activeEmpty: "No active dispatches in command."
+                activeEmpty: "No active dispatches in command"
             },
             my: {
-                title: "🚒 CAD ထိန်းချုပ်မှတ်တမ်းစင်တာ",
-                subtitle: "အရေးပေါ်တုံ့ပြန်မှုနှင့် ကွန်ပျူတာအကူ ညှိနှိုင်းမှုစနစ် | မန္တလေးတိုင်းဌာနချုပ်",
-                live: "စနစ်ဆောင်ရွက်နေဆဲ",
-                kpiActiveLabel: "တက်ကြွဆောင်ရွက်နေသော ဖြစ်စဉ်များ",
-                kpiActiveTrend: "ဆိုင်းငံ့ဆဲ သို့မဟုတ် စေလွှတ်ပြီး",
-                kpiSeverityLabel: "အန္တရာယ်ကြီးမှုများ",
-                kpiSeverityTrend: "Level 5 တက်ကြွဆောင်ရွက်နေသော",
-                kpiStationsLabel: "တက်ကြွသောစခန်းများ",
-                kpiStationsTrend: "အွန်လိုင်းနှင့် ဆောင်ရွက်နိုင်သော",
+                title: "CAD ကွပ်ကဲမှုနှင့် ထိန်းချုပ်ရေးစင်တာ",
+                subtitle: "အချိန်နှင့်တပြေးညီ ကွန်ပျူတာအကူ ညှိနှိုင်းမှုနှင့် အရေးပေါ်စနစ် | မန္တလေးတိုင်းဌာနချုပ်",
+                live: "စနစ် အပြည့်အဝ ဆောင်ရွက်နေသည်",
+                kpiActiveLabel: "တက်ကြွဖြစ်စဉ်များ",
+                kpiActiveTrend: "ဆိုင်းငံ့ဆဲ / မြေပြင်တွင် ဆောင်ရွက်ဆဲ",
+                kpiSeverityLabel: "အရေးပေါ် ပြင်းထန်မှု",
+                kpiSeverityTrend: "Level 5 အမြင့်ဆုံးအဆင့်",
+                kpiStationsLabel: "အဆင်သင့်စခန်းများ",
+                kpiStationsTrend: "တာဝန်ထမ်းဆောင်ရန် အသင့်ရှိ",
                 kpiDispatchesLabel: "ယနေ့ စေလွှတ်မှုများ",
-                kpiDispatchesTrend: "ဖန်တီးသည့်ကြောင်တန်းနေ့",
-                mapTitle: "📍 တိုက်ရိုက်ဖြစ်စဉ်နှင့်စခန်းမြေပုံ",
-                mapHint: "ဒဲ့နှိပ်ချဲ့ရန်၊ pin ပေါ်တင်ထားနှင့် အကျဉ်းချုပ်ကြည့်ရန်",
-                chartTitle: "📊 မီးပြင်းထန်မှုအဆင့် ခွဲခြမ်းစိတ်ဖြာမှု",
-                chartHint: "ဖြစ်စဉ်အဆင့်များ သမိုင်းဆိုင်ရာ ခွဲခြမ်းစိတ်ဖြာမှု",
-                pendingTitle: "🚨 ချက်ချင်း စေလွှတ်ရန် လိုအပ်သော မှတ်တမ်းများ",
+                kpiDispatchesTrend: "ယနေ့ ရက်စွဲအလိုက် စေလွှတ်မှု",
+                mapTitle: "တိုက်ရိုက်ဖြစ်စဉ်နှင့် စခန်းမြေပုံ",
+                mapHint: "မြေပြင် တိုက်ရိုက်မြေပုံမြင်ကွင်း",
+                chartTitle: "မီးပြင်းထန်မှုအဆင့် ဖြန့်ကြက်မှု",
+                chartHint: "အဆင့် ၀ မှ ၅ အထိ",
+                pendingTitle: "ချက်ချင်း စေလွှတ်ရန် လိုအပ်သော ဖြစ်စဉ်များ",
                 pendingBadge: "ဆိုင်းငံ့ဆဲ",
                 thNoP: "နံပါတ်",
-                thPhoneP: "သတင်းပို့သူ ဖုန်းနံပါတ်",
+                thPhoneP: "ဆက်သွယ်ရန် ဖုန်း",
                 thSeverity: "ပြင်းထန်မှု",
                 thLocationP: "တည်နေရာ",
                 thTimeP: "သတင်းပို့ချိန်",
                 thActionP: "လုပ်ဆောင်ချက်",
-                pendingEmpty: "အာရုံစိုက်ရန် မြှောင်ဆိုင်းငံ့ဆဲ မှတ်တမ်းမရှိပါ။",
-                activeTitle: "🚒 တက်ကြွ စေလွှတ်မှုများ",
-                activeBadge: "လက်ရှိဆောင်ရွက်နေ",
+                pendingEmpty: "အာရုံစိုက်ရန် လိုအပ်သော ဆိုင်းငံ့မှတ်တမ်းမရှိပါ",
+                activeTitle: "မြေပြင် စေလွှတ်ဆောင်ရွက်မှုများ",
+                activeBadge: "မြေပြင်တွင်",
                 thDispatchId: "စေလွှတ်မှု ID",
                 thIncident: "ဖြစ်စဉ်",
-                thStation: "တုံ့ပြန်သောစခန်း",
+                thStation: "စခန်း",
                 thOperator: "တာဝန်ခံ",
-                thTimeD: "စေလွှတ်ချိန်",
+                thTimeD: "အချိန်",
                 thActionD: "လုပ်ဆောင်ချက်",
-                activeEmpty: "ကွပ်ကဲမှုတွင် တက်ကြွ စေလွှတ်မှုမရှိပါ။"
+                activeEmpty: "လက်ရှိတွင် ဆောင်ရွက်နေသော စေလွှတ်မှုမရှိပါ"
             }
         };
 
@@ -383,7 +505,6 @@
             set("th-d-action", d.thActionD);
             set("dash-active-empty", d.activeEmpty);
 
-            // Translate severity badges and action buttons (data-en / data-my)
             document.querySelectorAll("[data-en][data-my]").forEach(el => {
                 el.innerText = lang === "my" ? el.getAttribute("data-my") : el.getAttribute("data-en");
             });

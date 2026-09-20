@@ -3,55 +3,74 @@
 {% block title %}Users List - Fire Route System{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-    <h1 id="users-title">👥 User Accounts</h1>
-    <a href="{% url 'user_create' %}" class="btn btn-orange" id="users-create-btn">➕ Create User</a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 id="users-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
+            👥 User Accounts
+        </h1>
+        <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
+            Manage authorized personnel, command roles, and credentials.
+        </p>
+    </div>
+    <a href="{% url 'user_create' %}" class="cad-btn cad-btn-emergency" id="users-create-btn">
+        ➕ Create User
+    </a>
 </div>
 
 <!-- Search bar -->
 <div class="search-bar-container" style="margin-bottom: 1.5rem; width: 100%; max-width: 500px;">
     <form method="GET" action="" style="display: flex; gap: 0.5rem; width: 100%;">
         <div class="search-input-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
-            <span style="position: absolute; left: 0.75rem; color: var(--gray-dark, #666666); pointer-events: none; font-size: 1rem; line-height: 1;">🔍</span>
+            <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; font-size: 0.95rem; line-height: 1;">🔍</span>
             <input type="text" name="q" value="{{ query|default:'' }}" id="users-search-input" placeholder="Search by username, email, phone..." 
-                   style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.25rem; font-family: var(--font-family, inherit); font-size: 0.9rem; line-height: 1.4; border: 1px solid var(--gray-medium, #e0e0e0); border-radius: 8px; background-color: var(--bg-white, #ffffff); color: var(--color-black, #000000); box-sizing: border-box;">
+                   style="width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; font-family: var(--font-family, inherit); font-size: 0.875rem; line-height: 1.4; border: 1px solid var(--cad-border); border-radius: 8px; background-color: var(--cad-surface); color: var(--cad-text); box-sizing: border-box;">
         </div>
-        <button type="submit" class="btn btn-orange" id="users-search-btn" style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; white-space: nowrap; height: 38px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;">
+        <button type="submit" class="btn btn-orange" id="users-search-btn" style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; white-space: nowrap; height: 38px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;">
             Search
         </button>
         {% if query %}
-            <a href="{{ request.path }}" class="btn btn-outline" id="users-clear-btn" style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 38px; box-sizing: border-box;">
+            <a href="{{ request.path }}" class="btn btn-outline" id="users-clear-btn" style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 38px; box-sizing: border-box;">
                 Clear
             </a>
         {% endif %}
     </form>
 </div>
 
-<div class="card" style="padding: 1.5rem;">
+<div class="cad-panel">
     {% if users %}
         <div class="table-responsive">
-            <table>
+            <table class="cad-table">
                 <thead>
                     <tr>
-                        <th id="th-user-id">No.</th>
+                        <th id="th-user-id" style="width: 60px;">No.</th>
                         <th id="th-user-name">Username</th>
                         <th id="th-user-email">Email</th>
                         <th id="th-user-phone">Phone Number</th>
                         <th id="th-user-role">Role</th>
                         <th id="th-user-status">Status</th>
-                        <th id="th-user-actions">Actions</th>
+                        <th id="th-user-actions" style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
                         <tr>
                             <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.phone_number|default:"-" }}</td>
+                            <td style="font-weight: 700; color: var(--cad-text);">
+                                {{ user.username }}
+                            </td>
+                            <td style="color: var(--cad-text-muted);">{{ user.email }}</td>
                             <td>
-                                <span class="badge" style="border: 1px solid var(--color-black); color: var(--color-black);">
-                                    {{ user.role.role_name }}
+                                {% if user.phone_number %}
+                                <a href="tel:{{ user.phone_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none;">
+                                    📞 {{ user.phone_number }}
+                                </a>
+                                {% else %}
+                                <span style="color: var(--cad-text-muted);">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700;">
+                                    🛡️ {{ user.role.role_name }}
                                 </span>
                             </td>
                             <td>
@@ -59,10 +78,10 @@
                                     {{ user.status }}
                                 </span>
                             </td>
-                            <td>
-                                <div style="display: flex; gap: 0.5rem; align-items: center; white-space: nowrap;">
-                                    <a href="{% url 'user_update' user.id %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
-                                    <a href="{% url 'user_delete' user.id %}" class="btn btn-red" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
+                            <td style="text-align: right;">
+                                <div style="display: inline-flex; gap: 0.4rem; align-items: center; white-space: nowrap;">
+                                    <a href="{% url 'user_update' user.id %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
+                                    <a href="{% url 'user_delete' user.id %}" class="btn btn-red" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
                                 </div>
                             </td>
                         </tr>
@@ -72,13 +91,13 @@
         </div>
         {% include 'pagination.html' %}
     {% else %}
-        <div style="text-align: center; padding: 3rem 0; color: var(--gray-dark);">
+        <div style="text-align: center; padding: 3rem 0; color: var(--cad-text-muted);">
             {% if query %}
-                <p style="font-size: 1.2rem; margin-bottom: 1rem;" id="users-no-match">No matching users found for "{{ query }}".</p>
+                <p style="font-size: 1.1rem; margin-bottom: 1rem;" id="users-no-match">No matching users found for "{{ query }}".</p>
                 <a href="{{ request.path }}" class="btn btn-orange" style="text-decoration: none;" id="users-clear-search">Clear Search Filter</a>
             {% else %}
-                <p style="font-size: 1.2rem; margin-bottom: 1rem;" id="users-empty">No users created yet.</p>
-                <a href="{% url 'user_create' %}" class="btn btn-orange" id="users-create-first">Create the First User Account</a>
+                <p style="font-size: 1.1rem; margin-bottom: 1rem;" id="users-empty">No users created yet.</p>
+                <a href="{% url 'user_create' %}" class="cad-btn cad-btn-emergency" id="users-create-first">Create the First User Account</a>
             {% endif %}
         </div>
     {% endif %}

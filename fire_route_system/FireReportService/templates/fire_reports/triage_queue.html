@@ -1,68 +1,102 @@
 {% extends 'base.html' %}
 
-{% block title %}Triage Queue - Fire Route System{% endblock %}
+{% block title %}Incident Triage Queue - Fire Department CAD{% endblock %}
+{% block breadcrumb %}Incident Triage Queue{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+<div class="cad-dash-header">
+    <div class="cad-dash-title-group">
+        <h1 class="cad-dash-title" id="triage-title">
+            <span>📥</span>
+            <span>Emergency Incident Triage Queue</span>
+        </h1>
+        <p class="cad-dash-subtitle" id="triage-subtitle">Review, verify, and confirm incoming citizen reports before dispatching field units.</p>
+    </div>
     <div>
-        <h1 style="margin: 0; font-size: 2rem;" id="triage-title">📥 Incident Triage Queue</h1>
-        <p style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--gray-dark);" id="triage-subtitle">Review and confirm incoming citizen reports before they enter active dispatch streams.</p>
+        {% if notifications %}
+        <span class="cad-badge cad-badge-scale-5" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
+            ⚠️ {{ notifications|length }} INCIDENTS AWAITING TRIAGE
+        </span>
+        {% else %}
+        <span class="cad-badge cad-badge-active" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
+            🛡️ ALL QUEUES CLEAR
+        </span>
+        {% endif %}
     </div>
 </div>
 
-<div class="card" style="padding: 1.5rem;">
+<div class="cad-panel">
+    <div class="cad-panel-header">
+        <div class="cad-panel-title">
+            <span>🚨</span>
+            <span>Pending Intake Stream</span>
+        </div>
+        <span style="font-size: 0.75rem; color: var(--cad-text-muted);">Real-Time Ingestion</span>
+    </div>
+
     {% if notifications %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th id="th-triage-no">No</th>
-                        <th id="th-triage-phone">Reporter Phone</th>
-                        <th id="th-triage-severity">Severity Scale</th>
-                        <th id="th-triage-location">Location</th>
-                        <th id="th-triage-logged">Logged At</th>
-                        <th id="th-triage-action">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for notif in notifications %}
-                        <tr>
-                            <td><strong>{{ forloop.counter }}</strong></td>
-                            <td>{{ notif.report.reporter_phone|default:"Anonymous" }}</td>
-                            <td>
-                                <span class="badge" style="background-color: {% if notif.report.fire_scale == 5 %}#ffebee{% elif notif.report.fire_scale == 4 %}#fbe9e7{% elif notif.report.fire_scale == 3 %}#fff3e0{% elif notif.report.fire_scale == 2 %}#fff8e1{% elif notif.report.fire_scale == 1 %}#e8f5e9{% else %}#e3f2fd{% endif %}; color: {% if notif.report.fire_scale == 5 %}var(--btn-red){% elif notif.report.fire_scale == 4 %}#bf360c{% elif notif.report.fire_scale == 3 %}var(--btn-orange){% elif notif.report.fire_scale == 2 %}#f9a825{% elif notif.report.fire_scale == 1 %}#2e7d32{% else %}#1565c0{% endif %}; border: 1px solid currentColor;">
-                                    {% if notif.report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ notif.report.fire_scale }}{% endif %}
-                                </span>
-                            </td>
-                            <td>
-                                {% if notif.report.latitude and notif.report.longitude %}
-                                <a href="https://www.google.com/maps?q={{ notif.report.latitude }},{{ notif.report.longitude }}" target="_blank" style="color: var(--color-black); text-decoration: underline;">
-                                    {{ notif.report.latitude|floatformat:4 }}, {{ notif.report.longitude|floatformat:4 }} ↗
-                                </a>
-                                {% else %}
-                                {{ notif.report.address|default:"N/A" }}
-                                {% endif %}
-                            </td>
-                            <td>{{ notif.created_at|date:"d-m-Y h:i A" }}</td>
-                            <td>
-                                <form method="POST" action="{% url 'confirm_incident' notif.id %}" style="margin: 0; display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-orange triage-confirm-btn" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; height: auto;">
-                                        Confirm Incident
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="cad-table-container">
+        <table class="cad-table">
+            <thead>
+                <tr>
+                    <th id="th-triage-no" style="width: 60px;">No</th>
+                    <th id="th-triage-phone">Reporter Phone</th>
+                    <th id="th-triage-severity">Severity Scale</th>
+                    <th id="th-triage-location">Location / Coordinates</th>
+                    <th id="th-triage-logged">Logged Time</th>
+                    <th id="th-triage-action" style="text-align: right;">Command Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notif in notifications %}
+                <tr class="{% if notif.report.fire_scale >= 4 %}row-urgent{% endif %}">
+                    <td><strong>#{{ forloop.counter }}</strong></td>
+                    <td>
+                        {% if notif.report.reporter_phone %}
+                        <a href="tel:{{ notif.report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            📞 {{ notif.report.reporter_phone }}
+                        </a>
+                        {% else %}
+                        <span style="color: var(--cad-text-muted); font-style: italic;">Anonymous Caller</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="cad-badge cad-badge-scale-{{ notif.report.fire_scale }}">
+                            {% if notif.report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ notif.report.fire_scale }}{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if notif.report.latitude and notif.report.longitude %}
+                        <a href="https://www.google.com/maps?q={{ notif.report.latitude }},{{ notif.report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem; font-weight: 600;">
+                            📍 {{ notif.report.latitude|floatformat:4 }}, {{ notif.report.longitude|floatformat:4 }} ↗
+                        </a>
+                        {% else %}
+                        <span>{{ notif.report.address|default:"Manual Address Not Stated" }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="font-numeric" style="font-weight: 600;">{{ notif.created_at|date:"d-m-Y" }}</span>
+                        <span style="font-size: 0.8rem; color: var(--cad-text-muted);">{{ notif.created_at|date:"h:i A" }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <form method="POST" action="{% url 'confirm_incident' notif.id %}" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="cad-btn cad-btn-emergency cad-btn-sm triage-confirm-btn">
+                                ⚡ Confirm Incident
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <div style="text-align: center; padding: 4rem 0; color: var(--gray-dark);">
-            <span style="font-size: 3rem; display: block; margin-bottom: 0.5rem;">📥</span>
-            <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; color: var(--color-black);" id="triage-empty-title">Triage queue is empty</h3>
-            <p style="margin: 0; font-size: 0.95rem;" id="triage-empty-desc">All incoming citizen fire reports have been triaged and confirmed.</p>
-        </div>
+    <div class="cad-empty-state">
+        <span class="cad-empty-icon">🛡️</span>
+        <h3 class="cad-empty-title" id="triage-empty-title">Triage queue is clear</h3>
+        <p class="cad-empty-desc" id="triage-empty-desc">All incoming citizen fire reports have been triaged, verified, and confirmed for operational response.</p>
+    </div>
     {% endif %}
 </div>
 
@@ -70,22 +104,22 @@
 (function() {
     const triageTranslations = {
         en: {
-            title: "📥 Incident Triage Queue",
-            subtitle: "Review and confirm incoming citizen reports before they enter active dispatch streams.",
+            title: "Emergency Incident Triage Queue",
+            subtitle: "Review, verify, and confirm incoming citizen reports before dispatching field units.",
             thNo: "No", thPhone: "Reporter Phone", thSeverity: "Severity Scale",
-            thLocation: "Location", thLogged: "Logged At", thAction: "Action",
-            confirmBtn: "Confirm Incident",
-            emptyTitle: "Triage queue is empty",
-            emptyDesc: "All incoming citizen fire reports have been triaged and confirmed."
+            thLocation: "Location / Coordinates", thLogged: "Logged Time", thAction: "Command Action",
+            confirmBtn: "⚡ Confirm Incident",
+            emptyTitle: "Triage queue is clear",
+            emptyDesc: "All incoming citizen fire reports have been triaged, verified, and confirmed for operational response."
         },
         my: {
-            title: "📥 ဖြစ်စဉ် Triage စီတန်း",
-            subtitle: "လက်ကြွဲနိုင်ငံသားများ၏ သတင်းပို့ချက်များကို တက်ကြွ စေလွှတ်မှုစနစ်သို့ ဝင်ရောက်ခြင်းမပြုမီ စစ်ဆေးနှင့် အတည်ပြုပါ။",
-            thNo: "နံပါတ်", thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်", thSeverity: "မီးပြင်းထန်မှုအဆင့်",
-            thLocation: "တည်နေရာ", thLogged: "မှတ်တမ်းတင်ချိန်", thAction: "လုပ်ဆောင်ချက်",
-            confirmBtn: "ဖြစ်စဉ်အတည်ပြုမည်",
-            emptyTitle: "Triage စီတန်းလွတ်နေပါသည်",
-            emptyDesc: "ဝင်ရောက်လာသော နိုင်ငံသားများ၏ မီးသတင်းပို့ချက်အားလုံး စစ်ဆေးအတည်ပြုပြီးပါပြီ။"
+            title: "အရေးပေါ်ဖြစ်စဉ် Triage စစ်ဆေးစီတန်း",
+            subtitle: "မြေပြင်အဖွဲ့များ စေလွှတ်ခြင်းမပြုမီ ဝင်ရောက်လာသော မီးလောင်မှုသတင်းများကို စစ်ဆေးနှင့် အတည်ပြုပါ။",
+            thNo: "နံပါတ်", thPhone: "သတင်းပို့သူ ဖုန်း", thSeverity: "မီးပြင်းထန်မှုအဆင့်",
+            thLocation: "တည်နေရာ / ကိုဩဒိနိတ်", thLogged: "သတင်းရရှိချိန်", thAction: "လုပ်ဆောင်ချက်",
+            confirmBtn: "⚡ ဖြစ်စဉ် အတည်ပြုမည်",
+            emptyTitle: "Triage စီတန်း လွတ်နေပါသည်",
+            emptyDesc: "ဝင်ရောက်လာသော မီးသတင်းပို့ချက်အားလုံး စစ်ဆေးအတည်ပြုပြီး ဖြစ်ပါသည်။"
         }
     };
 
@@ -103,7 +137,10 @@
         set("th-triage-action", d.thAction);
         set("triage-empty-title", d.emptyTitle);
         set("triage-empty-desc", d.emptyDesc);
-        document.querySelectorAll(".triage-confirm-btn").forEach(btn => { btn.innerText = d.confirmBtn; });
+
+        document.querySelectorAll(".triage-confirm-btn").forEach(b => {
+            b.innerText = d.confirmBtn;
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function() {

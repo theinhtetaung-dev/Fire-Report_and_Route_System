@@ -3,50 +3,64 @@
 {% block title %}Register Fire Station - Fire Route System{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="station-create-title">Register Fire Station</h1>
+<div style="max-width: 680px; margin: 1rem auto;">
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <h1 id="station-create-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                🚒 Register Fire Station
+            </h1>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
+                Add a new active or reserve fire station to the dispatch grid.
+            </p>
+        </div>
+        <a href="{% url 'firestation_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+            ← Back to List
+        </a>
+    </div>
 
-    <div class="card">
+    <div class="cad-panel">
         <form method="POST">
             {% csrf_token %}
             
             <div class="form-group">
                 <label for="name" id="lbl-station-name">Station Name</label>
-                <input type="text" id="name" name="name" required placeholder="e.g. Central Fire Station">
+                <input type="text" id="name" name="name" required placeholder="e.g. Central Fire Station" class="cad-input">
             </div>
 
             <div class="form-group">
                 <label for="address" id="lbl-station-address">Address</label>
-                <textarea id="address" name="address" required placeholder="Full street address..." rows="3"></textarea>
+                <textarea id="address" name="address" required placeholder="Full street address..." rows="3" class="cad-input"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="contact_number" id="lbl-station-contact">Contact Number</label>
-                <input type="tel" id="contact_number" name="contact_number" required placeholder="e.g. 09-12345678">
+                <input type="tel" id="contact_number" name="contact_number" required placeholder="e.g. 09-12345678" class="cad-input">
             </div>
 
-            <div class="form-group">
-                <label for="latitude" id="lbl-station-lat">Latitude</label>
-                <input type="number" id="latitude" name="latitude" step="any" required placeholder="e.g. 16.7842">
-            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="latitude" id="lbl-station-lat">Latitude</label>
+                    <input type="number" id="latitude" name="latitude" step="any" required placeholder="e.g. 21.9750" class="cad-input">
+                </div>
 
-            <div class="form-group">
-                <label for="longitude" id="lbl-station-lng">Longitude</label>
-                <input type="number" id="longitude" name="longitude" step="any" required placeholder="e.g. 96.1529">
+                <div class="form-group">
+                    <label for="longitude" id="lbl-station-lng">Longitude</label>
+                    <input type="number" id="longitude" name="longitude" step="any" required placeholder="e.g. 96.0830" class="cad-input">
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="status" id="lbl-station-status">Status</label>
-                <select id="status" name="status" required>
+                <select id="status" name="status" required class="cad-select">
                     <option value="Active" selected id="opt-station-active">Active</option>
                     <option value="Inactive" id="opt-station-inactive">Inactive</option>
                     <option value="Maintenance" id="opt-station-maintenance">Maintenance</option>
                 </select>
             </div>
 
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-orange" id="station-create-save">Register Station</button>
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--cad-border);">
                 <a href="{% url 'firestation_list' %}" class="btn btn-outline" id="station-create-cancel">Cancel</a>
+                <button type="submit" class="cad-btn cad-btn-emergency" id="station-create-save">Register Station</button>
             </div>
         </form>
     </div>
