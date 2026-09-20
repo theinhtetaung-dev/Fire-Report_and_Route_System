@@ -14,3 +14,8 @@ db.sqlite3-journal
 
 # Logs
 *.log
+
+# Environment variables & secrets
+.env
+*.env
+.env.local

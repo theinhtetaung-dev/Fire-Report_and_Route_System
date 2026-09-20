@@ -1,11 +1,20 @@
 import json
 from django.test import TestCase, Client
 from django.urls import reverse
-from DataAccess.models import FireReport
+from DataAccess.models import FireReport, Role, User
 
 class FireReportServiceAPITests(TestCase):
     def setUp(self):
         self.client = Client()
+        self.role = Role.objects.create(role_name="Operator", description="Operator")
+        self.user = User.objects.create(
+            role=self.role,
+            username="report_test_operator",
+            email="report_op@test.com",
+            password_hash="pw",
+            status="Active"
+        )
+        self.client.force_login(self.user)
         self.report1 = FireReport.objects.create(
             user_id=1,
             reporter_phone="09111222333",
@@ -105,6 +114,15 @@ from DataAccess.models import Tbl_Notification
 class FireReportTriageWorkflowTests(TestCase):
     def setUp(self):
         self.client = Client()
+        self.role = Role.objects.create(role_name="Operator", description="Operator")
+        self.user = User.objects.create(
+            role=self.role,
+            username="triage_operator",
+            email="triage_op@test.com",
+            password_hash="pw",
+            status="Active"
+        )
+        self.client.force_login(self.user)
 
     def test_notification_created_on_pending_report(self):
         """

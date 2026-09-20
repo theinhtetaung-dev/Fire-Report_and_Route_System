@@ -50,7 +50,7 @@
             <tbody>
                 {% for notif in notifications %}
                 <tr class="{% if notif.report.fire_scale >= 4 %}row-urgent{% endif %}">
-                    <td><strong>#{{ forloop.counter }}</strong></td>
+                    <td><strong>#{{ notif.report.id }}</strong></td>
                     <td>
                         {% if notif.report.reporter_phone %}
                         <a href="tel:{{ notif.report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">

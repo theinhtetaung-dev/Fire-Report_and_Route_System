@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Fire CAD System{% endblock %}
+
+{% block content %}
+<div style="max-width: 620px; margin: 1.5rem auto;">
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;" id="profile-title">
+                👤 Officer Profile
+            </h1>
+            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);" id="profile-subtitle">
+                Manage your credentials and view assigned operational role.
+            </p>
+        </div>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    {% if message %}
+        <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: #10B981; font-size: 0.875rem; font-weight: 600;">
+            ✓ {{ message }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div style="background: rgba(253, 0, 1, 0.1); border-left: 4px solid var(--cad-red); padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: var(--cad-red); font-size: 0.875rem; font-weight: 600;">
+            ⚠️ {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="cad-panel">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--cad-border);">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--cad-red); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem;">
+                    {{ request.user.username|slice:":2"|upper }}
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.15rem; color: var(--cad-text);">{{ request.user.username }}</h3>
+                    <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700; margin-top: 0.25rem;">
+                        🛡️ {{ request.user.role_name }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
+                    Email Address
+                </label>
+                <input type="email" name="email" value="{{ request.user.email }}" required class="cad-input">
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
+                    Phone Number
+                </label>
+                <input type="tel" name="phone_number" value="{{ request.user.phone_number|default:'' }}" placeholder="e.g. 09-12345678" class="cad-input">
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--cad-border);">
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--cad-text); font-weight: 700;">
+                    🔒 Change Password (leave blank to keep current)
+                </h4>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
+                        New Password
+                    </label>
+                    <input type="password" name="new_password" placeholder="••••••••" class="cad-input">
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
+                        Confirm New Password
+                    </label>
+                    <input type="password" name="confirm_password" placeholder="••••••••" class="cad-input">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                <button type="submit" class="cad-btn cad-btn-emergency">
+                    Save Profile Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

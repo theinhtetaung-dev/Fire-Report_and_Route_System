@@ -136,3 +136,178 @@ class UserServiceAPITests(TestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(pk=self.user1.pk).exists())
+
+
+class UserAuthModelTests(TestCase):
+    def setUp(self):
+        self.admin_role = Role.objects.create(role_name="Administrator", description="Admin")
+        self.disp_role = Role.objects.create(role_name="Dispatcher", description="CAD Operator")
+        self.user = User.objects.create(
+            role=self.admin_role,
+            username="sec_admin",
+            email="sec_admin@example.com",
+            phone_number="09111222333",
+            status="Active"
+        )
+        self.user.set_password("AntigravityPass#2026")
+        self.user.save()
+
+    def test_password_hashing_and_verification(self):
+        self.assertTrue(self.user.password_hash.startswith("pbkdf2_sha256$"))
+        self.assertTrue(self.user.check_password("AntigravityPass#2026"))
+        self.assertFalse(self.user.check_password("WrongPassword"))
+
+    def test_session_auth_hash(self):
+        auth_hash = self.user.get_session_auth_hash()
+        self.assertIsNotNone(auth_hash)
+        self.assertGreater(len(auth_hash), 10)
+
+    def test_role_properties_and_checks(self):
+        self.assertTrue(self.user.is_admin)
+        self.assertFalse(self.user.is_dispatcher)
+        self.assertTrue(self.user.has_role("administrator", "admin"))
+        self.assertFalse(self.user.has_role("citizen"))
+
+        # Switch role to dispatcher
+        self.user.role = self.disp_role
+        self.user.save()
+        self.assertTrue(self.user.is_dispatcher)
+        self.assertFalse(self.user.is_admin)
+
+
+class LoginLogoutViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.role = Role.objects.create(role_name="Dispatcher", description="Dispatcher")
+        self.user = User.objects.create(
+            role=self.role,
+            username="cad_op",
+            email="cad_op@emergency.gov",
+            status="Active"
+        )
+        self.user.set_password("DisptachSecret123")
+        self.user.save()
+
+    def test_login_get_renders_page(self):
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "CAD Officer Login")
+
+    def test_login_post_valid_credentials(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'cad_op',
+            'password': 'DisptachSecret123',
+        })
+        self.assertRedirects(response, reverse('dashboard'))
+        # Verify session
+        self.assertEqual(int(self.client.session['_auth_user_id']), self.user.id)
+
+    def test_login_post_valid_credentials_with_next_param(self):
+        url = reverse('login') + '?next=' + reverse('triage_queue')
+        response = self.client.post(url, {
+            'username': 'cad_op',
+            'password': 'DisptachSecret123',
+        })
+        self.assertRedirects(response, reverse('triage_queue'))
+
+    def test_login_post_invalid_password(self):
+        response = self.client.post(reverse('login'), {
+            'username': 'cad_op',
+            'password': 'BadPassword',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Invalid credentials or account is inactive.")
+
+    def test_logout_clears_session(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('logout'))
+        self.assertRedirects(response, reverse('login'))
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+
+class RoleAuthorizationViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin_role = Role.objects.create(role_name="Administrator")
+        self.dispatcher_role = Role.objects.create(role_name="Dispatcher")
+        self.responder_role = Role.objects.create(role_name="Firefighter")
+        self.citizen_role = Role.objects.create(role_name="Citizen")
+
+        self.admin_user = User.objects.create(
+            role=self.admin_role,
+            username="admin_test",
+            email="admin@test.gov",
+            status="Active"
+        )
+        self.admin_user.set_password("AdminPass1")
+        self.admin_user.save()
+
+        self.dispatcher_user = User.objects.create(
+            role=self.dispatcher_role,
+            username="disp_test",
+            email="disp@test.gov",
+            status="Active"
+        )
+        self.dispatcher_user.set_password("DispPass1")
+        self.dispatcher_user.save()
+
+        self.responder_user = User.objects.create(
+            role=self.responder_role,
+            username="resp_test",
+            email="resp@test.gov",
+            status="Active"
+        )
+        self.responder_user.set_password("RespPass1")
+        self.responder_user.save()
+
+        self.citizen_user = User.objects.create(
+            role=self.citizen_role,
+            username="citizen_test",
+            email="citizen@test.gov",
+            status="Active"
+        )
+        self.citizen_user.set_password("CitizenPass1")
+        self.citizen_user.save()
+
+    def test_unauthenticated_user_redirected_from_dashboard(self):
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
+    def test_public_report_fire_accessible_without_auth(self):
+        """Preserve public emergency fire intake without authentication."""
+        response = self.client.get(reverse('report_fire'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_citizen_forbidden_from_cad_dashboard(self):
+        self.client.force_login(self.citizen_user)
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 403)
+        self.assertContains(response, "Restricted Access", status_code=403)
+
+    def test_citizen_forbidden_from_triage_queue(self):
+        self.client.force_login(self.citizen_user)
+        response = self.client.get(reverse('triage_queue'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_responder_can_access_dashboard_but_forbidden_from_user_admin(self):
+        self.client.force_login(self.responder_user)
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('user_list'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_dispatcher_can_access_triage_queue(self):
+        self.client.force_login(self.dispatcher_user)
+        response = self.client.get(reverse('triage_queue'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_admin_can_access_user_and_role_management(self):
+        self.client.force_login(self.admin_user)
+        response_users = self.client.get(reverse('user_list'))
+        self.assertEqual(response_users.status_code, 200)
+
+        response_roles = self.client.get(reverse('role_list'))
+        self.assertEqual(response_roles.status_code, 200)
+

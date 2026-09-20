@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 django = "*"
 xhtml2pdf = "*"
+pymysql = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

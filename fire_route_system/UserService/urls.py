@@ -3,6 +3,11 @@ from . import userservice, userapi
 
 urlpatterns = [
 
+    # Auth
+    path('login/', userservice.login_view, name='login'),
+    path('logout/', userservice.logout_view, name='logout'),
+    path('profile/', userservice.profile_view, name='profile'),
+
     # Role
     path('roles/', userservice.role_list, name='role_list'),
     path('roles/create/', userservice.role_create, name='role_create'),

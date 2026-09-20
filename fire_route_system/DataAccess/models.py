@@ -9,6 +9,12 @@ class Role(models.Model):
         return self.role_name
 
 
+import hmac
+import hashlib
+from django.conf import settings
+from django.contrib.auth.hashers import make_password, check_password
+
+
 class User(models.Model):
     STATUS_CHOICES = [
         ('Active', 'Active'),
@@ -22,10 +28,118 @@ class User(models.Model):
     password_hash = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+    last_login = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    # ── Django Authentication Protocol Support ────────────────────────────
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    @property
+    def is_active(self):
+        return self.status == 'Active'
+
+    def get_username(self):
         return self.username
+
+    def get_session_auth_hash(self):
+        key_salt = "DataAccess.models.User.get_session_auth_hash"
+        return hmac.new(
+            settings.SECRET_KEY.encode(),
+            f"{self.password_hash}:{key_salt}".encode(),
+            hashlib.sha256
+        ).hexdigest()
+
+    def set_password(self, raw_password):
+        self.password_hash = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        if not self.password_hash:
+            return False
+        # Dual-support: verify Django PBKDF2 hash or plaintext fallback
+        if check_password(raw_password, self.password_hash):
+            return True
+        elif self.password_hash == raw_password:
+            # Upgrade legacy/plaintext password to PBKDF2 hash automatically
+            self.set_password(raw_password)
+            if self.pk:
+                User.objects.filter(pk=self.pk).update(password_hash=self.password_hash)
+            return True
+        return False
+
+    # ── Role-Based Authorization Helpers ─────────────────────────────────
+    @property
+    def role_name(self):
+        return self.role.role_name if self.role else ""
+
+    def has_role(self, *role_names):
+        """
+        Check if user's role matches any of the specified roles or aliases.
+        Aliases:
+          Admin <-> Administrator
+          Operator <-> Dispatcher
+          Responder <-> Firefighter
+          Reporter <-> Citizen
+        """
+        if not self.role:
+            return False
+        current_role = self.role.role_name.lower().strip()
+        role_map = {
+            'admin': {'admin', 'administrator'},
+            'administrator': {'admin', 'administrator'},
+            'dispatcher': {'dispatcher', 'operator'},
+            'operator': {'dispatcher', 'operator'},
+            'firefighter': {'firefighter', 'responder'},
+            'responder': {'firefighter', 'responder'},
+            'citizen': {'citizen', 'reporter'},
+            'reporter': {'citizen', 'reporter'},
+        }
+
+        for target in role_names:
+            t = target.lower().strip()
+            aliases = role_map.get(t, {t})
+            if current_role in aliases:
+                return True
+        return False
+
+    @property
+    def is_admin(self):
+        return self.has_role('Admin', 'Administrator')
+
+    @property
+    def is_dispatcher(self):
+        return self.has_role('Dispatcher', 'Operator')
+
+    @property
+    def is_firefighter(self):
+        return self.has_role('Firefighter', 'Responder')
+
+    @property
+    def is_citizen(self):
+        return self.has_role('Citizen', 'Reporter')
+
+    # ── Django Permissions Compatibility ─────────────────────────────────
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
+
+    def __str__(self):
+        return f"{self.username} ({self.role_name})"
 
 
 class FireStation(models.Model):

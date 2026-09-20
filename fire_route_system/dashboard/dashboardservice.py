@@ -1,8 +1,16 @@
 import json
+import csv
+from io import BytesIO
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.loader import get_template
 from django.utils import timezone
+from xhtml2pdf import pisa
 from DataAccess.models import FireReport, FireStation, Dispatch, Tbl_Notification
+from DataAccess.decorators import responder_required, dispatcher_required
 
+
+@responder_required
 def dashboard_view(request):
     # Active statuses list
     active_statuses = ['Pending', 'Dispatched']
@@ -15,8 +23,10 @@ def dashboard_view(request):
     # Available Stations (Count of active stations)
     available_stations = FireStation.objects.filter(status='Active').count()
     # Total Dispatches today
-    today = timezone.now().date()
-    total_dispatches_today = Dispatch.objects.filter(dispatched_at__date=today).count()
+    now = timezone.now()
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+    total_dispatches_today = Dispatch.objects.filter(dispatched_at__range=(start_of_day, end_of_day)).count()
 
     # 2. Bottom Row (Actionable Tables)
     # Pending Reports (Need immediate operator action)
@@ -141,6 +151,7 @@ def get_filtered_reports(request):
     return reports
 
 
+@dispatcher_required
 def report_portal(request):
     reports = get_filtered_reports(request)
     
@@ -154,6 +165,7 @@ def report_portal(request):
     return render(request, 'dashboard/report_preview.html', context)
 
 
+@dispatcher_required
 def export_csv(request):
     reports = get_filtered_reports(request)
     
@@ -177,6 +189,7 @@ def export_csv(request):
     return response
 
 
+@dispatcher_required
 def export_pdf(request):
     reports = get_filtered_reports(request)
     

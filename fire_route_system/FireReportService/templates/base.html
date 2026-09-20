@@ -83,6 +83,7 @@
                 </div>
 
                 <!-- COMMAND & DISPATCH -->
+                {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
                 <div class="cad-nav-section">
                     <span class="cad-nav-section-title">Command & Dispatch</span>
                     <a href="{% url 'dashboard' %}" class="cad-nav-item" id="nav-dashboard">
@@ -91,6 +92,7 @@
                             <span>CAD Dashboard</span>
                         </div>
                     </a>
+                    {% if request.user.is_dispatcher or request.user.is_admin %}
                     <a href="{% url 'triage_queue' %}" class="cad-nav-item" id="nav-triage">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">📥</span>
@@ -102,6 +104,7 @@
                             </span>
                         {% endif %}
                     </a>
+                    {% endif %}
                     <a href="{% url 'fire_report_list' %}" class="cad-nav-item" id="nav-incidents">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">🔥</span>
@@ -132,8 +135,28 @@
                         </div>
                     </a>
                 </div>
+                {% else %}
+                <div class="cad-nav-section">
+                    <span class="cad-nav-section-title">Public Services</span>
+                    <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon">🗺️</span>
+                            <span>Interactive Map</span>
+                        </div>
+                    </a>
+                    {% if not request.user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="cad-nav-item" id="nav-login">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon">🔑</span>
+                            <span>Officer Login</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 <!-- INTELLIGENCE & ADMIN -->
+                {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin %}
                 <div class="cad-nav-section">
                     <span class="cad-nav-section-title">Intelligence & Admin</span>
                     <a href="{% url 'report_portal' %}" class="cad-nav-item" id="nav-portal">
@@ -142,6 +165,7 @@
                             <span>Report Portal</span>
                         </div>
                     </a>
+                    {% if request.user.is_admin %}
                     <a href="{% url 'user_list' %}" class="cad-nav-item" id="nav-users">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">👥</span>
@@ -154,7 +178,9 @@
                             <span>Role Permissions</span>
                         </div>
                     </a>
+                    {% endif %}
                 </div>
+                {% endif %}
             </nav>
 
             <!-- Sidebar Controls Footer -->
@@ -188,10 +214,28 @@
                 </div>
 
                 <div class="cad-topbar-right">
-                    <div class="cad-operator-badge">
-                        <span class="cad-operator-avatar">OP</span>
-                        <span>Operator Active</span>
+                    {% if request.user.is_authenticated %}
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <a href="{% url 'profile' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" title="Manage Profile">
+                            <div class="cad-operator-badge">
+                                <span class="cad-operator-avatar">{{ request.user.username|slice:":2"|upper }}</span>
+                                <span>{{ request.user.username }}</span>
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: var(--cad-amber); font-size: 0.7rem; font-weight: 700;">
+                                    {{ request.user.role_name|upper }}
+                                </span>
+                            </div>
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none;" title="Sign Out">
+                            🚪 Logout
+                        </a>
                     </div>
+                    {% else %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none;">
+                            🔑 Officer Login
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </header>
 

@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from DataAccess.decorators import responder_required, dispatcher_required, admin_required
 from .models import FireReport
 from .forms import FireReportForm
 
 def report_fire(request):
+    """
+    Public emergency reporting intake workflow.
+    Open to all citizens without requiring login.
+    If authenticated, automatically associates report with the user account.
+    """
     if request.method == "POST":
         lat = request.POST.get('latitude')
         lng = request.POST.get('longitude')
@@ -14,6 +20,13 @@ def report_fire(request):
         lat_val = float(lat) if (lat and lat.strip()) else None
         lng_val = float(lng) if (lng and lng.strip()) else None
         phone_val = phone.strip() if phone else None
+
+        # Auto-fill from authenticated user if not manually provided
+        user_id = None
+        if getattr(request, 'user', None) and request.user.is_authenticated:
+            user_id = request.user.id
+            if not phone_val and getattr(request.user, 'phone_number', None):
+                phone_val = request.user.phone_number
 
         # Validation: Either GPS (lat & lng) OR address must be provided
         if not addr and (lat_val is None or lng_val is None):
@@ -26,6 +39,7 @@ def report_fire(request):
             })
 
         FireReport.objects.create(
+            user_id=user_id,
             latitude=lat_val,
             longitude=lng_val,
             address=addr if addr else None,
@@ -38,6 +52,7 @@ def report_fire(request):
     return render(request, 'report_form.html')
 
 
+@responder_required
 def fire_report_list(request):
     from django.db.models import Q
     from django.utils import timezone
@@ -124,6 +139,7 @@ def fire_report_list(request):
     })
 
 
+@dispatcher_required
 def fire_report_create(request):
     form = FireReportForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -133,6 +149,7 @@ def fire_report_create(request):
     return render(request, 'fire_reports/form.html', {'form': form, 'title': 'Create Fire Report'})
 
 
+@dispatcher_required
 def fire_report_update(request, pk):
     report = get_object_or_404(FireReport, pk=pk)
     form = FireReportForm(request.POST or None, instance=report)
@@ -143,6 +160,7 @@ def fire_report_update(request, pk):
     return render(request, 'fire_reports/form.html', {'form': form, 'title': 'Update Fire Report', 'report': report})
 
 
+@admin_required
 def fire_report_delete(request, pk):
     report = get_object_or_404(FireReport, pk=pk)
     if report.status != 'Resolved':
@@ -158,6 +176,7 @@ def fire_report_delete(request, pk):
     return render(request, 'fire_reports/delete.html', {'report': report})
 
 
+@dispatcher_required
 def triage_queue(request):
     from DataAccess.models import Tbl_Notification
     unread = Tbl_Notification.objects.filter(is_read=False).select_related('report').order_by('-created_at')
@@ -169,6 +188,7 @@ def triage_queue(request):
 from django.views.decorators.http import require_POST
 
 @require_POST
+@dispatcher_required
 def confirm_incident(request, notification_id):
     from DataAccess.models import Tbl_Notification
     notification = get_object_or_404(Tbl_Notification, pk=notification_id)

@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Officer Login - Fire CAD System{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 2rem auto; width: 100%;">
+    <div class="cad-panel" style="padding: 2.5rem 2rem; border-top: 4px solid var(--cad-red); box-shadow: var(--cad-shadow-md);">
+        
+        <!-- Header / Emblem -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 56px; height: 56px; margin: 0 auto 1rem auto; background: linear-gradient(135deg, #FD0001, #B91C1C); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(253, 0, 1, 0.35);">
+                <span style="font-size: 1.75rem;">🚒</span>
+            </div>
+            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text);" id="login-title">
+                CAD Officer Login
+            </h1>
+            <p style="margin: 0.35rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);" id="login-subtitle">
+                Access authorized emergency dispatch and command operations.
+            </p>
+        </div>
+
+        {% if error_message %}
+            <div style="background: rgba(253, 0, 1, 0.1); border-left: 4px solid var(--cad-red); padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: var(--cad-red); font-size: 0.875rem; font-weight: 600;">
+                ⚠️ {{ error_message }}
+            </div>
+        {% endif %}
+
+        {% if success_message %}
+            <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: #10B981; font-size: 0.875rem; font-weight: 600;">
+                ✓ {{ success_message }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+            <div class="form-group">
+                <label for="username" id="lbl-login-user" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.4rem; display: block;">
+                    Username or Email
+                </label>
+                <div style="position: relative;">
+                    <input type="text" id="username" name="username" required 
+                           placeholder="e.g. admin or operator" 
+                           class="cad-input" style="width: 100%; box-sizing: border-box; padding-left: 2.4rem;"
+                           value="{{ username|default:'' }}">
+                    <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--cad-text-muted); pointer-events: none;">👤</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" id="lbl-login-pass" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.4rem; display: block;">
+                    Password
+                </label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" required 
+                           placeholder="••••••••" 
+                           class="cad-input" style="width: 100%; box-sizing: border-box; padding-left: 2.4rem; padding-right: 2.4rem;">
+                    <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--cad-text-muted); pointer-events: none;">🔒</span>
+                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--cad-text-muted);" aria-label="Toggle password visibility">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="cad-btn cad-btn-emergency" style="width: 100%; justify-content: center; height: 44px; margin-top: 1rem; font-size: 0.95rem;" id="btn-login-submit">
+                🔐 Sign In to Console
+            </button>
+        </form>
+
+        <!-- Quick Demo Credentials Selector -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--cad-border);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--cad-text-muted); letter-spacing: 0.5px;" id="demo-title">
+                    ⚡ Quick Test Accounts
+                </span>
+                <span style="font-size: 0.7rem; color: var(--cad-amber); font-weight: 700;">Click to fill</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('admin', 'adminpass')">
+                    🛡️ <strong>Admin</strong>
+                </button>
+                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('operator_hnin', 'operatorpass')">
+                    📞 <strong>Dispatcher</strong>
+                </button>
+                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('firefighter_zaw', 'firefighter123')">
+                    🚒 <strong>Firefighter</strong>
+                </button>
+                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('citizen_kyaw', 'citizen123')">
+                    👤 <strong>Citizen</strong>
+                </button>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="{% url 'report_fire' %}" style="font-size: 0.85rem; color: var(--cad-amber); text-decoration: none; font-weight: 600;" id="link-public-report">
+                🚨 Need to report a fire immediately? Click here.
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillDemo(username, password) {
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+}
+
+function togglePasswordVisibility() {
+    const passInput = document.getElementById('password');
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+    } else {
+        passInput.type = 'password';
+    }
+}
+
+(function() {
+    const translations = {
+        en: {
+            title: "CAD Officer Login",
+            subtitle: "Access authorized emergency dispatch and command operations.",
+            lblUser: "Username or Email",
+            lblPass: "Password",
+            submitBtn: "🔐 Sign In to Console",
+            demoTitle: "⚡ Quick Test Accounts",
+            publicReport: "🚨 Need to report a fire immediately? Click here."
+        },
+        my: {
+            title: "အရာရှိ အကောင့်ဝင်ရန်",
+            subtitle: "ခွင့်ပြုချက်ရရှိထားသော အရေးပေါ်ဌာနနှင့် ကွပ်ကဲရေးစနစ်သို့ ဝင်ရောက်ပါ။",
+            lblUser: "အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်",
+            lblPass: "စကားဝှက်",
+            submitBtn: "🔐 ကွန်ဆိုးလ်သို့ ဝင်ရောက်မည်",
+            demoTitle: "⚡ စမ်းသပ်အကောင့်များ",
+            publicReport: "🚨 မီးလောင်မှု ချက်ချင်းသတင်းပို့ရန် လိုအပ်ပါသလား? ဤနေရာကို နှိပ်ပါ။"
+        }
+    };
+
+    function updateLoginUI(lang) {
+        const d = translations[lang];
+        if (!d) return;
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        set("login-title", d.title);
+        set("login-subtitle", d.subtitle);
+        set("lbl-login-user", d.lblUser);
+        set("lbl-login-pass", d.lblPass);
+        set("btn-login-submit", d.submitBtn);
+        set("demo-title", d.demoTitle);
+        set("link-public-report", d.publicReport);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateLoginUI(localStorage.getItem("lang") || "my");
+    });
+    window.addEventListener("languageChanged", function(e) {
+        updateLoginUI(e.detail.lang);
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}403 Access Denied - Fire CAD System{% endblock %}
+
+{% block content %}
+<div style="max-width: 620px; margin: 3rem auto;">
+    <div class="cad-panel" style="border: 2px solid var(--cad-red); box-shadow: var(--cad-glow-red); text-align: center; padding: 2.5rem 2rem;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--cad-red); margin: 0 auto 1.5rem auto;">
+            🛑
+        </div>
+
+        <h1 style="margin: 0 0 0.5rem 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-red);" id="forbidden-title">
+            403 - Restricted Access
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--cad-text-muted); margin: 0 0 1.5rem 0;" id="forbidden-subtitle">
+            You do not have the required command authority to access this system module.
+        </p>
+
+        <div style="background: var(--cad-surface-hover); border-radius: 8px; border-left: 4px solid var(--cad-red); padding: 1rem; text-align: left; margin-bottom: 2rem; font-size: 0.875rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--cad-text-muted);">Current Account:</span>
+                <strong style="color: var(--cad-text);">{{ request.user.username }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--cad-text-muted);">Current Role:</span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700;">
+                    {{ user_role|default:request.user.role_name }}
+                </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--cad-text-muted);">Required Authority:</span>
+                <strong style="color: var(--cad-red);">
+                    {% for r in required_roles %}{{ r }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </strong>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            {% if request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
+                <a href="{% url 'dashboard' %}" class="btn btn-orange" style="font-weight: 700;">
+                    📊 Return to Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'report_fire' %}" class="btn btn-orange" style="font-weight: 700;">
+                    🚨 Emergency Report
+                </a>
+            {% endif %}
+            <a href="{% url 'login' %}?next={{ attempted_url }}" class="btn btn-outline" style="font-weight: 600;">
+                🔄 Switch Account
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const translations = {
+        en: {
+            title: "403 - Restricted Access",
+            subtitle: "You do not have the required command authority to access this system module."
+        },
+        my: {
+            title: "၄၀၃ - ဝင်ရောက်ခွင့် ကန့်သတ်ထားသည်",
+            subtitle: "ဤစနစ်အပိုင်းသို့ ဝင်ရောက်ရန် လိုအပ်သော အခွင့်အာဏာ မရှိပါ။"
+        }
+    };
+
+    function updateForbiddenUI(lang) {
+        const d = translations[lang];
+        if (!d) return;
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        set("forbidden-title", d.title);
+        set("forbidden-subtitle", d.subtitle);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateForbiddenUI(localStorage.getItem("lang") || "my");
+    });
+    window.addEventListener("languageChanged", function(e) {
+        updateForbiddenUI(e.detail.lang);
+    });
+})();
+</script>
+{% endblock %}
