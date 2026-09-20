@@ -13,7 +13,7 @@
                 <h1 id="station-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
                     Delete Fire Station
                 </h1>
-                <span style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Irreversible Action</span>
+                <span id="station-del-badge" style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Irreversible Action</span>
             </div>
         </div>
 
@@ -43,16 +43,18 @@
     const translations = {
         en: {
             title: "Delete Fire Station",
+            badge: "Irreversible Action",
             warning: "⚠️ Warning: This action cannot be undone!",
-            desc: 'Are you sure you want to delete the fire station "{{ station.name }}"?',
+            desc: 'Are you sure you want to delete the fire station <strong>"{{ station.name }}"</strong>?',
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
-            title: "မီးသတ်စခန်း ဖျက်မည်",
-            warning: "⚠️ သတိပေးချက်: ဤလုပ်ဆောင်ချက်ကို မပြန်နိုင်ပါ!",
-            desc: '"{{ station.name }}" မီးသတ်စခန်းကို ဖျက်မှာ သေချာပါသလား?',
-            confirm: "အပြီးအပိုင် ဖျက်မည်",
+            title: "မီးသတ်စခန်း အချက်အလက် ဖျက်ပယ်ရန်",
+            badge: "⚠️ ပြန်လည်ပြင်ဆင်၍မရသော လုပ်ဆောင်ချက်",
+            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            desc: '<strong>"{{ station.name }}"</strong> မီးသတ်စခန်းကို စနစ်ထဲမှ အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?',
+            confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
         }
     };
@@ -61,9 +63,11 @@
         const d = translations[lang];
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         set("station-del-title", d.title);
+        set("station-del-badge", d.badge);
         set("station-del-warning", d.warning);
-        set("station-del-desc", d.desc);
+        setHtml("station-del-desc", d.desc);
         set("station-del-confirm", d.confirm);
         set("station-del-cancel", d.cancel);
     }

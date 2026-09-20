@@ -9,11 +9,11 @@
             <h1 id="user-form-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
                 {% if form.instance.pk %}✏️ Edit User Account{% else %}👤 Create User Account{% endif %}
             </h1>
-            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
+            <p id="user-form-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Set credentials, assign roles, and configure system permissions.
             </p>
         </div>
-        <a href="{% url 'user_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+        <a href="{% url 'user_list' %}" class="btn btn-outline" id="user-form-back" style="font-size: 0.85rem;">
             ← Back to List
         </a>
     </div>
@@ -54,16 +54,36 @@
     const isEdit = {{ form.instance.pk|yesno:"true,false" }};
     const translations = {
         en: {
-            titleCreate: "Create User Account",
-            titleEdit: "Edit User Account",
+            titleCreate: "👤 Create User Account",
+            titleEdit: "✏️ Edit User Account",
+            subtitle: "Set credentials, assign roles, and configure system permissions.",
+            back: "← Back to List",
             save: "Save User",
-            cancel: "Cancel"
+            cancel: "Cancel",
+            fields: {
+                username: "Username",
+                email: "Email Address",
+                phone_number: "Phone Number",
+                role: "Operational Role",
+                status: "Account Status",
+                password: "Password"
+            }
         },
         my: {
-            titleCreate: "အသုံးပြုသူ အကောင့် ဖန်တီးမည်",
-            titleEdit: "အသုံးပြုသူ အကောင့် တည်းဖြတ်မည်",
-            save: "အသုံးပြုသူ သိမ်းဆည်းမည်",
-            cancel: "မလုပ်တော့ပါ"
+            titleCreate: "👤 အသုံးပြုသူ အကောင့် အသစ်ဖွင့်ရန်",
+            titleEdit: "✏️ အသုံးပြုသူ အချက်အလက် ပြင်ဆင်ရန်",
+            subtitle: "အကောင့်ဝင်ရောက်ခွင့် အချက်အလက်များ သတ်မှတ်ခြင်း၊ ရာထူးတာဝန် ပေးအပ်ခြင်းနှင့် စနစ်သုံးစွဲခွင့်များ စီမံပါ။",
+            back: "← အသုံးပြုသူများစာရင်းသို့",
+            save: "အသုံးပြုသူ အကောင့် သိမ်းဆည်းမည်",
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                username: "အသုံးပြုသူ အမည် (Username)",
+                email: "အီးမေးလ် လိပ်စာ",
+                phone_number: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",
+                role: "ရာထူးတာဝန် (Role)",
+                status: "အကောင့် အခြေအနေ",
+                password: "စကားဝှက် (Password)"
+            }
         }
     };
 
@@ -72,8 +92,17 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("user-form-title", isEdit ? d.titleEdit : d.titleCreate);
+        set("user-form-subtitle", d.subtitle);
+        set("user-form-back", d.back);
         set("user-form-save", d.save);
         set("user-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

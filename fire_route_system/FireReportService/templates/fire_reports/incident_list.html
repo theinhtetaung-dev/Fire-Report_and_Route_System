@@ -88,13 +88,13 @@
     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
         <!-- View Toggle Pills -->
         <div class="cad-view-toggle-group" id="viewToggleGroup">
-            <button class="cad-view-btn active" id="btn-table" onclick="switchView('table')" title="Table View">
+            <button class="cad-view-btn active" id="btn-table" onclick="switchView('table')" title="Table View" data-en="☰ Table" data-my="☰ ဇယား">
                 ☰ Table
             </button>
-            <button class="cad-view-btn" id="btn-list" onclick="switchView('list')" title="Card Grid">
+            <button class="cad-view-btn" id="btn-list" onclick="switchView('list')" title="Card Grid" data-en="▦ Grid" data-my="▦ ကတ်ပြား">
                 ▦ Grid
             </button>
-            <button class="cad-view-btn" id="btn-map" onclick="switchView('map')" title="Map Overview">
+            <button class="cad-view-btn" id="btn-map" onclick="switchView('map')" title="Map Overview" data-en="🗺 Map" data-my="🗺 မြေပုံ">
                 🗺 Map
             </button>
         </div>
@@ -456,39 +456,39 @@
                 resetFilterBtn: "Reset Filters"
             },
             my: {
-                title: "အတည်ပြုပြီးသော မီးလောင်မှု ဖြစ်စဉ်များ",
-                subtitle: "တက်ကြွနှင့် သမိုင်းဆိုင်ရာ မီးလောင်မှု ဖြစ်စဉ်များကို စီမံခန့်ခွဲနှင့် ကြီးကြပ်ပါ။",
-                logBtn: "🚨 ဖြစ်စဉ် မှတ်တမ်းတင်မည်",
-                searchLabel: "ရှာဖွေစာသား",
-                searchPlaceholder: "ဖုန်းနံပါတ်၊ လိပ်စာဖြင့် ရှာဖွေပါ...",
+                title: "အတည်ပြုပြီးသော မီးလောင်မှုဖြစ်စဉ်များ",
+                subtitle: "လက်ရှိဖြစ်ပွားဆဲနှင့် ပြီးဆုံးပြီးသော မီးလောင်မှုဖြစ်စဉ် မှတ်တမ်းများ၊ တုံ့ပြန်ဆောင်ရွက်မှုများနှင့် မြေပြင်အခြေအနေများ။",
+                logBtn: "🚨 မီးလောင်မှုဖြစ်စဉ် အသစ်ဖွင့်ရန်",
+                searchLabel: "ရှာဖွေရန် စကားလုံး",
+                searchPlaceholder: "ဖုန်းနံပါတ်၊ လိပ်စာ စသည်ဖြင့် ရှာဖွေပါ...",
                 dateLabel: "ဖြစ်စဉ် ရက်စွဲ",
-                statusLabel: "အခြေအနေ",
-                scaleLabel: "ပြင်းထန်မှုအဆင့်",
-                applyBtn: "စစ်ထုတ်မည်",
-                resetBtn: "မူလပြန်ရန်",
-                optStatusAll: "အခြေအနေအားလုံး",
-                optStatusConfirmed: "အတည်ပြုပြီး",
-                optStatusDispatched: "စေလွှတ်ပြီး",
-                optStatusControl: "ထိန်းချုပ်နေဆဲ",
-                optStatusResolved: "ဖြေရှင်းပြီး",
-                optStatusAlarm: "မှားယွင်းသောသတင်း",
-                optScaleAll: "အဆင့်အားလုံး",
-                optScale0: "နယ်မြေခံ",
+                statusLabel: "လက်ရှိ အခြေအနေ",
+                scaleLabel: "မီးပြင်းထန်မှု အဆင့်",
+                applyBtn: "ရှာဖွေမည်",
+                resetBtn: "မူလအတိုင်း ပြန်ထားမည်",
+                optStatusAll: "အခြေအနေ အားလုံး",
+                optStatusConfirmed: "အတည်ပြုပြီး (Confirmed)",
+                optStatusDispatched: "တပ်ဖွဲ့ထွက်ခွာပြီး (Dispatched)",
+                optStatusControl: "မီးထိန်းနိုင်ပြီ (Under Control)",
+                optStatusResolved: "မီးငြှိမ်းသတ်ပြီး (Resolved)",
+                optStatusAlarm: "သတင်းမှား (False Alarm)",
+                optScaleAll: "မီးအဆင့် အားလုံး",
+                optScale0: "နယ်မြေခံ (Local)",
                 optScale1: "Level 1",
                 optScale2: "Level 2",
                 optScale3: "Level 3",
                 optScale4: "Level 4",
-                optScale5: "Level 5 (အမြင့်ဆုံး)",
-                thNo: "နံပါတ်",
-                thPhone: "သတင်းပို့သူ ဖုန်း",
-                thSeverity: "မီးပြင်းထန်မှုအဆင့်",
-                thLocation: "တည်နေရာ / ကိုဩဒိနိတ်",
+                optScale5: "Level 5 (အထူးပြင်းထန်)",
+                thNo: "စဉ်",
+                thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်",
+                thSeverity: "မီးအဆင့်",
+                thLocation: "တည်နေရာ / GPS ကိုဩဒိနိတ်",
                 thStatus: "အခြေအနေ",
-                thTime: "သတင်းပို့ချိန်",
+                thTime: "သတင်းရရှိချိန်",
                 thActions: "လုပ်ဆောင်ချက်",
-                noMatchTitle: "ကိုက်ညီသော မှတ်တမ်းမတွေ့ပါ",
-                noMatchDesc: "ရှာဖွေမှုစစ်ထုတ်ချက်ကို ရှင်းထုတ်၍ ပြန်လည်စမ်းသပ်ပါ။",
-                resetFilterBtn: "စစ်ထုတ်ချက်မူလပြန်ရန်"
+                noMatchTitle: "ရှာဖွေမှုနှင့် ကိုက်ညီသော ဖြစ်စဉ်မှတ်တမ်း မတွေ့ပါ",
+                noMatchDesc: "ရှာဖွေမှု စကားလုံးကို ပြန်လည်စစ်ဆေးပါ သို့မဟုတ် ရက်စွဲအပိုင်းအခြားကို ချဲ့ထွင်၍ ရှာဖွေပါ။",
+                resetFilterBtn: "ရှာဖွေမှု စစ်ထုတ်ချက်များ ဖျက်မည်"
             }
         };
 

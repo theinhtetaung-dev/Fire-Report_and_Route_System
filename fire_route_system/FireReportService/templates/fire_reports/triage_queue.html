@@ -14,11 +14,11 @@
     </div>
     <div>
         {% if notifications %}
-        <span class="cad-badge cad-badge-scale-5" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
+        <span class="cad-badge cad-badge-scale-5" id="triage-status-badge" data-count="{{ notifications|length }}" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
             ⚠️ {{ notifications|length }} INCIDENTS AWAITING TRIAGE
         </span>
         {% else %}
-        <span class="cad-badge cad-badge-active" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
+        <span class="cad-badge cad-badge-active" id="triage-status-badge" data-count="0" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
             🛡️ ALL QUEUES CLEAR
         </span>
         {% endif %}
@@ -29,9 +29,9 @@
     <div class="cad-panel-header">
         <div class="cad-panel-title">
             <span>🚨</span>
-            <span>Pending Intake Stream</span>
+            <span id="triage-stream-title">Pending Intake Stream</span>
         </div>
-        <span style="font-size: 0.75rem; color: var(--cad-text-muted);">Real-Time Ingestion</span>
+        <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="triage-stream-subtitle">Real-Time Ingestion</span>
     </div>
 
     {% if notifications %}
@@ -57,7 +57,7 @@
                             📞 {{ notif.report.reporter_phone }}
                         </a>
                         {% else %}
-                        <span style="color: var(--cad-text-muted); font-style: italic;">Anonymous Caller</span>
+                        <span style="color: var(--cad-text-muted); font-style: italic;" class="triage-anon-text">Anonymous Caller</span>
                         {% endif %}
                     </td>
                     <td>
@@ -106,20 +106,30 @@
         en: {
             title: "Emergency Incident Triage Queue",
             subtitle: "Review, verify, and confirm incoming citizen reports before dispatching field units.",
+            streamTitle: "Pending Intake Stream",
+            streamSubtitle: "Real-Time Ingestion",
             thNo: "No", thPhone: "Reporter Phone", thSeverity: "Severity Scale",
             thLocation: "Location / Coordinates", thLogged: "Logged Time", thAction: "Command Action",
             confirmBtn: "⚡ Confirm Incident",
+            anonText: "Anonymous Caller",
             emptyTitle: "Triage queue is clear",
-            emptyDesc: "All incoming citizen fire reports have been triaged, verified, and confirmed for operational response."
+            emptyDesc: "All incoming citizen fire reports have been triaged, verified, and confirmed for operational response.",
+            badgeWaiting: "⚠️ {n} INCIDENTS AWAITING TRIAGE",
+            badgeClear: "🛡️ ALL QUEUES CLEAR"
         },
         my: {
-            title: "အရေးပေါ်ဖြစ်စဉ် Triage စစ်ဆေးစီတန်း",
-            subtitle: "မြေပြင်အဖွဲ့များ စေလွှတ်ခြင်းမပြုမီ ဝင်ရောက်လာသော မီးလောင်မှုသတင်းများကို စစ်ဆေးနှင့် အတည်ပြုပါ။",
-            thNo: "နံပါတ်", thPhone: "သတင်းပို့သူ ဖုန်း", thSeverity: "မီးပြင်းထန်မှုအဆင့်",
-            thLocation: "တည်နေရာ / ကိုဩဒိနိတ်", thLogged: "သတင်းရရှိချိန်", thAction: "လုပ်ဆောင်ချက်",
-            confirmBtn: "⚡ ဖြစ်စဉ် အတည်ပြုမည်",
-            emptyTitle: "Triage စီတန်း လွတ်နေပါသည်",
-            emptyDesc: "ဝင်ရောက်လာသော မီးသတင်းပို့ချက်အားလုံး စစ်ဆေးအတည်ပြုပြီး ဖြစ်ပါသည်။"
+            title: "အရေးပေါ် မီးသတင်း ဦးစားပေးစိစစ်ရေး (Triage)",
+            subtitle: "မြေပြင်သို့ မီးသတ်တပ်ဖွဲ့များ မစေလွှတ်မီ ပြည်သူလူထုထံမှ ပေးပို့လာသော မီးသတင်းများကို စစ်ဆေးအတည်ပြုပါ။",
+            streamTitle: "လက်ခံရရှိထားသော မီးသတင်းများ",
+            streamSubtitle: "အချိန်နှင့်တစ်ပြေးညီ ဝင်ရောက်လာမှု",
+            thNo: "စဉ်", thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်", thSeverity: "မီးပြင်းထန်မှုအဆင့်",
+            thLocation: "တည်နေရာ / GPS ကိုဩဒိနိတ်", thLogged: "သတင်းရရှိချိန်", thAction: "စစ်ဆင်ရေး လုပ်ဆောင်ချက်",
+            confirmBtn: "⚡ မီးလောင်မှုဖြစ်စဉ် အတည်ပြုမည်",
+            anonText: "အမည်မသိ သတင်းပို့သူ",
+            emptyTitle: "စိစစ်ရန် မီးသတင်း မရှိပါ",
+            emptyDesc: "ပြည်သူလူထုထံမှ ပေးပို့ထားသော အရေးပေါ် မီးသတင်းများအားလုံးကို စိစစ်အတည်ပြုပြီး ဖြစ်ပါသည်။",
+            badgeWaiting: "⚠️ စိစစ်ဆဲ မီးသတင်း {n} ခု ရှိပါသည်",
+            badgeClear: "🛡️ စိစစ်ရန် မီးသတင်း မရှိပါ"
         }
     };
 
@@ -129,6 +139,8 @@
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("triage-title", d.title);
         set("triage-subtitle", d.subtitle);
+        set("triage-stream-title", d.streamTitle);
+        set("triage-stream-subtitle", d.streamSubtitle);
         set("th-triage-no", d.thNo);
         set("th-triage-phone", d.thPhone);
         set("th-triage-severity", d.thSeverity);
@@ -137,6 +149,20 @@
         set("th-triage-action", d.thAction);
         set("triage-empty-title", d.emptyTitle);
         set("triage-empty-desc", d.emptyDesc);
+
+        const badge = document.getElementById("triage-status-badge");
+        if (badge) {
+            const count = parseInt(badge.getAttribute("data-count") || "0", 10);
+            if (count > 0) {
+                badge.innerText = d.badgeWaiting.replace("{n}", count);
+            } else {
+                badge.innerText = d.badgeClear;
+            }
+        }
+
+        document.querySelectorAll(".triage-anon-text").forEach(el => {
+            el.innerText = d.anonText;
+        });
 
         document.querySelectorAll(".triage-confirm-btn").forEach(b => {
             b.innerText = d.confirmBtn;

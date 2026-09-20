@@ -18,17 +18,17 @@
 
         <div style="background: var(--cad-surface-hover); border-radius: 8px; border-left: 4px solid var(--cad-red); padding: 1rem; text-align: left; margin-bottom: 2rem; font-size: 0.875rem;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                <span style="color: var(--cad-text-muted);">Current Account:</span>
+                <span style="color: var(--cad-text-muted);" id="lbl-403-account">Current Account:</span>
                 <strong style="color: var(--cad-text);">{{ request.user.username }}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                <span style="color: var(--cad-text-muted);">Current Role:</span>
+                <span style="color: var(--cad-text-muted);" id="lbl-403-role">Current Role:</span>
                 <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700;">
                     {{ user_role|default:request.user.role_name }}
                 </span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-                <span style="color: var(--cad-text-muted);">Required Authority:</span>
+                <span style="color: var(--cad-text-muted);" id="lbl-403-required">Required Authority:</span>
                 <strong style="color: var(--cad-red);">
                     {% for r in required_roles %}{{ r }}{% if not forloop.last %}, {% endif %}{% endfor %}
                 </strong>
@@ -37,15 +37,15 @@
 
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
             {% if request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
-                <a href="{% url 'dashboard' %}" class="btn btn-orange" style="font-weight: 700;">
+                <a href="{% url 'dashboard' %}" class="btn btn-orange" id="btn-403-primary" style="font-weight: 700;">
                     📊 Return to Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'report_fire' %}" class="btn btn-orange" style="font-weight: 700;">
+                <a href="{% url 'report_fire' %}" class="btn btn-orange" id="btn-403-primary" style="font-weight: 700;">
                     🚨 Emergency Report
                 </a>
             {% endif %}
-            <a href="{% url 'login' %}?next={{ attempted_url }}" class="btn btn-outline" style="font-weight: 600;">
+            <a href="{% url 'login' %}?next={{ attempted_url }}" class="btn btn-outline" id="btn-403-switch" style="font-weight: 600;">
                 🔄 Switch Account
             </a>
         </div>
@@ -54,14 +54,25 @@
 
 <script>
 (function() {
+    const isOfficer = {{ request.user.is_dispatcher|yesno:"true," }}{{ request.user.is_admin|yesno:"true," }}{{ request.user.is_firefighter|yesno:"true,false" }};
     const translations = {
         en: {
             title: "403 - Restricted Access",
-            subtitle: "You do not have the required command authority to access this system module."
+            subtitle: "You do not have the required command authority to access this system module.",
+            lblAccount: "Current Account:",
+            lblRole: "Current Role:",
+            lblRequired: "Required Authority:",
+            btnPrimary: isOfficer ? "📊 Return to Dashboard" : "🚨 Emergency Report",
+            btnSwitch: "🔄 Switch Account"
         },
         my: {
             title: "၄၀၃ - ဝင်ရောက်ခွင့် ကန့်သတ်ထားသည်",
-            subtitle: "ဤစနစ်အပိုင်းသို့ ဝင်ရောက်ရန် လိုအပ်သော အခွင့်အာဏာ မရှိပါ။"
+            subtitle: "ဤစနစ်အပိုင်းသို့ ဝင်ရောက်အသုံးပြုရန် သင့်တွင် လိုအပ်သော ခွင့်ပြုချက် အဆင့် မရှိပါ။",
+            lblAccount: "လက်ရှိ အကောင့်:",
+            lblRole: "လက်ရှိ ရာထူးတာဝန်:",
+            lblRequired: "လိုအပ်သော လုပ်ပိုင်ခွင့်အဆင့်:",
+            btnPrimary: isOfficer ? "📊 ပင်မကွပ်ကဲမှုစာမျက်နှာသို့ ပြန်သွားမည်" : "🚨 အရေးပေါ် မီးသတင်းပို့ရန်",
+            btnSwitch: "🔄 အခြားအကောင့်ဖြင့် ဝင်ရောက်မည်"
         }
     };
 
@@ -71,6 +82,11 @@
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("forbidden-title", d.title);
         set("forbidden-subtitle", d.subtitle);
+        set("lbl-403-account", d.lblAccount);
+        set("lbl-403-role", d.lblRole);
+        set("lbl-403-required", d.lblRequired);
+        set("btn-403-primary", d.btnPrimary);
+        set("btn-403-switch", d.btnSwitch);
     }
 
     document.addEventListener("DOMContentLoaded", function() {

@@ -8,7 +8,7 @@
         <h1 id="roles-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
             🛡️ User Roles
         </h1>
-        <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
+        <p id="roles-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
             Define system roles and authority levels across the emergency network.
         </p>
     </div>
@@ -65,6 +65,7 @@
     const roleTranslations = {
         en: {
             title: "🛡️ User Roles",
+            subtitle: "Define system roles and authority levels across the emergency network.",
             createBtn: "➕ Create Role",
             thId: "No.", thName: "Role Name", thDesc: "Description",
             thCreated: "Created At", thActions: "Actions",
@@ -72,12 +73,13 @@
             createFirst: "Create the First Role"
         },
         my: {
-            title: "🛡️ အသုံးပြုသူ အခန်းကဏ္ဍများ",
-            createBtn: "➕ အခန်းကဏ္ဍ ဖန်တီးမည်",
-            thId: "No.", thName: "အခန်းကဏ္ဍ အမည်", thDesc: "ဖော်ပြချက်",
-            thCreated: "ဖန်တီးချိန်", thActions: "လုပ်ဆောင်ချက်",
-            empty: "အသုံးပြုသူ အခန်းကဏ္ဍ မသတ်မှတ်ရသေးပါ။",
-            createFirst: "ပထမ အခန်းကဏ္ဍ ဖန်တီးမည်"
+            title: "🛡️ ရာထူးတာဝန်များ (User Roles)",
+            subtitle: "အရေးပေါ်ကွပ်ကဲမှုကွန်ရက်အတွင်း အသုံးပြုသူများ၏ ရာထူးတာဝန်များနှင့် လုပ်ပိုင်ခွင့်အဆင့်များကို သတ်မှတ်ပါ။",
+            createBtn: "➕ ရာထူးတာဝန် အသစ်သတ်မှတ်ရန်",
+            thId: "စဉ်", thName: "ရာထူးအမည်", thDesc: "တာဝန်နှင့် လုပ်ပိုင်ခွင့် ဖော်ပြချက်",
+            thCreated: "စတင်ဖန်တီးချိန်", thActions: "လုပ်ဆောင်ချက်",
+            empty: "သတ်မှတ်ထားသော ရာထူးတာဝန် မရှိသေးပါ။",
+            createFirst: "ပထမဆုံး ရာထူးတာဝန် သတ်မှတ်ပါ"
         }
     };
 
@@ -86,6 +88,7 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("roles-title", d.title);
+        set("roles-subtitle", d.subtitle);
         set("roles-create-btn", d.createBtn);
         set("th-role-id", d.thId);
         set("th-role-name", d.thName);

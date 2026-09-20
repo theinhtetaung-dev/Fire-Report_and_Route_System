@@ -13,7 +13,7 @@
                 <h1 id="user-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
                     Delete User Account
                 </h1>
-                <span style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Permanent Revocation</span>
+                <span id="user-del-badge" style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Permanent Revocation</span>
             </div>
         </div>
 
@@ -43,16 +43,18 @@
     const translations = {
         en: {
             title: "Delete User Account",
+            badge: "Permanent Revocation",
             warning: "⚠️ Warning: This action cannot be undone!",
-            desc: 'Are you sure you want to delete the user account "{{ user.username }}" (ID: #{{ user.id }}, Role: {{ user.role.role_name }})?',
+            desc: 'Are you sure you want to delete the user account <strong>"{{ user.username }}"</strong> (ID: #{{ user.id }}, Role: {{ user.role.role_name }})?',
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
-            title: "အသုံးပြုသူ အကောင့် ဖျက်မည်",
-            warning: "⚠️ သတိပေးချက်: ဤလုပ်ဆောင်ချက်ကို မပြန်နိုင်ပါ!",
-            desc: '"{{ user.username }}" (ID: #{{ user.id }}, အခန်းကဏ္ဍ: {{ user.role.role_name }}) ၏ အသုံးပြုသူ အကောင့်ကို ဖျက်မှာ သေချာပါသလား?',
-            confirm: "အပြီးအပိုင် ဖျက်မည်",
+            title: "အသုံးပြုသူ အကောင့် ဖျက်ပယ်ရန်",
+            badge: "⚠️ အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
+            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            desc: '<strong>"{{ user.username }}"</strong> (အမှတ်: #{{ user.id }}၊ ရာထူး: {{ user.role.role_name }}) ၏ အကောင့်ကို စနစ်ထဲမှ အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?',
+            confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
         }
     };
@@ -61,9 +63,11 @@
         const d = translations[lang];
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         set("user-del-title", d.title);
+        set("user-del-badge", d.badge);
         set("user-del-warning", d.warning);
-        set("user-del-desc", d.desc);
+        setHtml("user-del-desc", d.desc);
         set("user-del-confirm", d.confirm);
         set("user-del-cancel", d.cancel);
     }

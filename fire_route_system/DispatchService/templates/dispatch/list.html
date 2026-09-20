@@ -10,7 +10,7 @@
             <span>📋</span>
             <span>Emergency Dispatches</span>
         </h1>
-        <p class="cad-dash-subtitle">Field deployments, responding fire stations, deployed apparatus, and resolution logs.</p>
+        <p class="cad-dash-subtitle" id="dispatch-subtitle">Field deployments, responding fire stations, deployed apparatus, and resolution logs.</p>
     </div>
     <a href="{% url 'dispatch_create' %}" class="cad-btn cad-btn-emergency" id="dispatch-new-btn">
         🚒 New Dispatch Deployment
@@ -21,9 +21,9 @@
     <div class="cad-panel-header">
         <div class="cad-panel-title">
             <span>📡</span>
-            <span>Active & Resolved Mission Records</span>
+            <span id="dispatch-panel-title">Active & Resolved Mission Records</span>
         </div>
-        <span style="font-size: 0.75rem; color: var(--cad-text-muted);">Real-Time Fleet Deployment</span>
+        <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="dispatch-panel-subtitle">Real-Time Fleet Deployment</span>
     </div>
 
     {% if dispatches %}
@@ -95,7 +95,7 @@
     <div class="cad-empty-state">
         <span class="cad-empty-icon">📋</span>
         <h3 class="cad-empty-title" id="dispatch-empty">No dispatch operations logged yet</h3>
-        <p class="cad-empty-desc">Create the first emergency unit deployment when an incident is confirmed.</p>
+        <p class="cad-empty-desc" id="dispatch-empty-desc">Create the first emergency unit deployment when an incident is confirmed.</p>
         <a href="{% url 'dispatch_create' %}" class="cad-btn cad-btn-emergency" id="dispatch-first-btn">
             Log the First Dispatch
         </a>
@@ -108,23 +108,31 @@
     const dispatchTranslations = {
         en: {
             title: "Emergency Dispatches",
+            subtitle: "Field deployments, responding fire stations, deployed apparatus, and resolution logs.",
             newBtn: "🚒 New Dispatch Deployment",
+            panelTitle: "Active & Resolved Mission Records",
+            panelSubtitle: "Real-Time Fleet Deployment",
             thId: "No.", thIncident: "Target Incident", thStation: "Responding Station",
             thOperator: "Command Operator", thDispatched: "Dispatched Time", thResolved: "Status / Resolved",
             thResources: "Resources Deployed", thActions: "Actions",
             activeBadge: "Active In Field",
             emptyText: "No dispatch operations logged yet",
+            emptyDesc: "Create the first emergency unit deployment when an incident is confirmed.",
             firstBtn: "Log the First Dispatch"
         },
         my: {
-            title: "အရေးပေါ် စေလွှတ်မှုများ",
-            newBtn: "🚒 စေလွှတ်မှုအသစ် ထည့်သွင်းမည်",
-            thId: "နံပါတ်", thIncident: "ပစ်မှတ်ဖြစ်စဉ်", thStation: "တုံ့ပြန်သောစခန်း",
-            thOperator: "ကွပ်ကဲရေးတာဝန်ခံ", thDispatched: "စေလွှတ်ချိန်", thResolved: "အခြေအနေ / ပြီးဆုံးချိန်",
-            thResources: "ဖြန့်ချထားသော အရင်းအမြစ်", thActions: "လုပ်ဆောင်ချက်",
-            activeBadge: "မြေပြင်တွင် ဆောင်ရွက်ဆဲ",
-            emptyText: "စေလွှတ်မှု မှတ်တမ်းမရှိသေးပါ",
-            firstBtn: "ပထမ စေလွှတ်မှု မှတ်တမ်းတင်မည်"
+            title: "🚒 အရေးပေါ် မီးသတ်ယာဉ်/တပ်ဖွဲ့ စေလွှတ်မှုများ",
+            subtitle: "မြေပြင်မီးငြှိမ်းသတ်ရေး တပ်ဖွဲ့များ၊ တာဝန်ကျမီးသတ်စခန်းများ၊ စေလွှတ်သည့်ယာဉ်များနှင့် ပြီးဆုံးမှုမှတ်တမ်းများ။",
+            newBtn: "🚒 စေလွှတ်မှု အသစ်ဖွင့်ရန်",
+            panelTitle: "📡 စစ်ဆင်ရေး ဆောင်ရွက်ဆဲနှင့် ပြီးဆုံးပြီးသော မှတ်တမ်းများ",
+            panelSubtitle: "အချိန်နှင့်တစ်ပြေးညီ မီးသတ်တပ်ဖွဲ့ စေလွှတ်မှုများ",
+            thId: "စဉ်", thIncident: "မီးလောင်မှုဖြစ်စဉ်", thStation: "တာဝန်ကျ မီးသတ်စခန်း",
+            thOperator: "တာဝန်ကျ အရာရှိ", thDispatched: "စေလွှတ်ချိန်", thResolved: "အခြေအနေ / ပြီးဆုံးချိန်",
+            thResources: "စေလွှတ်သည့် မီးသတ်ယာဉ်နှင့် လူအင်အား", thActions: "လုပ်ဆောင်ချက်",
+            activeBadge: "စစ်ဆင်ရေးဆောင်ရွက်ဆဲ",
+            emptyText: "လက်ရှိ စေလွှတ်မှု မှတ်တမ်းများ မရှိသေးပါ",
+            emptyDesc: "မီးလောင်မှုဖြစ်စဉ် အတည်ပြုပြီးပါက ပထမဆုံး အရေးပေါ်တပ်ဖွဲ့ စေလွှတ်မှုကို စတင်နိုင်ပါသည်။",
+            firstBtn: "ပထမဆုံး စေလွှတ်မှု စတင်မည်"
         }
     };
 
@@ -133,7 +141,10 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("dispatch-title", d.title);
+        set("dispatch-subtitle", d.subtitle);
         set("dispatch-new-btn", d.newBtn);
+        set("dispatch-panel-title", d.panelTitle);
+        set("dispatch-panel-subtitle", d.panelSubtitle);
         set("th-disp-id", d.thId);
         set("th-disp-incident", d.thIncident);
         set("th-disp-station", d.thStation);
@@ -143,6 +154,7 @@
         set("th-disp-resources", d.thResources);
         set("th-disp-actions", d.thActions);
         set("dispatch-empty", d.emptyText);
+        set("dispatch-empty-desc", d.emptyDesc);
         set("dispatch-first-btn", d.firstBtn);
         document.querySelectorAll(".disp-active-badge").forEach(el => { el.innerText = d.activeBadge; });
         document.querySelectorAll("[data-en][data-my]").forEach(el => {

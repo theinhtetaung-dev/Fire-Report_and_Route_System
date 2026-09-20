@@ -13,7 +13,7 @@
                 Manage your credentials and view assigned operational role.
             </p>
         </div>
-        <a href="{% url 'dashboard' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline" id="profile-back" style="font-size: 0.85rem;">
             ← Back to Dashboard
         </a>
     </div>
@@ -47,33 +47,33 @@
             </div>
 
             <div class="form-group">
-                <label style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
+                <label id="lbl-profile-email" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
                     Email Address
                 </label>
                 <input type="email" name="email" value="{{ request.user.email }}" required class="cad-input">
             </div>
 
             <div class="form-group">
-                <label style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
+                <label id="lbl-profile-phone" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.35rem; display: block;">
                     Phone Number
                 </label>
                 <input type="tel" name="phone_number" value="{{ request.user.phone_number|default:'' }}" placeholder="e.g. 09-12345678" class="cad-input">
             </div>
 
             <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--cad-border);">
-                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--cad-text); font-weight: 700;">
+                <h4 id="sec-profile-password" style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--cad-text); font-weight: 700;">
                     🔒 Change Password (leave blank to keep current)
                 </h4>
                 
                 <div class="form-group">
-                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
+                    <label id="lbl-profile-new-pass" style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
                         New Password
                     </label>
                     <input type="password" name="new_password" placeholder="••••••••" class="cad-input">
                 </div>
 
                 <div class="form-group">
-                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
+                    <label id="lbl-profile-confirm-pass" style="font-weight: 600; font-size: 0.8rem; color: var(--cad-text-muted); margin-bottom: 0.35rem; display: block;">
                         Confirm New Password
                     </label>
                     <input type="password" name="confirm_password" placeholder="••••••••" class="cad-input">
@@ -81,11 +81,62 @@
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
-                <button type="submit" class="cad-btn cad-btn-emergency">
+                <button type="submit" class="cad-btn cad-btn-emergency" id="btn-profile-save">
                     Save Profile Changes
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+(function() {
+    const profileTranslations = {
+        en: {
+            title: "👤 Officer Profile",
+            subtitle: "Manage your credentials and view assigned operational role.",
+            back: "← Back to Dashboard",
+            email: "Email Address",
+            phone: "Phone Number",
+            secPass: "🔒 Change Password (leave blank to keep current)",
+            newPass: "New Password",
+            confirmPass: "Confirm New Password",
+            saveBtn: "Save Profile Changes"
+        },
+        my: {
+            title: "👤 အရာရှိ ကိုယ်ရေးအချက်အလက်",
+            subtitle: "အကောင့်ဝင်ရောက်ခွင့် အချက်အလက်များနှင့် တာဝန်ပေးအပ်ထားသော ရာထူးတာဝန်ကို စစ်ဆေးပြင်ဆင်ပါ။",
+            back: "← ပင်မကွပ်ကဲမှုစာမျက်နှာသို့",
+            email: "အီးမေးလ် လိပ်စာ",
+            phone: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",
+            secPass: "🔒 စကားဝှက် အသစ်ပြောင်းရန် (မပြောင်းလိုပါက ကွက်လပ်ထားပါ)",
+            newPass: "စကားဝှက် အသစ်",
+            confirmPass: "စကားဝှက် အသစ်ကို ထပ်မံရိုက်ထည့်ပါ",
+            saveBtn: "ကိုယ်ရေးအချက်အလက် ပြင်ဆင်ချက်များ သိမ်းဆည်းမည်"
+        }
+    };
+
+    function updateProfileUI(lang) {
+        const d = profileTranslations[lang];
+        if (!d) return;
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        set("profile-title", d.title);
+        set("profile-subtitle", d.subtitle);
+        set("profile-back", d.back);
+        set("lbl-profile-email", d.email);
+        set("lbl-profile-phone", d.phone);
+        set("sec-profile-password", d.secPass);
+        set("lbl-profile-new-pass", d.newPass);
+        set("lbl-profile-confirm-pass", d.confirmPass);
+        set("btn-profile-save", d.saveBtn);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateProfileUI(localStorage.getItem("lang") || "my");
+    });
+    window.addEventListener("languageChanged", function(e) {
+        updateProfileUI(e.detail.lang);
+    });
+})();
+</script>
 {% endblock %}

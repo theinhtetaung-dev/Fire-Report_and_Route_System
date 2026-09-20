@@ -11,7 +11,7 @@
                 <span>⚠️</span>
                 <span id="disp-del-title">Delete Dispatch Operation</span>
             </div>
-            <span class="cad-badge cad-badge-scale-5">DESTRUCTIVE ACTION</span>
+            <span class="cad-badge cad-badge-scale-5" id="disp-del-badge">DESTRUCTIVE ACTION</span>
         </div>
 
         <div class="cad-panel-body">
@@ -36,16 +36,18 @@
     const translations = {
         en: {
             title: "Delete Dispatch Operation",
+            badge: "DESTRUCTIVE ACTION",
             warning: "⚠️ Warning: This action cannot be undone!",
-            desc: "Are you sure you want to permanently delete Dispatch #{{ dispatch.id }} (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?",
+            desc: "Are you sure you want to permanently delete <strong>Dispatch #{{ dispatch.id }}</strong> (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?",
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
-            title: "စေလွှတ်မှု ဖျက်မည်",
-            warning: "⚠️ သတိပေးချက်: ဤလုပ်ဆောင်ချက်ကို မပြန်နိုင်ပါ!",
-            desc: "Dispatch #{{ dispatch.id }} (Report #{{ dispatch.report.id }}, တုံ့ပြန်သောစခန်း: {{ dispatch.station.name }}) ကို ဖျက်မှာ သေချာပါသလား?",
-            confirm: "အပြီးအပိုင် ဖျက်မည်",
+            title: "တပ်ဖွဲ့စေလွှတ်မှု မှတ်တမ်း ဖျက်ပယ်ရန်",
+            badge: "⚠️ အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
+            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            desc: "<strong>တပ်ဖွဲ့စေလွှတ်မှု မှတ်တမ်း အမှတ် #{{ dispatch.id }}</strong> (ဖြစ်စဉ် အမှတ် #{{ dispatch.report.id }}၊ တာဝန်ကျစခန်း: {{ dispatch.station.name }}) ကို အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?",
+            confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
         }
     };
@@ -54,9 +56,11 @@
         const d = translations[lang];
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         set("disp-del-title", d.title);
+        set("disp-del-badge", d.badge);
         set("disp-del-warning", d.warning);
-        set("disp-del-desc", d.desc);
+        setHtml("disp-del-desc", d.desc);
         set("disp-del-confirm", d.confirm);
         set("disp-del-cancel", d.cancel);
     }

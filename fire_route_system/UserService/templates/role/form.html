@@ -9,11 +9,11 @@
             <h1 id="role-form-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
                 {% if form.instance.pk %}✏️ Edit User Role{% else %}🛡️ Create User Role{% endif %}
             </h1>
-            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
+            <p id="role-form-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Define title and operational access scope for this role.
             </p>
         </div>
-        <a href="{% url 'role_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+        <a href="{% url 'role_list' %}" class="btn btn-outline" id="role-form-back" style="font-size: 0.85rem;">
             ← Back to List
         </a>
     </div>
@@ -54,16 +54,28 @@
     const isEdit = {{ form.instance.pk|yesno:"true,false" }};
     const translations = {
         en: {
-            titleCreate: "Create User Role",
-            titleEdit: "Edit User Role",
+            titleCreate: "🛡️ Create User Role",
+            titleEdit: "✏️ Edit User Role",
+            subtitle: "Define title and operational access scope for this role.",
+            back: "← Back to List",
             save: "Save Role",
-            cancel: "Cancel"
+            cancel: "Cancel",
+            fields: {
+                role_name: "Role Name",
+                description: "Role Description & Authority Scope"
+            }
         },
         my: {
-            titleCreate: "အသုံးပြုသူ အခန်းကဏ္ဍ ဖန်တီးမည်",
-            titleEdit: "အသုံးပြုသူ အခန်းကဏ္ဍ တည်းဖြတ်မည်",
-            save: "အခန်းကဏ္ဍ သိမ်းဆည်းမည်",
-            cancel: "မလုပ်တော့ပါ"
+            titleCreate: "🛡️ ရာထူးတာဝန် အသစ်သတ်မှတ်ရန်",
+            titleEdit: "✏️ ရာထူးတာဝန် အချက်အလက် ပြင်ဆင်ရန်",
+            subtitle: "ဤရာထူးအတွက် အမည်နှင့် စနစ်သုံးစွဲခွင့် နယ်ပယ်ကို သတ်မှတ်ပါ။",
+            back: "← ရာထူးများစာရင်းသို့",
+            save: "ရာထူးတာဝန် သိမ်းဆည်းမည်",
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                role_name: "ရာထူး အမည်",
+                description: "တာဝန်နှင့် လုပ်ပိုင်ခွင့် ဖော်ပြချက်"
+            }
         }
     };
 
@@ -72,8 +84,17 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("role-form-title", isEdit ? d.titleEdit : d.titleCreate);
+        set("role-form-subtitle", d.subtitle);
+        set("role-form-back", d.back);
         set("role-form-save", d.save);
         set("role-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

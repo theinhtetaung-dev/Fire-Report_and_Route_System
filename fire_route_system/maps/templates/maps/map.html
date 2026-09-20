@@ -104,7 +104,7 @@
                 <h2 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;" id="map-sidebar-title">
                     🚒 Fire Stations
                 </h2>
-                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); font-weight: 700; font-size: 0.75rem;">
+                <span class="badge" id="map-sidebar-count" data-count="{{ stations|length }}" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); font-weight: 700; font-size: 0.75rem;">
                     {{ stations|length }} Stations
                 </span>
             </div>
@@ -138,7 +138,7 @@
                 {% endfor %}
             {% else %}
                 <div style="text-align: center; padding: 2rem 0; color: var(--cad-text-muted);">
-                    <p>No fire stations found.</p>
+                    <p id="map-sidebar-empty">No fire stations found.</p>
                 </div>
             {% endif %}
         </div>
@@ -236,6 +236,45 @@
                 duration: 1.5
             });
         }
-    }
+    };
+
+    (function() {
+        const mapTranslations = {
+            en: {
+                title: "🚒 Fire Stations",
+                subtitle: "All fire stations in the Mandalay city area. Click any station to focus on map.",
+                count: "{n} Stations",
+                empty: "No fire stations found."
+            },
+            my: {
+                title: "🚒 မီးသတ်စခန်းများ",
+                subtitle: "မန္တလေးမြို့နယ်အတွင်းရှိ မီးသတ်စခန်းများအားလုံး။ မြေပုံပေါ်တွင် အနီးကပ်ကြည့်ရှုရန် စခန်းတစ်ခုခုကို နှိပ်ပါ။",
+                count: "စခန်း {n} ခု",
+                empty: "မီးသတ်စခန်း အချက်အလက်များ မတွေ့ရှိပါ။"
+            }
+        };
+
+        function updateMapSidebarUI(lang) {
+            const d = mapTranslations[lang];
+            if (!d) return;
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            set("map-sidebar-title", d.title);
+            set("map-sidebar-subtitle", d.subtitle);
+            set("map-sidebar-empty", d.empty);
+
+            const countEl = document.getElementById("map-sidebar-count");
+            if (countEl) {
+                const count = countEl.getAttribute("data-count") || "0";
+                countEl.innerText = d.count.replace("{n}", count);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateMapSidebarUI(localStorage.getItem("lang") || "my");
+        });
+        window.addEventListener("languageChanged", function(e) {
+            updateMapSidebarUI(e.detail.lang);
+        });
+    })();
 </script>
 {% endblock %}

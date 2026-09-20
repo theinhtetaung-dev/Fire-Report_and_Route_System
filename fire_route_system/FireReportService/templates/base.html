@@ -55,7 +55,7 @@
                     </svg>
                     <div class="cad-brand-text">
                         <span class="cad-brand-title">Fire<span>Route</span></span>
-                        <span class="cad-brand-subtitle">CAD Command Center</span>
+                        <span class="cad-brand-subtitle" id="cad-brand-subtitle">CAD Command Center</span>
                     </div>
                 </a>
 
@@ -85,7 +85,7 @@
                 <!-- COMMAND & DISPATCH -->
                 {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
                 <div class="cad-nav-section">
-                    <span class="cad-nav-section-title">Command & Dispatch</span>
+                    <span class="cad-nav-section-title" id="nav-sec-command">Command & Dispatch</span>
                     <a href="{% url 'dashboard' %}" class="cad-nav-item" id="nav-dashboard">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">📊</span>
@@ -121,7 +121,7 @@
 
                 <!-- LOGISTICS & FLEET -->
                 <div class="cad-nav-section">
-                    <span class="cad-nav-section-title">Logistics & Fleet</span>
+                    <span class="cad-nav-section-title" id="nav-sec-logistics">Logistics & Fleet</span>
                     <a href="{% url 'firestation_list' %}" class="cad-nav-item" id="nav-stations">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">🚒</span>
@@ -137,7 +137,7 @@
                 </div>
                 {% else %}
                 <div class="cad-nav-section">
-                    <span class="cad-nav-section-title">Public Services</span>
+                    <span class="cad-nav-section-title" id="nav-sec-public">Public Services</span>
                     <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">🗺️</span>
@@ -158,7 +158,7 @@
                 <!-- INTELLIGENCE & ADMIN -->
                 {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin %}
                 <div class="cad-nav-section">
-                    <span class="cad-nav-section-title">Intelligence & Admin</span>
+                    <span class="cad-nav-section-title" id="nav-sec-admin">Intelligence & Admin</span>
                     <a href="{% url 'report_portal' %}" class="cad-nav-item" id="nav-portal">
                         <div class="cad-nav-item-content">
                             <span class="cad-nav-icon">📑</span>
@@ -207,7 +207,7 @@
                         ☰
                     </button>
                     <div class="cad-breadcrumb">
-                        <span>Mandalay Region Command</span>
+                        <span id="cad-region-title">Mandalay Region Command</span>
                         <span>/</span>
                         <span class="cad-breadcrumb-active">{% block breadcrumb %}CAD Operational Console{% endblock %}</span>
                     </div>
@@ -225,13 +225,13 @@
                                 </span>
                             </div>
                         </a>
-                        <a href="{% url 'logout' %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none;" title="Sign Out">
+                        <a href="{% url 'logout' %}" class="btn btn-outline" id="cad-logout-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none;" title="Sign Out">
                             🚪 Logout
                         </a>
                     </div>
                     {% else %}
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none;">
+                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" id="cad-top-login-btn" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none;">
                             🔑 Officer Login
                         </a>
                     </div>
@@ -471,10 +471,10 @@
                     const currentLang = localStorage.getItem("lang") || "my";
                     if (theme === "dark") {
                         if (icon) icon.innerText = "🌙";
-                        if (text) text.innerText = currentLang === "my" ? "အမိုက်ကမ်း" : "Dark Mode";
+                        if (text) text.innerText = currentLang === "my" ? "အမှောင်မုဒ်" : "Dark Mode";
                     } else {
                         if (icon) icon.innerText = "☀️";
-                        if (text) text.innerText = currentLang === "my" ? "အလင်းရောင်" : "Light Mode";
+                        if (text) text.innerText = currentLang === "my" ? "အလင်းမုဒ်" : "Light Mode";
                     }
                 }
             }
@@ -500,6 +500,13 @@
         // Global Language Switcher Logic
         const globalTranslations = {
             en: {
+                brandSubtitle: "CAD Command Center",
+                liveText: "OPERATIONAL",
+                regionTitle: "Mandalay Region Command",
+                navSecCommand: "Command & Dispatch",
+                navSecLogistics: "Logistics & Fleet",
+                navSecPublic: "Public Services",
+                navSecAdmin: "Intelligence & Admin",
                 navEmergency: "Emergency Report",
                 navDashboard: "CAD Dashboard",
                 navTriage: "Triage Queue",
@@ -510,34 +517,58 @@
                 navUsers: "User Accounts",
                 navRoles: "Role Permissions",
                 navPortal: "Report Portal",
+                navLogin: "Officer Login",
+                logoutBtn: "🚪 Logout",
                 langBtnText: "မြန်မာ",
                 langBtnIcon: "🇲🇲",
                 themeLight: "Light Mode",
                 themeDark: "Dark Mode",
+                modalTitle: "Operation",
                 modalLoading: "Loading form..."
             },
             my: {
-                navEmergency: "အရေးပေါ် သတင်းပို့ရန်",
-                navDashboard: "CAD Dashboard",
-                navTriage: "Triage Queue",
-                navIncidents: "မီးလောင်မှုမှတ်တမ်းများ",
+                brandSubtitle: "အရေးပေါ်ကွပ်ကဲမှုဗဟိုဌာန",
+                liveText: "စနစ်အသင့်ရှိ",
+                regionTitle: "မန္တလေးတိုင်းဒေသကြီး ကွပ်ကဲမှုဗဟို",
+                navSecCommand: "ကွပ်ကဲရေးနှင့် တာဝန်စေလွှတ်ခြင်း",
+                navSecLogistics: "စခန်းများနှင့် ယာဉ်ယန္တရားများ",
+                navSecPublic: "ပြည်သူ့ဝန်ဆောင်မှုများ",
+                navSecAdmin: "အစီရင်ခံစာနှင့် စနစ်စီမံခန့်ခွဲမှု",
+                navEmergency: "အရေးပေါ် မီးသတင်းပို့ရန်",
+                navDashboard: "CAD ကွပ်ကဲမှုဗဟို",
+                navTriage: "သတင်းဦးစားပေး စိစစ်ရေး (Triage)",
+                navIncidents: "မီးလောင်မှုဖြစ်စဉ်များ",
                 navStations: "မီးသတ်စခန်းများ",
-                navMaps: "အပြန်အလှန်မြေပုံ",
-                navDispatch: "တာဝန်ပေးစေလွှတ်မှုများ",
-                navUsers: "အသုံးပြုသူများ",
-                navRoles: "အခန်းကဏ္ဍများ",
-                navPortal: "သတင်းထုတ်ပြန်ချက်",
+                navMaps: "ကွပ်ကဲမှုမြေပုံ",
+                navDispatch: "တပ်ဖွဲ့စေလွှတ်မှုများ",
+                navUsers: "အသုံးပြုသူ အကောင့်များ",
+                navRoles: "ရာထူးနှင့် လုပ်ပိုင်ခွင့်များ",
+                navPortal: "အစီရင်ခံစာ ထုတ်ယူရန်",
+                navLogin: "တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်",
+                logoutBtn: "🚪 အကောင့်ထွက်မည်",
                 langBtnText: "English",
                 langBtnIcon: "🇺🇸",
-                themeLight: "အလင်းရောင်",
-                themeDark: "အမိုက်ကမ်း",
-                modalLoading: "ပုံစံ ဖွင့်နေပါသည်..."
+                themeLight: "အလင်းမုဒ်",
+                themeDark: "အမှောင်မုဒ်",
+                modalTitle: "ဆောင်ရွက်ချက်",
+                modalLoading: "အချက်အလက် ဖွင့်နေပါသည်..."
             }
         };
 
         window.applyGlobalLanguage = function(lang) {
             const data = globalTranslations[lang];
             if (!data) return;
+
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+            set("cad-brand-subtitle", data.brandSubtitle);
+            set("cad-live-text", data.liveText);
+            set("cad-region-title", data.regionTitle);
+            set("nav-sec-command", data.navSecCommand);
+            set("nav-sec-logistics", data.navSecLogistics);
+            set("nav-sec-public", data.navSecPublic);
+            set("nav-sec-admin", data.navSecAdmin);
+            set("cad-logout-btn", data.logoutBtn);
 
             const navEmergency = document.querySelector(".nav-emergency-btn span:last-child");
             if (navEmergency) navEmergency.innerText = data.navEmergency;
@@ -568,6 +599,17 @@
 
             const navPortal = document.querySelector("#nav-portal .cad-nav-item-content span:last-child");
             if (navPortal) navPortal.innerText = data.navPortal;
+
+            const navLogin = document.querySelector("#nav-login .cad-nav-item-content span:last-child");
+            if (navLogin) navLogin.innerText = data.navLogin;
+
+            const topLogin = document.getElementById("cad-top-login-btn");
+            if (topLogin) topLogin.innerText = "🔑 " + data.navLogin;
+
+            const modalTitleEl = document.getElementById("modalTitle");
+            if (modalTitleEl && modalTitleEl.innerText === "Operation" || (modalTitleEl && modalTitleEl.innerText === "ဆောင်ရွက်ချက်")) {
+                modalTitleEl.innerText = data.modalTitle;
+            }
 
             const langBtnText = document.getElementById("globalLangToggleText");
             if (langBtnText) langBtnText.innerText = data.langBtnText;

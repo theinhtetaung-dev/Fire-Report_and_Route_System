@@ -79,16 +79,16 @@
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('admin', 'adminpass')">
-                    🛡️ <strong>Admin</strong>
+                    🛡️ <strong data-en="Admin" data-my="စနစ်အုပ်ချုပ်သူ (Admin)">Admin</strong>
                 </button>
                 <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('operator_hnin', 'operatorpass')">
-                    📞 <strong>Dispatcher</strong>
+                    📞 <strong data-en="Dispatcher" data-my="တာဝန်စေလွှတ်သူ (Dispatcher)">Dispatcher</strong>
                 </button>
                 <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('firefighter_zaw', 'firefighter123')">
-                    🚒 <strong>Firefighter</strong>
+                    🚒 <strong data-en="Firefighter" data-my="မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)">Firefighter</strong>
                 </button>
                 <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('citizen_kyaw', 'citizen123')">
-                    👤 <strong>Citizen</strong>
+                    👤 <strong data-en="Citizen" data-my="ပြည်သူ (Citizen)">Citizen</strong>
                 </button>
             </div>
         </div>
@@ -128,13 +128,13 @@ function togglePasswordVisibility() {
             publicReport: "🚨 Need to report a fire immediately? Click here."
         },
         my: {
-            title: "အရာရှိ အကောင့်ဝင်ရန်",
-            subtitle: "ခွင့်ပြုချက်ရရှိထားသော အရေးပေါ်ဌာနနှင့် ကွပ်ကဲရေးစနစ်သို့ ဝင်ရောက်ပါ။",
+            title: "တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်",
+            subtitle: "အရေးပေါ်မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်။",
             lblUser: "အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်",
-            lblPass: "စကားဝှက်",
-            submitBtn: "🔐 ကွန်ဆိုးလ်သို့ ဝင်ရောက်မည်",
-            demoTitle: "⚡ စမ်းသပ်အကောင့်များ",
-            publicReport: "🚨 မီးလောင်မှု ချက်ချင်းသတင်းပို့ရန် လိုအပ်ပါသလား? ဤနေရာကို နှိပ်ပါ။"
+            lblPass: "စကားဝှက် (Password)",
+            submitBtn: "🔐 စနစ်သို့ ဝင်ရောက်မည်",
+            demoTitle: "⚡ စမ်းသပ်အသုံးပြုနိုင်သော အကောင့်များ",
+            publicReport: "🚨 အရေးပေါ် မီးလောင်မှု သတင်းပို့လိုပါသလား? ဤနေရာကို နှိပ်ပါ။"
         }
     };
 
@@ -149,6 +149,10 @@ function togglePasswordVisibility() {
         set("btn-login-submit", d.submitBtn);
         set("demo-title", d.demoTitle);
         set("link-public-report", d.publicReport);
+
+        document.querySelectorAll("[data-en][data-my]").forEach(el => {
+            el.innerText = lang === "my" ? el.getAttribute("data-my") : el.getAttribute("data-en");
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function() {

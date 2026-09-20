@@ -11,7 +11,7 @@
                 <span>🚒</span>
                 <span id="dispatch-form-title">{% if form.instance.pk %}Edit Dispatch Operation{% else %}Log Dispatch Deployment{% endif %}</span>
             </div>
-            <span class="cad-badge cad-badge-pending">MISSION ASSIGNMENT</span>
+            <span class="cad-badge cad-badge-pending" id="dispatch-form-badge">MISSION ASSIGNMENT</span>
         </div>
 
         <div class="cad-panel-body">
@@ -56,14 +56,32 @@ document.addEventListener("DOMContentLoaded", function() {
         en: {
             titleCreate: "Log Dispatch Deployment",
             titleEdit: "Edit Dispatch Operation",
+            badge: "MISSION ASSIGNMENT",
             save: "Save & Deploy",
-            cancel: "Cancel"
+            cancel: "Cancel",
+            fields: {
+                report: "Target Incident",
+                station: "Responding Station",
+                dispatched_at: "Dispatched Time",
+                resolved_at: "Resolved Time",
+                resources_deployed: "Resources Deployed",
+                notes: "Operational Notes"
+            }
         },
         my: {
-            titleCreate: "စေလွှတ်မှု အသစ် မှတ်တမ်းတင်မည်",
-            titleEdit: "စေလွှတ်မှု တည်းဖြတ်မည်",
+            titleCreate: "မီးသတ်တပ်ဖွဲ့ စေလွှတ်မှု အသစ်ဖွင့်ရန်",
+            titleEdit: "စေလွှတ်မှု အချက်အလက် ပြင်ဆင်ရန်",
+            badge: "တာဝန်စေလွှတ်မှု အမိန့်",
             save: "သိမ်းဆည်းပြီး စေလွှတ်မည်",
-            cancel: "မလုပ်တော့ပါ"
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                report: "မီးလောင်မှုဖြစ်စဉ်",
+                station: "တာဝန်ကျ မီးသတ်စခန်း",
+                dispatched_at: "စေလွှတ်သည့် အချိန်",
+                resolved_at: "မီးငြှိမ်းသတ်ပြီးဆုံးသည့် အချိန်",
+                resources_deployed: "စေလွှတ်သည့် မီးသတ်ယာဉ်နှင့် လူအင်အား",
+                notes: "မှတ်ချက်"
+            }
         }
     };
 
@@ -72,8 +90,16 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("dispatch-form-title", isEdit ? d.titleEdit : d.titleCreate);
+        set("dispatch-form-badge", d.badge);
         set("dispatch-form-save", d.save);
         set("dispatch-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

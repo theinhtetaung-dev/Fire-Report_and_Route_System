@@ -8,7 +8,7 @@
         <h1 id="users-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
             👥 User Accounts
         </h1>
-        <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
+        <p id="users-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
             Manage authorized personnel, command roles, and credentials.
         </p>
     </div>
@@ -108,6 +108,7 @@
     const userTranslations = {
         en: {
             title: "👥 User Accounts",
+            subtitle: "Manage authorized personnel, command roles, and credentials.",
             createBtn: "➕ Create User",
             searchPlaceholder: "Search by username, email, phone...",
             searchBtn: "Search",
@@ -121,16 +122,17 @@
         },
         my: {
             title: "👥 အသုံးပြုသူ အကောင့်များ",
-            createBtn: "➕ အသုံးပြုသူ ဖန်တီးမည်",
-            searchPlaceholder: "အသုံးပြုသူနာမည်၊ အီးမေးလ်၊ ဖုန်းဖြင့် ရှာပါ...",
+            subtitle: "ခွင့်ပြုချက်ရရှိထားသော တာဝန်ထမ်းဆောင်သူများ၊ ရာထူးတာဝန်များနှင့် အကောင့်များကို စီမံခန့်ခွဲပါ။",
+            createBtn: "➕ အသုံးပြုသူ အသစ်ထည့်ရန်",
+            searchPlaceholder: "အသုံးပြုသူ အမည်၊ အီးမေးလ်၊ ဖုန်းနံပါတ်ဖြင့် ရှာဖွေပါ...",
             searchBtn: "ရှာဖွေမည်",
             clearBtn: "ရှင်းလင်းမည်",
-            thId: "No.", thName: "အသုံးပြုသူနာမည်", thEmail: "အီးမေးလ်",
-            thPhone: "ဖုန်းနံပါတ်", thRole: "အခန်းကဏ္ဍ", thStatus: "အခြေအနေ", thActions: "လုပ်ဆောင်ချက်",
-            noMatch: "ကိုက်ညီသော အသုံးပြုသူမတွေ့ပါ။",
-            clearSearch: "ရှာဖွေမှုစစ်ထုတ်ချက် ရှင်းလင်းမည်",
-            empty: "အသုံးပြုသူ မရှိသေးပါ။",
-            createFirst: "ပထမ အသုံးပြုသူ အကောင့် ဖန်တီးမည်"
+            thId: "စဉ်", thName: "အသုံးပြုသူ အမည်", thEmail: "အီးမေးလ်",
+            thPhone: "ဖုန်းနံပါတ်", thRole: "ရာထူးတာဝန် (Role)", thStatus: "လက်ရှိ အခြေအနေ", thActions: "လုပ်ဆောင်ချက်",
+            noMatch: "ရှာဖွေမှုနှင့် ကိုက်ညီသော အသုံးပြုသူ မတွေ့ပါ။",
+            clearSearch: "ရှာဖွေမှု စစ်ထုတ်ချက်များ ဖျက်မည်",
+            empty: "အသုံးပြုသူ အကောင့်များ မရှိသေးပါ။",
+            createFirst: "ပထမဆုံး အသုံးပြုသူ အကောင့် ဖွင့်ပါ"
         }
     };
 
@@ -140,6 +142,7 @@
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         const setAttr = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
         set("users-title", d.title);
+        set("users-subtitle", d.subtitle);
         set("users-create-btn", d.createBtn);
         setAttr("users-search-input", "placeholder", d.searchPlaceholder);
         set("users-search-btn", d.searchBtn);

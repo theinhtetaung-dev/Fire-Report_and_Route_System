@@ -51,8 +51,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
 (function() {
     const translations = {
-        en: { save: "Save Report", cancel: "Cancel" },
-        my: { save: "မှတ်တမ်း သိမ်းဆည်းမည်", cancel: "မလုပ်တော့ပါ" }
+        en: {
+            save: "Save Incident Report",
+            cancel: "Cancel",
+            fields: {
+                reporter_phone: "Reporter Phone",
+                latitude: "Latitude",
+                longitude: "Longitude",
+                address: "Address",
+                fire_scale: "Fire Severity Scale",
+                status: "Operational Status",
+                fire_image: "Incident Scene Photo"
+            }
+        },
+        my: {
+            save: "မှတ်တမ်း သိမ်းဆည်းမည်",
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                reporter_phone: "သတင်းပို့သူ ဖုန်းနံပါတ်",
+                latitude: "လတ္တီတွဒ် (Latitude)",
+                longitude: "လောင်ဂျီတွဒ် (Longitude)",
+                address: "ဖြစ်ပွားရာ လိပ်စာ",
+                fire_scale: "မီးပြင်းထန်မှု အဆင့်",
+                status: "လက်ရှိ အခြေအနေ",
+                fire_image: "မီးလောင်မှု ဓာတ်ပုံ"
+            }
+        }
     };
 
     function updateReportFormUI(lang) {
@@ -61,6 +85,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("report-form-save", d.save);
         set("report-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

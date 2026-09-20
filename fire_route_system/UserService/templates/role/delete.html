@@ -13,7 +13,7 @@
                 <h1 id="role-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
                     Delete User Role
                 </h1>
-                <span style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Irreversible Action</span>
+                <span id="role-del-badge" style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Irreversible Action</span>
             </div>
         </div>
 
@@ -43,16 +43,18 @@
     const translations = {
         en: {
             title: "Delete User Role",
+            badge: "Irreversible Action",
             warning: "⚠️ Warning: This action cannot be undone!",
-            desc: 'Are you sure you want to delete the user role "{{ role.role_name }}" (ID: #{{ role.id }})?',
+            desc: 'Are you sure you want to delete the user role <strong>"{{ role.role_name }}"</strong> (ID: #{{ role.id }})?',
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
-            title: "အသုံးပြုသူ အခန်းကဏ္ဍ ဖျက်မည်",
-            warning: "⚠️ သတိပေးချက်: ဤလုပ်ဆောင်ချက်ကို မပြန်နိုင်ပါ!",
-            desc: '"{{ role.role_name }}" (ID: #{{ role.id }}) အခန်းကဏ္ဍကို ဖျက်မှာ သေချာပါသလား?',
-            confirm: "အပြီးအပိုင် ဖျက်မည်",
+            title: "ရာထူးတာဝန် ဖျက်ပယ်ရန်",
+            badge: "⚠️ အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
+            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            desc: '<strong>"{{ role.role_name }}"</strong> (အမှတ်: #{{ role.id }}) ရာထူးတာဝန်ကို စနစ်ထဲမှ အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?',
+            confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
         }
     };
@@ -61,9 +63,11 @@
         const d = translations[lang];
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         set("role-del-title", d.title);
+        set("role-del-badge", d.badge);
         set("role-del-warning", d.warning);
-        set("role-del-desc", d.desc);
+        setHtml("role-del-desc", d.desc);
         set("role-del-confirm", d.confirm);
         set("role-del-cancel", d.cancel);
     }

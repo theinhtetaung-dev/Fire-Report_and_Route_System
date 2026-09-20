@@ -9,11 +9,11 @@
             <h1 id="station-create-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
                 🚒 Register Fire Station
             </h1>
-            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
+            <p id="station-create-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Add a new active or reserve fire station to the dispatch grid.
             </p>
         </div>
-        <a href="{% url 'firestation_list' %}" class="btn btn-outline" style="font-size: 0.85rem;">
+        <a href="{% url 'firestation_list' %}" class="btn btn-outline" id="station-create-back" style="font-size: 0.85rem;">
             ← Back to List
         </a>
     </div>
@@ -70,18 +70,22 @@
 (function() {
     const translations = {
         en: {
-            title: "Register Fire Station",
+            title: "🚒 Register Fire Station",
+            subtitle: "Add a new active or reserve fire station to the dispatch grid.",
+            back: "← Back to List",
             lblName: "Station Name", lblAddress: "Address", lblContact: "Contact Number",
             lblLat: "Latitude", lblLng: "Longitude", lblStatus: "Status",
             optActive: "Active", optInactive: "Inactive", optMaintenance: "Maintenance",
             save: "Register Station", cancel: "Cancel"
         },
         my: {
-            title: "မီးသတ်စခန်း မှတ်ပုံတင်မည်",
-            lblName: "စခန်းအမည်", lblAddress: "လိပ်စာ", lblContact: "ဆက်သွယ်ရေးနံပါတ်",
-            lblLat: "အလျားဒီဂရီ (Latitude)", lblLng: "အနံဒီဂရီ (Longitude)", lblStatus: "အခြေအနေ",
-            optActive: "တက်ကြွ", optInactive: "ရပ်ဆိုင်းထား", optMaintenance: "ပြုပြင်ထိန်းသိမ်းမှု",
-            save: "စခန်း မှတ်ပုံတင်မည်", cancel: "မလုပ်တော့ပါ"
+            title: "🚒 မီးသတ်စခန်း အသစ်ထည့်သွင်းရန်",
+            subtitle: "အရေးပေါ် စေလွှတ်မှုကွန်ရက်ထဲသို့ မီးသတ်စခန်း အသစ်တစ်ခု ထည့်သွင်းသတ်မှတ်ပါ။",
+            back: "← စခန်းများစာရင်းသို့",
+            lblName: "မီးသတ်စခန်း အမည်", lblAddress: "တည်နေရာ လိပ်စာအပြည့်အစုံ", lblContact: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",
+            lblLat: "လတ္တီတွဒ် (Latitude)", lblLng: "လောင်ဂျီတွဒ် (Longitude)", lblStatus: "တာဝန်ထမ်းဆောင်မှု အခြေအနေ",
+            optActive: "တာဝန်ထမ်းဆောင်ဆဲ / အသင့်ရှိ (Active)", optInactive: "ယာယီပိတ်ထား (Inactive)", optMaintenance: "ပြုပြင်ထိန်းသိမ်းဆဲ (Maintenance)",
+            save: "မီးသတ်စခန်း သိမ်းဆည်းမည်", cancel: "မလုပ်တော့ပါ"
         }
     };
 
@@ -90,6 +94,8 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("station-create-title", d.title);
+        set("station-create-subtitle", d.subtitle);
+        set("station-create-back", d.back);
         set("lbl-station-name", d.lblName);
         set("lbl-station-address", d.lblAddress);
         set("lbl-station-contact", d.lblContact);

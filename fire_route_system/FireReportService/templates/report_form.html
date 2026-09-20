@@ -19,13 +19,13 @@
             <div class="cad-empty-state" style="padding: 2.5rem 1rem;">
                 <div style="font-size: 3.5rem; margin-bottom: 1rem;">🚒</div>
                 <h2 id="success-title" style="font-size: 1.5rem; font-weight: 800; color: var(--cad-green-active); margin-bottom: 0.5rem;">
-                    သတင်းပို့ခြင်း အောင်မြင်ပါသည်
+                    မီးသတင်းပေးပို့ခြင်း အောင်မြင်ပါသည်
                 </h2>
                 <p id="success-desc" style="font-size: 1rem; color: var(--cad-text-muted); margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto;">
-                    မီးသတ်ကားများနှင့် ကယ်ဆယ်ရေးအဖွဲ့များ ချက်ချင်း စေလွှတ်ပါမည်။
+                    မီးသတ်ယာဉ်များနှင့် အရေးပေါ်ကယ်ဆယ်ရေးတပ်ဖွဲ့များ ချက်ချင်း ထွက်ခွာပါမည်။
                 </p>
                 <a href="{% url 'report_fire' %}" id="success-btn" class="cad-btn cad-btn-emergency" style="font-size: 1rem; padding: 0.75rem 1.75rem;">
-                    သတင်းအသစ် ထပ်ပို့ရန်
+                    သတင်းအသစ် ထပ်မံပေးပို့ရန်
                 </a>
             </div>
             {% else %}
@@ -33,10 +33,10 @@
             <div style="margin-bottom: 1.5rem; padding-right: 5.5rem;">
                 <h2 id="title-text" style="font-size: 1.45rem; font-weight: 800; color: var(--cad-red-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.35rem 0;">
                     <span>🔥</span>
-                    <span>အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်</span>
+                    <span id="title-text-span">အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်</span>
                 </h2>
-                <p style="font-size: 0.85rem; color: var(--cad-text-muted); margin: 0;">
-                    Emergency Fire Incident Rapid Reporting Console | One-Click Response
+                <p id="subtitle-text" style="font-size: 0.85rem; color: var(--cad-text-muted); margin: 0;">
+                    အရေးပေါ် မီးသတင်း အမြန်ပေးပို့ခြင်း | တစ်ချက်နှိပ်ရုံဖြင့် မီးသတ်တပ်ဖွဲ့ ထွက်ခွာပါမည်
                 </p>
             </div>
 
@@ -52,7 +52,7 @@
                 <!-- Reporter Phone Input -->
                 <div class="cad-form-group">
                     <label id="phone-label" for="phone-input" class="cad-label">သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):</label>
-                    <input type="tel" name="reporter_phone" id="phone-input" value="{{ reporter_phone|default:'' }}" placeholder="e.g. 09xxxxxxxxx" class="cad-input">
+                    <input type="tel" name="reporter_phone" id="phone-input" value="{{ reporter_phone|default:'' }}" placeholder="ဥပမာ- ၀၉xxxxxxxxx" class="cad-input">
                 </div>
 
                 <!-- Location Mode Selector -->
@@ -80,13 +80,13 @@
 
                 <!-- Address Input Block -->
                 <div id="address-block" style="display: none;" class="cad-form-group">
-                    <label id="address-label" for="address-input" class="cad-label">မီးလောင်မှု တည်နေရာ လိပ်စာ:</label>
-                    <textarea name="address" id="address-input" rows="3" class="cad-textarea" placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ...">{{ address|default:'' }}</textarea>
+                    <label id="address-label" for="address-input" class="cad-label">မီးလောင်မှု ဖြစ်ပွားရာ လိပ်စာ:</label>
+                    <textarea name="address" id="address-input" rows="3" class="cad-textarea" placeholder="လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ (ဥပမာ- ၇၃ လမ်း၊ ၂၆ လမ်းထောင့်)...">{{ address|default:'' }}</textarea>
                 </div>
 
                 <!-- Optional Photo Upload -->
                 <div class="cad-form-group">
-                    <label id="photo-label" class="cad-label">မီးလောင်မှု အခြေအနေ ဓာတ်ပုံတင်ရန် (ရွေးချယ်နိုင်သည်):</label>
+                    <label id="photo-label" class="cad-label">မီးလောင်မှု အခြေအနေ ဓာတ်ပုံ (ရွေးချယ်နိုင်သည်):</label>
                     <input type="file" name="fire_image" accept="image/*" class="cad-input" style="padding: 0.4rem;">
                 </div>
 
@@ -105,18 +105,161 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof window.updateUI === "function") window.updateUI();
-        if (typeof window.fetchGPS === "function") window.fetchGPS();
+    const reportFormTranslations = {
+        en: {
+            title: "Emergency Fire Report",
+            subtitle: "Emergency Fire Incident Rapid Reporting Console | One-Click Response",
+            phoneLabel: "Reporter's Phone Number (Optional):",
+            phonePlaceholder: "e.g. 09xxxxxxxxx",
+            locChoiceLabel: "Select Location Method:",
+            tabGps: "📡 GPS Location",
+            tabAddr: "✍️ Manual Address",
+            gpsFetchBtn: "📡 Acquire Current Location",
+            gpsWaiting: "Waiting for GPS location access...",
+            gpsFetching: "Acquiring GPS coordinates...",
+            gpsReady: "GPS location acquired successfully",
+            gpsDenied: "Location access denied. Please enter address below.",
+            addrLabel: "Incident Location Address:",
+            addrPlaceholder: "Street, ward, township, or nearby landmarks (e.g. 73rd x 26th street)...",
+            photoLabel: "Upload Fire Condition Photo (Optional):",
+            submitBtn: "🚨 Report Fire Immediately",
+            successTitle: "Report Submitted Successfully",
+            successDesc: "Fire rescue teams and engines will be dispatched immediately.",
+            successBtn: "Send Another Report",
+            langBtnText: "မြန်မာ"
+        },
+        my: {
+            title: "အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်",
+            subtitle: "အရေးပေါ် မီးသတင်း အမြန်ပေးပို့ခြင်း | တစ်ချက်နှိပ်ရုံဖြင့် မီးသတ်တပ်ဖွဲ့ ထွက်ခွာပါမည်",
+            phoneLabel: "သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):",
+            phonePlaceholder: "ဥပမာ- ၀၉xxxxxxxxx",
+            locChoiceLabel: "သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:",
+            tabGps: "📡 GPS တည်နေရာ",
+            tabAddr: "✍️ လိပ်စာ အသေးစိတ်",
+            gpsFetchBtn: "📡 လက်ရှိတည်နေရာကို ရယူမည်",
+            gpsWaiting: "တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...",
+            gpsFetching: "တည်နေရာကို ရှာဖွေရယူနေပါသည်...",
+            gpsReady: "တည်နေရာကို အောင်မြင်စွာ ရရှိပါပြီ",
+            gpsDenied: "တည်နေရာ သိခွင့်မရရှိပါ။ အောက်တွင် လိပ်စာ ရေးသားပေးပို့နိုင်ပါသည်",
+            addrLabel: "မီးလောင်မှု ဖြစ်ပွားရာ လိပ်စာ:",
+            addrPlaceholder: "လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ (ဥပမာ- ၇၃ လမ်း၊ ၂၆ လမ်းထောင့်)...",
+            photoLabel: "မီးလောင်မှု အခြေအနေ ဓာတ်ပုံ (ရွေးချယ်နိုင်သည်):",
+            submitBtn: "🚨 အခုချက်ချင်း သတင်းပို့မည်",
+            successTitle: "မီးသတင်းပေးပို့ခြင်း အောင်မြင်ပါသည်",
+            successDesc: "မီးသတ်ယာဉ်များနှင့် အရေးပေါ်ကယ်ဆယ်ရေးတပ်ဖွဲ့များ ချက်ချင်း ထွက်ခွာပါမည်။",
+            successBtn: "သတင်းအသစ် ထပ်မံပေးပို့ရန်",
+            langBtnText: "English"
+        }
+    };
 
-        const currentLang = localStorage.getItem("lang") || "my";
+    window.switchLocationMode = function(mode) {
+        const gpsBlock = document.getElementById("gps-block");
+        const addrBlock = document.getElementById("address-block");
+        const btnGps = document.getElementById("btn-tab-gps");
+        const btnAddr = document.getElementById("btn-tab-addr");
+        const modeInput = document.getElementById("location_mode");
+
+        if (mode === 'gps') {
+            if (gpsBlock) gpsBlock.style.display = "block";
+            if (addrBlock) addrBlock.style.display = "none";
+            if (btnGps) { btnGps.classList.remove("cad-btn-outline"); btnGps.classList.add("cad-btn-navy"); }
+            if (btnAddr) { btnAddr.classList.remove("cad-btn-navy"); btnAddr.classList.add("cad-btn-outline"); }
+            if (modeInput) modeInput.value = "gps";
+        } else {
+            if (gpsBlock) gpsBlock.style.display = "none";
+            if (addrBlock) addrBlock.style.display = "block";
+            if (btnAddr) { btnAddr.classList.remove("cad-btn-outline"); btnAddr.classList.add("cad-btn-navy"); }
+            if (btnGps) { btnGps.classList.remove("cad-btn-navy"); btnGps.classList.add("cad-btn-outline"); }
+            if (modeInput) modeInput.value = "address";
+        }
+    };
+
+    window.fetchGPS = function() {
+        const lang = localStorage.getItem("lang") || "my";
+        const d = reportFormTranslations[lang] || reportFormTranslations.my;
+        const gpsText = document.getElementById("gps-text");
+        const gpsStatus = document.getElementById("gps-status");
+
+        if (!navigator.geolocation) {
+            if (gpsText) gpsText.innerText = d.gpsDenied;
+            return;
+        }
+
+        if (gpsText) gpsText.innerText = d.gpsFetching;
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const latInput = document.getElementById("lat");
+                const lngInput = document.getElementById("lng");
+                if (latInput) latInput.value = lat;
+                if (lngInput) lngInput.value = lng;
+
+                if (gpsStatus) {
+                    gpsStatus.classList.remove("cad-badge-pending");
+                    gpsStatus.classList.add("cad-badge-active");
+                }
+                if (gpsText) {
+                    gpsText.innerText = d.gpsReady + ` (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                }
+            },
+            function(error) {
+                if (gpsText) gpsText.innerText = d.gpsDenied;
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    };
+
+    window.updateReportFormUI = function(lang) {
+        const d = reportFormTranslations[lang] || reportFormTranslations.my;
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setPlaceholder = (id, val) => { const el = document.getElementById(id); if (el) el.placeholder = val; };
+
+        set("title-text-span", d.title);
+        set("subtitle-text", d.subtitle);
+        set("phone-label", d.phoneLabel);
+        setPlaceholder("phone-input", d.phonePlaceholder);
+        set("location-choice-label", d.locChoiceLabel);
+        set("btn-tab-gps", d.tabGps);
+        set("btn-tab-addr", d.tabAddr);
+        set("btn-gps-fetch", d.gpsFetchBtn);
+        set("address-label", d.addrLabel);
+        setPlaceholder("address-input", d.addrPlaceholder);
+        set("photo-label", d.photoLabel);
+        set("submitBtn", d.submitBtn);
+        set("success-title", d.successTitle);
+        set("success-desc", d.successDesc);
+        set("success-btn", d.successBtn);
+
+        const gpsStatus = document.getElementById("gps-status");
+        const latInput = document.getElementById("lat");
+        const gpsText = document.getElementById("gps-text");
+        if (gpsText) {
+            if (latInput && latInput.value) {
+                gpsText.innerText = d.gpsReady + ` (${parseFloat(latInput.value).toFixed(4)}, ${parseFloat(document.getElementById("lng").value).toFixed(4)})`;
+            } else {
+                gpsText.innerText = d.gpsWaiting;
+            }
+        }
+
         const langBtn = document.getElementById("langToggle");
-        if (langBtn) langBtn.innerText = currentLang === "my" ? "English" : "မြန်မာ";
+        if (langBtn) langBtn.innerText = d.langBtnText;
+    };
+
+    window.updateUI = function() {
+        const currentLang = localStorage.getItem("lang") || "my";
+        window.updateReportFormUI(currentLang);
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentLang = localStorage.getItem("lang") || "my";
+        window.updateReportFormUI(currentLang);
+        window.fetchGPS();
     });
 
     window.addEventListener("languageChanged", function(e) {
-        const langBtn = document.getElementById("langToggle");
-        if (langBtn) langBtn.innerText = e.detail.lang === "my" ? "English" : "မြန်မာ";
+        window.updateReportFormUI(e.detail.lang);
     });
 </script>
 {% endblock %}
