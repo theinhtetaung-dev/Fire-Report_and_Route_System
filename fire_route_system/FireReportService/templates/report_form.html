@@ -50,11 +50,53 @@
             <form method="POST" action="" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- Reporter Phone Input -->
-                <div class="cad-form-group">
-                    <label id="phone-label" for="phone-input" class="cad-label">သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):</label>
-                    <input type="tel" name="reporter_phone" id="phone-input" value="{{ reporter_phone|default:'' }}" placeholder="ဥပမာ- ၀၉xxxxxxxxx" class="cad-input">
+                {% if phone_missing %}
+                <!-- Phone Missing Guidance Alert -->
+                <div class="cad-panel" style="padding: 1.1rem 1.25rem; border-left: 4px solid var(--cad-gold-primary); background-color: var(--cad-table-header-bg); border-radius: var(--radius-sm); margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+                        <svg class="cad-icon cad-icon-gold" style="width: 1.6rem; height: 1.6rem; flex-shrink: 0; margin-top: 0.15rem;"><use href="#cad-icon-alert"/></svg>
+                        <div style="flex: 1;">
+                            <div id="missing-phone-title" style="font-weight: 800; color: var(--cad-gold-primary); font-size: 0.95rem; margin-bottom: 0.35rem;">
+                                ဖုန်းနံပါတ် ဖြည့်စွက်ရန် လိုအပ်ပါသည်
+                            </div>
+                            <div id="missing-phone-text" style="font-size: 0.875rem; color: var(--cad-text-main); line-height: 1.5; margin-bottom: 0.75rem;">
+                                မီးသတင်းပေးပို့ရန် သင့်အကောင့်တွင် ဖုန်းနံပါတ် ဖြည့်သွင်းထားရန် လိုအပ်ပါသည်။ ကျေးဇူးပြု၍ မိမိအကောင့် Profile တွင် ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပေးပါ။
+                            </div>
+                            <a href="{% url 'profile' %}" id="missing-phone-btn" class="cad-btn cad-btn-gold cad-btn-sm" style="display: inline-flex; text-decoration: none; align-items: center; gap: 0.4rem; font-weight: 700;">
+                                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-user"/></svg>
+                                <span id="missing-phone-btn-text">Profile တွင် ဖုန်းနံပါတ် ဖြည့်စွက်ရန်</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+                {% else %}
+                <!-- Authenticated Account & Auto-linked Phone Info Card -->
+                <div style="background-color: var(--cad-table-header-bg); border: 1px solid var(--cad-border); border-radius: var(--radius-sm); padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 2.25rem; height: 2.25rem; border-radius: 50%; background-color: var(--cad-navy-light); display: flex; align-items: center; justify-content: center;">
+                            <svg class="cad-icon cad-icon-blue"><use href="#cad-icon-shield"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--cad-text-muted); display: flex; align-items: center; gap: 0.35rem;">
+                                <span id="account-verified-label">အကောင့် အတည်ပြုပြီး</span>
+                                <span class="cad-badge cad-badge-active" style="padding: 0.1rem 0.4rem; font-size: 0.65rem;">Verified</span>
+                            </div>
+                            <div style="font-size: 0.95rem; font-weight: 700; color: var(--cad-text-main);">
+                                {{ request.user.username }}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div id="phone-auto-label" style="font-size: 0.75rem; color: var(--cad-text-muted);">
+                            အကောင့်မှတ်ပုံတင် ဖုန်းနံပါတ် (အလိုအလျောက် သုံးမည်)
+                        </div>
+                        <div style="font-size: 1rem; font-weight: 800; color: var(--cad-green-active); letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.35rem; justify-content: flex-end;">
+                            <svg class="cad-icon cad-icon-sm cad-icon-green"><use href="#cad-icon-phone"/></svg>
+                            <span>{{ user_phone }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Location Mode Selector -->
                 <div class="cad-form-group" style="margin-top: 1.25rem;">
@@ -100,9 +142,9 @@
                 <input type="hidden" id="location_mode" name="location_mode" value="gps">
 
                 <!-- Submit Button -->
-                <button type="submit" id="submitBtn" class="cad-btn cad-btn-emergency" style="width: 100%; padding: 0.9rem; font-size: 1.15rem; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; letter-spacing: 0.5px;">
+                <button type="submit" id="submitBtn" class="cad-btn cad-btn-emergency" {% if phone_missing %}disabled style="opacity: 0.55; cursor: not-allowed; width: 100%; padding: 0.9rem; font-size: 1.15rem; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; letter-spacing: 0.5px;" title="ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပါ"{% else %}style="width: 100%; padding: 0.9rem; font-size: 1.15rem; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; letter-spacing: 0.5px;"{% endif %}>
                     <svg class="cad-icon cad-icon-lg"><use href="#cad-icon-siren"/></svg>
-                    <span id="submit-btn-text">အခုချက်ချင်း သတင်းပို့မည်</span>
+                    <span id="submit-btn-text">{% if phone_missing %}ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပါ{% else %}အခုချက်ချင်း သတင်းပို့မည်{% endif %}</span>
                 </button>
             </form>
             {% endif %}
@@ -115,8 +157,11 @@
         en: {
             title: "Emergency Fire Report",
             subtitle: "Emergency Fire Incident Rapid Reporting Console | One-Click Response",
-            phoneLabel: "Reporter's Phone Number (Optional):",
-            phonePlaceholder: "e.g. 09xxxxxxxxx",
+            accountVerified: "Authenticated Account",
+            phoneAutoLabel: "Account Phone Number (Auto-assigned)",
+            missingPhoneTitle: "Phone Number Required",
+            missingPhoneText: "To submit an emergency fire report, your account must have a registered phone number. Please update your profile with a valid phone number before submitting.",
+            missingPhoneBtn: "Update Phone in Profile",
             locChoiceLabel: "Select Location Method:",
             tabGps: "GPS Location",
             tabAddr: "Manual Address",
@@ -129,6 +174,7 @@
             addrPlaceholder: "Street, ward, township, or nearby landmarks (e.g. 73rd x 26th street)...",
             photoLabel: "Upload Fire Condition Photo (Optional):",
             submitBtn: "Report Fire Immediately",
+            submitBtnDisabled: "Phone Number Required to Report",
             successTitle: "Report Submitted Successfully",
             successDesc: "Fire rescue teams and engines will be dispatched immediately.",
             successBtn: "Send Another Report",
@@ -137,8 +183,11 @@
         my: {
             title: "အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်",
             subtitle: "အရေးပေါ် မီးသတင်း အမြန်ပေးပို့ခြင်း | တစ်ချက်နှိပ်ရုံဖြင့် မီးသတ်တပ်ဖွဲ့ ထွက်ခွာပါမည်",
-            phoneLabel: "သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):",
-            phonePlaceholder: "ဥပမာ- ၀၉xxxxxxxxx",
+            accountVerified: "အကောင့် အတည်ပြုပြီး",
+            phoneAutoLabel: "အကောင့်မှတ်ပုံတင် ဖုန်းနံပါတ် (အလိုအလျောက် သုံးမည်)",
+            missingPhoneTitle: "ဖုန်းနံပါတ် ဖြည့်စွက်ရန် လိုအပ်ပါသည်",
+            missingPhoneText: "မီးသတင်းပေးပို့ရန် သင့်အကောင့်တွင် ဖုန်းနံပါတ် ဖြည့်သွင်းထားရန် လိုအပ်ပါသည်။ ကျေးဇူးပြု၍ မိမိအကောင့် Profile တွင် ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပေးပါ။",
+            missingPhoneBtn: "Profile တွင် ဖုန်းနံပါတ် ဖြည့်စွက်ရန်",
             locChoiceLabel: "သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:",
             tabGps: "GPS တည်နေရာ",
             tabAddr: "လိပ်စာ အသေးစိတ်",
@@ -151,6 +200,7 @@
             addrPlaceholder: "လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ (ဥပမာ- ၇၃ လမ်း၊ ၂၆ လမ်းထောင့်)...",
             photoLabel: "မီးလောင်မှု အခြေအနေ ဓာတ်ပုံ (ရွေးချယ်နိုင်သည်):",
             submitBtn: "အခုချက်ချင်း သတင်းပို့မည်",
+            submitBtnDisabled: "ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပါ",
             successTitle: "မီးသတင်းပေးပို့ခြင်း အောင်မြင်ပါသည်",
             successDesc: "မီးသတ်ယာဉ်များနှင့် အရေးပေါ်ကယ်ဆယ်ရေးတပ်ဖွဲ့များ ချက်ချင်း ထွက်ခွာပါမည်။",
             successBtn: "သတင်းအသစ် ထပ်မံပေးပို့ရန်",
@@ -224,8 +274,11 @@
 
         set("title-text-span", d.title);
         set("subtitle-text", d.subtitle);
-        set("phone-label", d.phoneLabel);
-        setPlaceholder("phone-input", d.phonePlaceholder);
+        set("account-verified-label", d.accountVerified);
+        set("phone-auto-label", d.phoneAutoLabel);
+        set("missing-phone-title", d.missingPhoneTitle);
+        set("missing-phone-text", d.missingPhoneText);
+        set("missing-phone-btn-text", d.missingPhoneBtn);
         set("location-choice-label", d.locChoiceLabel);
         set("tab-gps-text", d.tabGps);
         set("tab-addr-text", d.tabAddr);
@@ -233,7 +286,13 @@
         set("address-label", d.addrLabel);
         setPlaceholder("address-input", d.addrPlaceholder);
         set("photo-label", d.photoLabel);
-        set("submit-btn-text", d.submitBtn);
+
+        const submitBtnEl = document.getElementById("submitBtn");
+        if (submitBtnEl && submitBtnEl.disabled) {
+            set("submit-btn-text", d.submitBtnDisabled);
+        } else {
+            set("submit-btn-text", d.submitBtn);
+        }
         set("success-title", d.successTitle);
         set("success-desc", d.successDesc);
         set("success-btn", d.successBtn);

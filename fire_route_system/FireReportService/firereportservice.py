@@ -1,55 +1,78 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from DataAccess.decorators import responder_required, dispatcher_required, admin_required
 from .models import FireReport
 from .forms import FireReportForm
 
+@login_required(login_url='login')
 def report_fire(request):
     """
-    Public emergency reporting intake workflow.
-    Open to all citizens without requiring login.
-    If authenticated, automatically associates report with the user account.
+    Emergency Fire Report intake workflow.
+    Requires an authenticated user session. Unauthenticated users are redirected to login.
+    The reporter's phone number is retrieved server-side from the authenticated user's profile.
+    Client-side phone number submissions are neither requested nor trusted.
+    If the user's phone number is missing, an informative Burmese message directs them
+    to complete their profile before submitting.
     """
+    if not getattr(request, 'user', None) or not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
+
+    user = request.user
+    user_phone = (getattr(user, 'phone_number', None) or '').strip()
+    phone_missing = not bool(user_phone)
+
     if request.method == "POST":
+        # Server-side validation: ensure verified phone number exists on user account
+        if phone_missing:
+            return render(request, 'report_form.html', {
+                'error': 'မီးသတင်းပေးပို့ရန် သင့်အကောင့်တွင် ဆက်သွယ်ရန် ဖုန်းနံပါတ် ဖြည့်သွင်းထားရန် လိုအပ်ပါသည်။ ကျေးဇူးပြု၍ မိမိအကောင့် Profile တွင် ဖုန်းနံပါတ် အရင်ဖြည့်စွက်ပေးပါ။',
+                'phone_missing': True,
+                'user_phone': None,
+                'latitude': request.POST.get('latitude'),
+                'longitude': request.POST.get('longitude'),
+                'address': request.POST.get('address', '').strip(),
+            })
+
         lat = request.POST.get('latitude')
         lng = request.POST.get('longitude')
-        phone = request.POST.get('reporter_phone')
         addr = request.POST.get('address', '').strip()
 
         # Parse coordinates
         lat_val = float(lat) if (lat and lat.strip()) else None
         lng_val = float(lng) if (lng and lng.strip()) else None
-        phone_val = phone.strip() if phone else None
-
-        # Auto-fill from authenticated user if not manually provided
-        user_id = None
-        if getattr(request, 'user', None) and request.user.is_authenticated:
-            user_id = request.user.id
-            if not phone_val and getattr(request.user, 'phone_number', None):
-                phone_val = request.user.phone_number
 
         # Validation: Either GPS (lat & lng) OR address must be provided
         if not addr and (lat_val is None or lng_val is None):
             return render(request, 'report_form.html', {
-                'error': 'Either GPS location coordinates or a manual address description must be provided.',
+                'error': 'တည်နေရာ GPS ကိုဩဒိနိတ် သို့မဟုတ် လိပ်စာ အသေးစိတ် ဖော်ပြချက် တစ်ခုခုကို မဖြစ်မနေ ဖြည့်သွင်းပေးရန် လိုအပ်ပါသည်။',
+                'phone_missing': False,
+                'user_phone': user_phone,
                 'latitude': lat,
                 'longitude': lng,
-                'reporter_phone': phone,
-                'address': addr
+                'address': addr,
             })
 
         FireReport.objects.create(
-            user_id=user_id,
+            user_id=user.id,
             latitude=lat_val,
             longitude=lng_val,
             address=addr if addr else None,
             fire_scale=0,
-            reporter_phone=phone_val,
+            reporter_phone=user_phone,
             status='Pending'
         )
-        return render(request, 'report_form.html', {'success': True})
+        return render(request, 'report_form.html', {
+            'success': True,
+            'user_phone': user_phone,
+            'phone_missing': False,
+        })
 
-    return render(request, 'report_form.html')
+    return render(request, 'report_form.html', {
+        'user_phone': user_phone,
+        'phone_missing': phone_missing,
+    })
 
 
 @responder_required
