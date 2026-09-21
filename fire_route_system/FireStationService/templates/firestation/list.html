@@ -7,7 +7,8 @@
     .stations-page-container {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        flex: 1;
+        min-height: 0;
         width: 100%;
         box-sizing: border-box;
         overflow: hidden;
@@ -76,6 +77,7 @@
     /* Views Layout */
     .stations-view-container {
         flex: 1;
+        min-height: 0;
         position: relative;
         overflow: hidden;
     }
@@ -500,12 +502,17 @@
                 console.error("Failed to load map stations:", err);
             });
 
+
         mapInitialized = true;
 
         // Ensure Leaflet recalculates dimensions after display toggle
-        setTimeout(function() {
+        // Use requestAnimationFrame to wait for browser layout, then invalidateSize
+        requestAnimationFrame(function() {
             stationMap.invalidateSize();
-        }, 200);
+            setTimeout(function() {
+                stationMap.invalidateSize();
+            }, 300);
+        });
     }
 
     function openDetailsPanel(station) {
@@ -578,9 +585,12 @@
                 if (targetView === "map") {
                     initMap();
                     if (stationMap) {
-                        setTimeout(() => {
+                        requestAnimationFrame(() => {
                             stationMap.invalidateSize();
-                        }, 100);
+                            setTimeout(() => {
+                                stationMap.invalidateSize();
+                            }, 300);
+                        });
                     }
                 } else {
                     // Close sliding details panel when moving away from Map View
