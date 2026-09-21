@@ -1,13 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Fire Route System{% endblock %}</title>
+    <title>{% block title %}Fire Department CAD System{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'dashboard/img/logo.svg' %}">
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
         (function() {
@@ -22,764 +25,277 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --bg-white: #FFFFFF;
-            --color-black: #000000;
-            --btn-orange: #E25225;
-            --btn-red: #c30010;
-            --gray-light: #f5f5f5;
-            --gray-medium: #e0e0e0;
-            --gray-dark: #333333;
-            --transition-speed: 0.25s;
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --tr-hover-bg: #fafafa;
-        }
-
-        [data-theme="dark"] {
-            --bg-white: #121212;
-            --color-black: #ffffff;
-            --gray-light: #1e1e1e;
-            --gray-medium: #333333;
-            --gray-dark: #a0a0a0;
-            --tr-hover-bg: #1c1c1c;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background-color: var(--bg-white);
-            color: var(--color-black);
-            line-height: 1.5;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: row;
-            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-        }
-
-        /* Sidebar Navigation styling for Desktop */
-        .sidebar {
-            width: 260px;
-            background-color: #0c0c0c;
-            color: #ffffff;
-            border-right: 3px solid var(--btn-orange);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 1.5rem;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            height: 100vh;
-        }
-
-        /* Main content offset for fixed sidebar */
-        .main-wrapper {
-            flex: 1;
-            margin-left: 260px;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            background-color: var(--bg-white);
-            transition: background-color var(--transition-speed) ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content-area {
-            flex: 1;
-            padding: 2.5rem;
-            overflow-y: auto;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            background-color: var(--bg-white);
-            transition: background-color var(--transition-speed) ease;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .card {
-            background-color: var(--bg-white);
-            border: 1px solid var(--gray-medium);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            padding: 1.5rem;
-            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-        }
-
-        .logo {
-            margin-bottom: 2rem;
-        }
-
-        .logo a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-        }
-
-        .logo span {
-            color: var(--btn-orange);
-        }
-
-        /* Nav Toggle for Mobile */
-        .nav-toggle-label {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 24px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .nav-toggle-label span {
-            display: block;
-            height: 2.5px;
-            width: 100%;
-            background-color: #ffffff;
-            transition: all var(--transition-speed) ease-in-out;
-        }
-
-        #nav-toggle {
-            display: none;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            list-style: none;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        .nav-links a {
-            color: #b0b0b0;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            transition: all 0.2s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border-left: 3px solid transparent;
-            display: block;
-            width: 100%;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #ffffff;
-            background-color: #222222;
-            border-left: 3px solid var(--btn-orange);
-            transform: translateX(4px);
-        }
-
-        .nav-links a.nav-emergency-btn {
-            background-color: var(--btn-red);
-            color: #ffffff;
-            font-weight: 700;
-            border: none;
-            text-align: center;
-            margin-bottom: 1rem;
-            border-left: none;
-        }
-
-        .nav-links a.nav-emergency-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px) scale(1.02);
-            color: #ffffff;
-            background-color: var(--btn-red);
-        }
-
-        /* Theme Toggle styles */
-        .theme-toggle-container {
-            margin-top: auto;
-            padding-top: 1.5rem;
-            border-top: 1px solid #222222;
-            width: 100%;
-        }
-
-        .theme-toggle-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            width: 100%;
-            background-color: #161616;
-            color: #b0b0b0;
-            border: 1px solid #222222;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            font-family: var(--font-family);
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle-btn:hover {
-            background-color: #222222;
-            color: #ffffff;
-            border-color: var(--btn-orange);
-            transform: translateY(-2px);
-        }
-
-        /* Global UI Typography Hierarchy */
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--color-black);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            transition: color var(--transition-speed) ease;
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 1.75rem;
-            line-height: 1.3;
-            margin-bottom: 1.5rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-
-        h4 {
-            font-size: 1rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-
-        /* Premium Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1.5rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            line-height: 1.4;
-            text-decoration: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            gap: 0.5rem;
-        }
-
-        .btn-orange {
-            background-color: var(--btn-orange);
-            color: #ffffff;
-        }
-
-        .btn-orange:hover {
-            background-color: var(--color-black);
-            color: var(--bg-white);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(226, 82, 37, 0.25);
-        }
-
-        .btn-confirm, .triage-confirm-btn {
-            background-color: var(--btn-orange) !important;
-            border-color: var(--btn-orange) !important;
-            color: #ffffff !important;
-        }
-
-        .btn-confirm:hover, .triage-confirm-btn:hover {
-            background-color: var(--color-black) !important;
-            border-color: var(--color-black) !important;
-            color: var(--bg-white) !important;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(226, 82, 37, 0.25);
-        }
-
-        .btn-red {
-            background-color: var(--btn-red);
-            color: #ffffff;
-        }
-
-        .btn-red:hover {
-            background-color: var(--color-black);
-            color: var(--bg-white);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(195, 0, 16, 0.25);
-        }
-
-        .btn-black {
-            background-color: var(--color-black);
-            color: var(--bg-white);
-        }
-
-        .btn-black:hover {
-            background-color: var(--btn-orange);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--color-black);
-            border-color: var(--color-black);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--color-black);
-            color: var(--bg-white);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Footer override for dashboard app */
-        footer {
-            display: none !important; /* Hide footer in full screen map dashboard */
-        }
-
-        /* Form styling */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            width: 100%;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        label {
-            font-weight: 600;
-            font-size: 0.875rem;
-            line-height: 1.4;
-            color: var(--color-black);
-            transition: color var(--transition-speed) ease;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="number"],
-        input[type="tel"],
-        input[type="url"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 0.5rem 1rem;
-            font-family: var(--font-family);
-            font-size: 0.95rem;
-            line-height: 1.4;
-            border: 1px solid var(--gray-medium);
-            border-radius: 8px;
-            background-color: var(--bg-white);
-            color: var(--color-black);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-        }
-
-        input[type="text"]:hover,
-        input[type="email"]:hover,
-        input[type="password"]:hover,
-        input[type="number"]:hover,
-        input[type="tel"]:hover,
-        input[type="url"]:hover,
-        select:hover,
-        textarea:hover {
-            border-color: var(--gray-dark);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--color-black);
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Tables Grid Styling */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--gray-medium);
-            border-radius: 8px;
-            transition: border-color var(--transition-speed) ease;
-        }
-
-        table {
-            width: 100%;
-            min-width: 500px;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            background-color: var(--bg-white);
-            transition: background-color var(--transition-speed) ease;
-        }
-
-        th, td {
-            padding: 0.875rem 1.25rem; /* vertical 14px (>12px), horizontal 20px (>16px) */
-            border-bottom: 1px solid var(--gray-medium);
-            color: var(--gray-dark);
-            vertical-align: middle;
-            text-align: left;
-            transition: border-bottom var(--transition-speed) ease, color var(--transition-speed) ease;
-        }
-
-        th {
-            background-color: var(--gray-light);
-            color: var(--color-black);
-            font-weight: 700;
-            border-bottom: 2px solid var(--gray-medium);
-        }
-
-        /* Alignment styles matching constraints */
-        th:first-child,
-        td:first-child {
-            text-align: right;
-            padding-right: 1.5rem;
-        }
-
-        th:last-child,
-        td:last-child {
-            text-align: right;
-        }
-
-        td:last-child > div {
-            justify-content: flex-end;
-        }
-
-        tr:hover td {
-            background-color: rgba(226, 82, 37, 0.05);
-        }
-
-        /* Pill Status Badges with Opacity */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem; /* rounded pill style */
-            font-size: 0.725rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 50px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Use existing palette with distinct opacities:
-           Red for Pending, Suspended, False Alarm
-           Orange for Dispatched, Maintenance
-           Green for Active, Resolved, Under Control
-           Gray for Inactive
-        */
-        .badge-pending, .badge-suspended, .badge-false-alarm { 
-            background-color: rgba(195, 0, 16, 0.1); 
-            color: var(--btn-red); 
-        }
-        .badge-confirmed { 
-            background-color: #e3f2fd !important; 
-            color: #1565c0 !important; 
-            border: 1px solid currentColor !important;
-        }
-        .badge-active, .badge-resolved, .badge-under-control { 
-            background-color: rgba(46, 125, 50, 0.1); 
-            color: #2e7d32; 
-        }
-        .badge-inactive { 
-            background-color: rgba(55, 71, 79, 0.1); 
-            color: #37474f; 
-        }
-        .badge-dispatched, .badge-maintenance { 
-            background-color: rgba(226, 82, 37, 0.1); 
-            color: var(--btn-orange); 
-        }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            body {
-                flex-direction: column;
-                height: 100vh;
-                width: 100vw;
-                overflow: hidden;
-            }
-
-            .sidebar {
-                width: 100%;
-                position: relative;
-                height: 65px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 1.5rem;
-                border-right: none;
-                border-bottom: 3px solid var(--btn-orange);
-            }
-
-            .main-wrapper {
-                margin-left: 0;
-                height: calc(100vh - 65px);
-            }
-
-            .logo {
-                margin-bottom: 0;
-            }
-
-            .nav-toggle-label {
-                display: flex;
-            }
-
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: #0c0c0c;
-                padding: 1.5rem;
-                border-top: 1px solid #222222;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                z-index: 999;
-                gap: 0.5rem;
-            }
-
-            #nav-toggle:checked ~ .nav-links {
-                display: flex;
-            }
-            
-            .nav-links a {
-                display: block;
-                width: 100%;
-                padding: 0.5rem 1rem;
-                border-left: 3px solid transparent;
-            }
-            
-            .nav-links a.nav-emergency-btn {
-                text-align: center;
-                margin-bottom: 0.5rem;
-            }
-            
-            .dashboard-panel {
-                top: 1rem;
-                right: 1rem;
-                left: 1rem;
-                bottom: 1rem;
-                width: auto;
-                max-width: none;
-            }
-
-            main {
-                padding: 1rem !important;
-                margin: 0 !important;
-            }
-            
-            .theme-toggle-container {
-                margin-top: 0;
-                padding-top: 0;
-                border-top: none;
-                width: auto;
-            }
-            
-            .theme-toggle-btn {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.85rem;
-            }
-        }
-
-        /* Modal Backdrop overlay */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            animation: fadeIn var(--transition-speed) ease;
-        }
-
-        /* Modal Container Card */
-        .modal-container {
-            background-color: var(--bg-white);
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 500px;
-            max-width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-            padding: 2rem; /* base-8: 32px */
-            display: flex;
-            flex-direction: column;
-            animation: slideUp var(--transition-speed) ease;
-            border: 1px solid var(--gray-medium);
-        }
-
-        .modal-close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1.25rem;
-            background: none;
-            border: none;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-dark);
-            cursor: pointer;
-            line-height: 1;
-            transition: color var(--transition-speed) ease;
-        }
-
-        .modal-close-btn:hover {
-            color: var(--btn-orange);
-        }
-
-        .modal-body form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            width: 100%;
-        }
-
-        /* Loading spinner */
-        .modal-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            gap: 1rem;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--gray-medium);
-            border-top: 4px solid var(--btn-orange);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-    </style>
+    
+    <!-- Core CAD Design System Stylesheet -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/cad_theme.css' %}">
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-        <div class="logo">
-            <a href="{% url 'firestation_list' %}">
-                🚒 Fire<span>Route</span>
-            </a>
-        </div>
-        
-        <input type="checkbox" id="nav-toggle">
-        <label for="nav-toggle" class="nav-toggle-label">
-            <span></span>
-            <span></span>
-            <span></span>
-        </label>
+    <!-- CAD Vector Icon Sprite -->
+    {% include 'cad_icons.html' %}
 
-        <nav class="nav-links">
-            <a href="{% url 'report_fire' %}" class="nav-emergency-btn">🚨 Emergency Report</a>
-            <a href="{% url 'dashboard' %}" id="nav-dashboard">📊 CAD Dashboard</a>
-            <a href="{% url 'triage_queue' %}" id="nav-triage" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
-                <span>📥 Triage Queue</span>
-                {% if unread_notifications_count > 0 %}
-                    <span class="notification-badge" style="background-color: var(--btn-red, #c30010); color: white; border-radius: 50%; padding: 0.1rem 0.35rem; font-size: 0.7rem; font-weight: 700; min-width: 18px; text-align: center; box-sizing: border-box; line-height: 1;">
-                        {{ unread_notifications_count }}
+    <div class="cad-app-shell">
+        <!-- Sidebar Backdrop for Mobile -->
+        <div class="cad-sidebar-overlay" id="cadSidebarOverlay" onclick="toggleCadSidebar()"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="cad-sidebar" id="cadSidebar">
+            <!-- Brand & CAD Header -->
+            <div class="cad-brand-container">
+                <a href="{% url 'dashboard' %}" class="cad-brand-link">
+                    <!-- Myanmar Fire Services Department Official SVG Logo -->
+                    <img src="{% static 'dashboard/img/logo.svg' %}" alt="Fire Department Logo" class="cad-brand-emblem">
+                    <div class="cad-brand-text">
+                        <span class="cad-brand-title">Fire<span>Route</span></span>
+                        <span class="cad-brand-subtitle" id="cad-brand-subtitle">CAD Command Center</span>
+                    </div>
+                </a>
+
+                <!-- Live System Telemetry Status -->
+                <div class="cad-status-telemetry">
+                    <span class="cad-live-status">
+                        <span class="cad-pulse-dot"></span>
+                        <span id="cad-live-text">OPERATIONAL</span>
                     </span>
+                    <span class="cad-live-clock" id="cadLiveClock">--:--:--</span>
+                </div>
+            </div>
+
+            <!-- Grouped Navigation Area -->
+            <nav class="cad-nav-scroll">
+                <!-- EMERGENCY ACTION -->
+                <div class="cad-nav-section">
+                    <a href="{% url 'report_fire' %}" class="cad-nav-item cad-nav-emergency nav-emergency-btn">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-siren"/></svg></span>
+                            <span>Emergency Report</span>
+                        </div>
+                        <span class="cad-badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 0.65rem;">191</span>
+                    </a>
+                </div>
+
+                <!-- COMMAND & DISPATCH -->
+                {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
+                <div class="cad-nav-section">
+                    <span class="cad-nav-section-title" id="nav-sec-command">Command & Dispatch</span>
+                    <a href="{% url 'dashboard' %}" class="cad-nav-item" id="nav-dashboard">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-dashboard"/></svg></span>
+                            <span>CAD Dashboard</span>
+                        </div>
+                    </a>
+                    {% if request.user.is_dispatcher or request.user.is_admin %}
+                    <a href="{% url 'triage_queue' %}" class="cad-nav-item" id="nav-triage">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-triage"/></svg></span>
+                            <span>Triage Queue</span>
+                        </div>
+                        {% if unread_notifications_count > 0 %}
+                            <span class="cad-notification-pill">
+                                {{ unread_notifications_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'fire_report_list' %}" class="cad-nav-item" id="nav-incidents">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg></span>
+                            <span>Incidents</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-map"/></svg></span>
+                            <span>Interactive Map</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- LOGISTICS & FLEET -->
+                <div class="cad-nav-section">
+                    <span class="cad-nav-section-title" id="nav-sec-logistics">Logistics & Fleet</span>
+                    <a href="{% url 'firestation_list' %}" class="cad-nav-item" id="nav-stations">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-station"/></svg></span>
+                            <span>Fire Stations</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'dispatch_list' %}" class="cad-nav-item" id="nav-dispatch">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg></span>
+                            <span>Dispatches</span>
+                        </div>
+                    </a>
+                </div>
+                {% else %}
+                <div class="cad-nav-section">
+                    <span class="cad-nav-section-title" id="nav-sec-public">Public Services</span>
+                    <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-map"/></svg></span>
+                            <span>Interactive Map</span>
+                        </div>
+                    </a>
+                    {% if not request.user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="cad-nav-item" id="nav-login">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-key"/></svg></span>
+                            <span>Officer Login</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
                 {% endif %}
-            </a>
-            <a href="{% url 'fire_report_list' %}" id="nav-incidents">Incidents</a>
-            <a href="{% url 'firestation_list' %}" id="nav-stations">Stations</a>
-            <a href="{% url 'map_view' %}" id="nav-maps">Interactive Map</a>
-            <a href="{% url 'dispatch_list' %}" id="nav-dispatch">Dispatches</a>
-            <a href="{% url 'user_list' %}" id="nav-users">Users</a>
-            <a href="{% url 'report_portal' %}" id="nav-portal">📋 Report Portal</a>
-        </nav>
-        
-        <!-- Theme Toggle -->
-        <div class="theme-toggle-container">
-            <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Theme">
-                <span class="theme-icon" id="themeToggleIcon">☀️</span>
-                <span class="theme-text" id="themeToggleText">Light Mode</span>
-            </button>
-        </div>
 
-        <!-- Language Toggle -->
-        <div class="theme-toggle-container" style="margin-top: 0.5rem;">
-            <button id="globalLangToggleBtn" class="theme-toggle-btn" aria-label="Toggle Language" onclick="toggleGlobalLanguage()">
-                <span id="globalLangToggleIcon" class="theme-icon">🇲🇲</span>
-                <span id="globalLangToggleText" class="theme-text">မြန်မာ</span>
-            </button>
-        </div>
-    </aside>
+                <!-- INTELLIGENCE & ADMIN -->
+                {% if request.user.is_authenticated and request.user.is_dispatcher or request.user.is_admin %}
+                <div class="cad-nav-section">
+                    <span class="cad-nav-section-title" id="nav-sec-admin">Intelligence & Admin</span>
+                    <a href="{% url 'report_portal' %}" class="cad-nav-item" id="nav-portal">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-file-text"/></svg></span>
+                            <span>Report Portal</span>
+                        </div>
+                    </a>
+                    {% if request.user.is_admin %}
+                    <a href="{% url 'user_list' %}" class="cad-nav-item" id="nav-users">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-users"/></svg></span>
+                            <span>User Accounts</span>
+                        </div>
+                    </a>
+                    <a href="{% url 'role_list' %}" class="cad-nav-item" id="nav-roles">
+                        <div class="cad-nav-item-content">
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-shield"/></svg></span>
+                            <span>Role Permissions</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </nav>
 
-    <!-- Main Wrapper Area -->
-    <div class="main-wrapper">
-        {% block main_layout %}
-        <main class="content-area">
-            {% block content %}
+            <!-- Sidebar Controls Footer -->
+            <div class="cad-sidebar-footer">
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" class="cad-toggle-btn" aria-label="Toggle Theme">
+                    <span class="theme-icon" id="themeToggleIcon"><svg class="cad-icon"><use href="#cad-icon-sun"/></svg></span>
+                    <span class="theme-text" id="themeToggleText">Light Mode</span>
+                </button>
+                <!-- Language Toggle Button -->
+                <button id="globalLangToggleBtn" class="cad-toggle-btn" aria-label="Toggle Language" onclick="toggleGlobalLanguage()">
+                    <span id="globalLangToggleIcon" class="theme-icon" style="font-size: 0.9rem;">🇲🇲</span>
+                    <span id="globalLangToggleText" class="theme-text">မြန်မာ</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="cad-main-wrapper">
+            <!-- CAD Top Command Bar -->
+            <header class="cad-topbar">
+                <div class="cad-topbar-left">
+                    <button class="cad-mobile-toggle" onclick="toggleCadSidebar()" aria-label="Open Navigation">
+                        <svg class="cad-icon"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <div class="cad-breadcrumb">
+                        <span id="cad-region-title">Mandalay Region Command</span>
+                        <span>/</span>
+                        <span class="cad-breadcrumb-active">{% block breadcrumb %}CAD Operational Console{% endblock %}</span>
+                    </div>
+                </div>
+
+                <div class="cad-topbar-right">
+                    {% if request.user.is_authenticated %}
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <a href="{% url 'profile' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" title="Manage Profile">
+                            <div class="cad-operator-badge">
+                                <span class="cad-operator-avatar">{{ request.user.username|slice:":2"|upper }}</span>
+                                <span>{{ request.user.username }}</span>
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: var(--cad-amber); font-size: 0.7rem; font-weight: 700;">
+                                    {{ request.user.role_name|upper }}
+                                </span>
+                            </div>
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline" id="cad-logout-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;" title="Sign Out">
+                            <svg class="cad-icon"><use href="#cad-icon-logout"/></svg>
+                            <span id="cad-logout-text">Logout</span>
+                        </a>
+                    </div>
+                    {% else %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" id="cad-top-login-btn" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                            <svg class="cad-icon"><use href="#cad-icon-key"/></svg>
+                            <span id="cad-top-login-text">Officer Login</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content Layout -->
+            {% block main_layout %}
+            <main class="cad-content-area">
+                {% block content %}
+                {% endblock %}
+            </main>
             {% endblock %}
-        </main>
-        {% endblock %}
+        </div>
     </div>
+
     <!-- Global Modal Overlay Container -->
-    <div id="globalModal" class="modal-overlay" style="display: none;">
-        <div class="modal-container">
-            <button class="modal-close-btn" aria-label="Close Modal">&times;</button>
-            <div class="modal-body">
-                <div class="modal-loading">
-                    <div class="spinner"></div>
-                    <p id="modalLoadingText">ပုံစံ ဖွင့်နေပါသည်...</p>
+    <div id="globalModal" class="cad-modal-overlay" style="display: none;">
+        <div class="cad-modal-container">
+            <div class="cad-modal-header">
+                <h3 id="modalTitle" style="font-size: 1.1rem; font-weight: 700; margin: 0;">Operation</h3>
+                <button class="cad-modal-close modal-close-btn" aria-label="Close Modal">&times;</button>
+            </div>
+            <div class="cad-modal-body modal-body">
+                <div style="text-align: center; padding: 2rem 0; color: var(--cad-text-muted);">
+                    <div style="display: inline-block; width: 32px; height: 32px; border: 3px solid var(--cad-border); border-top-color: var(--cad-red-primary); border-radius: 50%; animation: spin 1s infinite linear;"></div>
+                    <p id="modalLoadingText" style="margin-top: 0.75rem; font-size: 0.9rem;">Loading form...</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <style>
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-
     {% block extra_js %}{% endblock %}
-    
+
+    <!-- Live Telemetry Clock Script -->
+    <script>
+        function updateCadClock() {
+            const clockEl = document.getElementById("cadLiveClock");
+            if (clockEl) {
+                const now = new Date();
+                clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            }
+        }
+        setInterval(updateCadClock, 1000);
+        updateCadClock();
+
+        function toggleCadSidebar() {
+            const sidebar = document.getElementById("cadSidebar");
+            const overlay = document.getElementById("cadSidebarOverlay");
+            if (sidebar) sidebar.classList.toggle("open");
+            if (overlay) overlay.classList.toggle("active");
+        }
+    </script>
+
     <!-- AJAX Modal Form Loader Controller -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const modal = document.getElementById("globalModal");
             const modalBody = modal.querySelector(".modal-body");
             const modalCloseBtn = modal.querySelector(".modal-close-btn");
+            const modalTitle = document.getElementById("modalTitle");
 
             function openModal() {
                 modal.style.display = "flex";
@@ -790,9 +306,9 @@
                 modal.style.display = "none";
                 document.body.style.overflow = "";
                 modalBody.innerHTML = `
-                    <div class="modal-loading">
-                        <div class="spinner"></div>
-                        <p>${(localStorage.getItem('lang') || 'my') === 'my' ? 'ပုံစံ ဖွင့်နေပါသည်...' : 'Loading form...'}</p>
+                    <div style="text-align: center; padding: 2rem 0; color: var(--cad-text-muted);">
+                        <div style="display: inline-block; width: 32px; height: 32px; border: 3px solid var(--cad-border); border-top-color: var(--cad-red-primary); border-radius: 50%; animation: spin 1s infinite linear;"></div>
+                        <p id="modalLoadingText" style="margin-top: 0.75rem; font-size: 0.9rem;">${(localStorage.getItem('lang') || 'my') === 'my' ? 'ပုံစံ ဖွင့်နေပါသည်...' : 'Loading form...'}</p>
                     </div>
                 `;
             }
@@ -807,7 +323,7 @@
             // Intercept clicks on links that trigger create or update actions
             document.addEventListener("click", function(e) {
                 const link = e.target.closest("a[href*='/create/'], a[href*='/update/'], a[href*='/edit/'], a[href$='/report/']");
-                if (link) {
+                if (link && !link.classList.contains("no-modal")) {
                     e.preventDefault();
                     openModalForm(link.href);
                 }
@@ -825,13 +341,20 @@
                         
                         if (form) {
                             modalBody.innerHTML = "";
-                            if (heading) {
-                                const titleEl = document.createElement("h3");
-                                titleEl.innerText = heading.innerText;
-                                titleEl.style.marginBottom = "1.5rem";
-                                modalBody.appendChild(titleEl);
+                            if (heading && modalTitle) {
+                                modalTitle.innerText = heading.innerText;
                             }
                             modalBody.appendChild(form);
+
+                            // Re-bind styling to inputs
+                            form.querySelectorAll("input, select, textarea").forEach(el => {
+                                if (!el.classList.contains("cad-input") && el.type !== "submit" && el.type !== "button") {
+                                    el.classList.add("cad-input");
+                                }
+                            });
+                            form.querySelectorAll("button[type='submit'], input[type='submit']").forEach(btn => {
+                                btn.classList.add("cad-btn", "cad-btn-emergency");
+                            });
 
                             // Initialize form UI and GPS
                             if (typeof window.updateUI === "function") window.updateUI();
@@ -849,7 +372,6 @@
                             // Handle form submission via AJAX inside the modal
                             form.addEventListener("submit", function(e) {
                                 e.preventDefault();
-                                
                                 const formData = new FormData(form);
                                 
                                 fetch(url, {
@@ -876,18 +398,10 @@
                                         
                                         if (targetContent) {
                                             modalBody.innerHTML = "";
-                                            if (heading && !successContainer) {
-                                                const reTitle = document.createElement("h3");
-                                                reTitle.innerText = heading.innerText;
-                                                reTitle.style.marginBottom = "1.5rem";
-                                                modalBody.appendChild(reTitle);
-                                            }
                                             modalBody.appendChild(targetContent);
 
-                                            // Re-initialize UI
                                             if (typeof window.updateUI === "function") window.updateUI();
                                             
-                                            // Re-bind cancel buttons
                                             const reCancelBtns = targetContent.querySelectorAll("a.btn-outline, button.btn-outline, .btn-secondary, a[href*='list'], a[href='/'], #success-btn");
                                             reCancelBtns.forEach(btn => {
                                                 btn.addEventListener("click", function(e) {
@@ -903,11 +417,11 @@
                                 });
                             });
                         } else {
-                            modalBody.innerHTML = `<p style="color: var(--btn-red);">Error: Form element could not be loaded.</p>`;
+                            modalBody.innerHTML = `<p style="color: var(--cad-red-primary);">Error: Form element could not be loaded.</p>`;
                         }
                     })
                     .catch(err => {
-                        modalBody.innerHTML = `<p style="color: var(--btn-red);">Error: Failed to fetch form.</p>`;
+                        modalBody.innerHTML = `<p style="color: var(--cad-red-primary);">Error: Failed to fetch form.</p>`;
                         console.error("AJAX form GET error:", err);
                     });
             }
@@ -926,7 +440,8 @@
                 { id: "nav-maps", path: "/map/" },
                 { id: "nav-dispatch", path: "/dispatch/" },
                 { id: "nav-users", path: "/users/" },
-                { id: "nav-roles", path: "/roles/" }
+                { id: "nav-roles", path: "/roles/" },
+                { id: "nav-portal", path: "/dashboard/report-portal/" }
             ];
             
             links.forEach(link => {
@@ -950,16 +465,15 @@
                     const text = themeToggleBtn.querySelector(".theme-text");
                     const currentLang = localStorage.getItem("lang") || "my";
                     if (theme === "dark") {
-                        if (icon) icon.innerText = "🌙";
-                        if (text) text.innerText = currentLang === "my" ? "အမိုက်ကမ်း" : "Dark Mode";
+                        if (icon) icon.innerHTML = '<svg class="cad-icon"><use href="#cad-icon-moon"/></svg>';
+                        if (text) text.innerText = currentLang === "my" ? "အမှောင်မုဒ်" : "Dark Mode";
                     } else {
-                        if (icon) icon.innerText = "☀️";
-                        if (text) text.innerText = currentLang === "my" ? "အလင်းရောင်" : "Light Mode";
+                        if (icon) icon.innerHTML = '<svg class="cad-icon"><use href="#cad-icon-sun"/></svg>';
+                        if (text) text.innerText = currentLang === "my" ? "အလင်းမုဒ်" : "Light Mode";
                     }
                 }
             }
             
-            // Set initial UI state
             updateThemeUI(currentTheme);
             
             if (themeToggleBtn) {
@@ -981,38 +495,58 @@
         // Global Language Switcher Logic
         const globalTranslations = {
             en: {
-                navEmergency: "🚨 Emergency Report",
-                navDashboard: "📊 CAD Dashboard",
-                navTriage: "📥 Triage Queue",
+                brandSubtitle: "CAD Command Center",
+                liveText: "OPERATIONAL",
+                regionTitle: "Mandalay Region Command",
+                navSecCommand: "Command & Dispatch",
+                navSecLogistics: "Logistics & Fleet",
+                navSecPublic: "Public Services",
+                navSecAdmin: "Intelligence & Admin",
+                navEmergency: "Emergency Report",
+                navDashboard: "CAD Dashboard",
+                navTriage: "Triage Queue",
                 navIncidents: "Incidents",
-                navStations: "Stations",
+                navStations: "Fire Stations",
                 navMaps: "Interactive Map",
                 navDispatch: "Dispatches",
-                navUsers: "Users",
-                navRoles: "Roles",
-                navPortal: "📋 Report Portal",
+                navUsers: "User Accounts",
+                navRoles: "Role Permissions",
+                navPortal: "Report Portal",
+                navLogin: "Officer Login",
+                logoutBtn: "Logout",
                 langBtnText: "မြန်မာ",
                 langBtnIcon: "🇲🇲",
                 themeLight: "Light Mode",
                 themeDark: "Dark Mode",
+                modalTitle: "Operation",
                 modalLoading: "Loading form..."
             },
             my: {
-                navEmergency: "🚨 အရေးပေါ် သတင်းပို့ရန်",
-                navDashboard: "📊 CAD Dashboard",
-                navTriage: "📥 Triage Queue",
-                navIncidents: "မီးလောင်မှုမှတ်တမ်းများ",
+                brandSubtitle: "အရေးပေါ်ကွပ်ကဲမှုဗဟိုဌာန",
+                liveText: "စနစ်အသင့်ရှိ",
+                regionTitle: "မန္တလေးတိုင်းဒေသကြီး ကွပ်ကဲမှုဗဟို",
+                navSecCommand: "ကွပ်ကဲရေးနှင့် တာဝန်စေလွှတ်ခြင်း",
+                navSecLogistics: "စခန်းများနှင့် ယာဉ်ယန္တရားများ",
+                navSecPublic: "ပြည်သူ့ဝန်ဆောင်မှုများ",
+                navSecAdmin: "အစီရင်ခံစာနှင့် စနစ်စီမံခန့်ခွဲမှု",
+                navEmergency: "အရေးပေါ် မီးသတင်းပို့ရန်",
+                navDashboard: "CAD ကွပ်ကဲမှုဗဟို",
+                navTriage: "သတင်းဦးစားပေး စိစစ်ရေး (Triage)",
+                navIncidents: "မီးလောင်မှုဖြစ်စဉ်များ",
                 navStations: "မီးသတ်စခန်းများ",
-                navMaps: "အပြန်အလှန်မြေပုံ",
-                navDispatch: "တာဝန်ပေးစေလွှတ်မှုများ",
-                navUsers: "အသုံးပြုသူများ",
-                navRoles: "အခန်းကဏ္ဍများ",
-                navPortal: "📋 သတင်းထုတ်ပြန်ချက်",
+                navMaps: "ကွပ်ကဲမှုမြေပုံ",
+                navDispatch: "တပ်ဖွဲ့စေလွှတ်မှုများ",
+                navUsers: "အသုံးပြုသူ အကောင့်များ",
+                navRoles: "ရာထူးနှင့် လုပ်ပိုင်ခွင့်များ",
+                navPortal: "အစီရင်ခံစာ ထုတ်ယူရန်",
+                navLogin: "အကောင့်ဝင်ရန်",
+                logoutBtn: "အကောင့်ထွက်မည်",
                 langBtnText: "English",
                 langBtnIcon: "🇺🇸",
-                themeLight: "အလင်းရောင်",
-                themeDark: "အမိုက်ကမ်း",
-                modalLoading: "ပုံစံ ဖွင့်နေပါသည်..."
+                themeLight: "အလင်းမုဒ်",
+                themeDark: "အမှောင်မုဒ်",
+                modalTitle: "ဆောင်ရွက်ချက်",
+                modalLoading: "အချက်အလက် ဖွင့်နေပါသည်..."
             }
         };
 
@@ -1020,38 +554,59 @@
             const data = globalTranslations[lang];
             if (!data) return;
 
-            const navEmergency = document.querySelector(".nav-emergency-btn");
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+            set("cad-brand-subtitle", data.brandSubtitle);
+            set("cad-live-text", data.liveText);
+            set("cad-region-title", data.regionTitle);
+            set("nav-sec-command", data.navSecCommand);
+            set("nav-sec-logistics", data.navSecLogistics);
+            set("nav-sec-public", data.navSecPublic);
+            set("nav-sec-admin", data.navSecAdmin);
+
+            const logoutText = document.getElementById("cad-logout-text");
+            if (logoutText) logoutText.innerText = data.logoutBtn;
+
+            const navEmergency = document.querySelector(".nav-emergency-btn span:last-child");
             if (navEmergency) navEmergency.innerText = data.navEmergency;
 
-            const navDashboard = document.getElementById("nav-dashboard");
+            const navDashboard = document.querySelector("#nav-dashboard .cad-nav-item-content span:last-child");
             if (navDashboard) navDashboard.innerText = data.navDashboard;
 
-            const navTriage = document.getElementById("nav-triage");
-            if (navTriage) {
-                const textSpan = navTriage.querySelector("span:first-child") || navTriage;
-                if (textSpan) textSpan.innerText = data.navTriage;
-            }
+            const navTriage = document.querySelector("#nav-triage .cad-nav-item-content span:last-child");
+            if (navTriage) navTriage.innerText = data.navTriage;
 
-            const navIncidents = document.getElementById("nav-incidents");
+            const navIncidents = document.querySelector("#nav-incidents .cad-nav-item-content span:last-child");
             if (navIncidents) navIncidents.innerText = data.navIncidents;
 
-            const navStations = document.getElementById("nav-stations");
+            const navStations = document.querySelector("#nav-stations .cad-nav-item-content span:last-child");
             if (navStations) navStations.innerText = data.navStations;
 
-            const navMaps = document.getElementById("nav-maps");
+            const navMaps = document.querySelector("#nav-maps .cad-nav-item-content span:last-child");
             if (navMaps) navMaps.innerText = data.navMaps;
 
-            const navDispatch = document.getElementById("nav-dispatch");
+            const navDispatch = document.querySelector("#nav-dispatch .cad-nav-item-content span:last-child");
             if (navDispatch) navDispatch.innerText = data.navDispatch;
 
-            const navUsers = document.getElementById("nav-users");
+            const navUsers = document.querySelector("#nav-users .cad-nav-item-content span:last-child");
             if (navUsers) navUsers.innerText = data.navUsers;
 
-            const navRoles = document.getElementById("nav-roles");
+            const navRoles = document.querySelector("#nav-roles .cad-nav-item-content span:last-child");
             if (navRoles) navRoles.innerText = data.navRoles;
 
-            const navPortal = document.getElementById("nav-portal");
+            const navPortal = document.querySelector("#nav-portal .cad-nav-item-content span:last-child");
             if (navPortal) navPortal.innerText = data.navPortal;
+
+            const navLogin = document.querySelector("#nav-login .cad-nav-item-content span:last-child");
+            if (navLogin) navLogin.innerText = data.navLogin;
+
+            const topLoginText = document.getElementById("cad-top-login-text");
+            if (topLoginText) topLoginText.innerText = data.navLogin;
+
+            const modalTitleEl = document.getElementById("modalTitle");
+            if (modalTitleEl && modalTitleEl.innerText === "Operation" || (modalTitleEl && modalTitleEl.innerText === "ဆောင်ရွက်ချက်")) {
+                modalTitleEl.innerText = data.modalTitle;
+            }
 
             const langBtnText = document.getElementById("globalLangToggleText");
             if (langBtnText) langBtnText.innerText = data.langBtnText;
@@ -1059,14 +614,12 @@
             const langBtnIcon = document.getElementById("globalLangToggleIcon");
             if (langBtnIcon) langBtnIcon.innerText = data.langBtnIcon;
 
-            // Update theme toggle label text
             const themeText = document.getElementById("themeToggleText");
             if (themeText) {
                 const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
                 themeText.innerText = currentTheme === "dark" ? data.themeDark : data.themeLight;
             }
 
-            // Update modal loading text if visible
             const modalLoadingText = document.getElementById("modalLoadingText");
             if (modalLoadingText) modalLoadingText.innerText = data.modalLoading;
 
@@ -1080,13 +633,11 @@
             window.applyGlobalLanguage(currentLang);
         };
 
-        // Set initial language state on load
         document.addEventListener("DOMContentLoaded", function() {
             const currentLang = localStorage.getItem("lang") || "my";
             window.applyGlobalLanguage(currentLang);
         });
 
-        // Emergency Reporting Form Logic (Global fallback to handle AJAX modal scope)
         window.toggleLanguage = function() {
             let currentLang = localStorage.getItem("lang") || "my";
             currentLang = (currentLang === "my") ? "en" : "my";
@@ -1094,179 +645,15 @@
             if (typeof window.applyGlobalLanguage === "function") {
                 window.applyGlobalLanguage(currentLang);
             }
-            window.updateUI();
-        };
-
-        const formLanguages = {
-            en: {
-                title: "🔥 Emergency Fire Reporting",
-                phoneLabel: "Reporter's Phone Number (Optional):",
-                photoLabel: "Upload Fire Condition Photo (Optional):",
-                locationChoice: "Choose Location Reporting Method:",
-                tabGPS: "📡 GPS Coordinates",
-                tabAddr: "✍️ Manual Address",
-                gpsFetch: "📡 Acquire GPS Location",
-                gpsWaiting: "Waiting to acquire coordinates...",
-                gpsReady: "GPS coordinates acquired successfully",
-                addressLabel: "Describe Location / Landmark Address:",
-                addressPlaceholder: "Enter street name, ward, landmark or specific area details...",
-                submitBtn: "🚨 Report Fire Now",
-                toggleText: "မြန်မာ",
-                successTitle: "Report Submitted Successfully",
-                successDesc: "Fire rescue teams and engines will be dispatched immediately.",
-                successBtn: "Send Another Report"
-            },
-            my: {
-                title: "🔥 အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်",
-                phoneLabel: "သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):",
-                photoLabel: "မီးလောင်မှု အခြေအနေ ဓာတ်ပုံတင်ရန် (ရွေးချယ်နိုင်သည်):",
-                locationChoice: "သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:",
-                tabGPS: "📡 GPS တည်နေရာ",
-                tabAddr: "✍️ လိပ်စာ အသေးစိတ်",
-                gpsFetch: "📡 လက်ရှိတည်နေရာကို ရယူမည်",
-                gpsWaiting: "တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...",
-                gpsReady: "တည်နေရာကို အောင်မြင်စွာ ရရှိပြီးပါပြီ",
-                addressLabel: "မီးလောင်မှု တည်နေရာ လိပ်စာ:",
-                addressPlaceholder: "လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ...",
-                submitBtn: "🚨 အခုချက်ချင်း သတင်းပို့မည်",
-                toggleText: "English",
-                successTitle: "သတင်းပို့ခြင်း အောင်မြင်ပါသည်",
-                successDesc: "မီးသတ်ကားများနှင့် ကယ်ဆယ်ရေးအဖွဲ့များ ချက်ချင်း စေလွှတ်ပါမည်။",
-                successBtn: "သတင်းအသစ် ထပ်ပို့ရန်"
-            }
-        };
-
-        window.updateUI = function() {
-            let currentLang = localStorage.getItem("lang") || "my";
-            const data = formLanguages[currentLang];
-            if (!data) return;
-            
-            const titleText = document.getElementById("title-text");
-            if (titleText) titleText.innerText = data.title;
-            
-            const phoneLabel = document.getElementById("phone-label");
-            if (phoneLabel) phoneLabel.innerText = data.phoneLabel;
-            
-            const locationChoiceLabel = document.getElementById("location-choice-label");
-            if (locationChoiceLabel) locationChoiceLabel.innerText = data.locationChoice;
-
-            const tabGPS = document.getElementById("btn-tab-gps");
-            if (tabGPS) tabGPS.innerText = data.tabGPS;
-
-            const tabAddr = document.getElementById("btn-tab-addr");
-            if (tabAddr) tabAddr.innerText = data.tabAddr;
-
-            const gpsFetch = document.getElementById("btn-gps-fetch");
-            if (gpsFetch) gpsFetch.innerText = data.gpsFetch;
-
-            const addressLabel = document.getElementById("address-label");
-            if (addressLabel) addressLabel.innerText = data.addressLabel;
-
-            const addressInput = document.getElementById("address-input");
-            if (addressInput) addressInput.placeholder = data.addressPlaceholder;
-
-            const photoLabel = document.getElementById("photo-label");
-            if (photoLabel) photoLabel.innerText = data.photoLabel;
-            
-            const langToggle = document.getElementById("langToggle");
-            if (langToggle) langToggle.innerText = data.toggleText;
-            
-            const successTitle = document.getElementById("success-title");
-            if (successTitle) successTitle.innerText = data.successTitle;
-            
-            const successDesc = document.getElementById("success-desc");
-            if (successDesc) successDesc.innerText = data.successDesc;
-
-            const successBtn = document.getElementById("success-btn");
-            if (successBtn) successBtn.innerText = data.successBtn;
-
-            const submitBtn = document.getElementById("submitBtn");
-            if (submitBtn) submitBtn.innerText = data.submitBtn;
-
-            let gpsStatus = document.getElementById("gps-status");
-            let gpsText = document.getElementById("gps-text");
-            if (gpsText) {
-                const isReady = gpsStatus && gpsStatus.classList.contains("ready");
-                gpsText.innerText = isReady ? data.gpsReady : data.gpsWaiting;
-            }
-        };
-
-        window.switchLocationMode = function(mode) {
-            const locationModeInput = document.getElementById("location_mode");
-            if (locationModeInput) locationModeInput.value = mode;
-
-            const gpsTab = document.getElementById("btn-tab-gps");
-            const addrTab = document.getElementById("btn-tab-addr");
-            const gpsBlock = document.getElementById("gps-block");
-            const addrBlock = document.getElementById("address-block");
-
-            if (mode === "gps") {
-                if (gpsTab) gpsTab.classList.add("active");
-                if (addrTab) addrTab.classList.remove("active");
-                if (gpsBlock) gpsBlock.style.display = "block";
-                if (addrBlock) addrBlock.style.display = "none";
-                window.fetchGPS();
-            } else {
-                if (gpsTab) gpsTab.classList.remove("active");
-                if (addrTab) addrTab.classList.add("active");
-                if (gpsBlock) gpsBlock.style.display = "none";
-                if (addrBlock) addrBlock.style.display = "block";
-            }
-        };
-
-        window.fetchGPS = function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const latInput = document.getElementById("lat");
-                    const lngInput = document.getElementById("lng");
-                    if (latInput && lngInput) {
-                        latInput.value = position.coords.latitude;
-                        lngInput.value = position.coords.longitude;
-                    }
-                    
-                    let gpsStatus = document.getElementById("gps-status");
-                    if (gpsStatus) {
-                        gpsStatus.classList.add("ready");
-                    }
-                    
-                    window.updateUI();
-                }, function(error) {
-                    console.warn("GPS acquire error:", error);
-                    let gpsText = document.getElementById("gps-text");
-                    let currentLang = localStorage.getItem("lang") || "my";
-                    if (gpsText) {
-                        gpsText.innerText = currentLang === "en" ? "⚠️ Failed to fetch GPS coordinates" : "⚠️ GPS တည်နေရာ မရရှိနိုင်ပါ";
-                    }
-
-                    const titleText = currentLang === "en" ? "Location Access Required" : "တည်နေရာသိခွင့်ပြုရန် လိုအပ်ပါသည်";
-                    const bodyText = currentLang === "en" 
-                        ? "Location access is disabled. Would you like to enable location settings to share coordinates?" 
-                        : "တည်နေရာသိခွင့်ပြုချက်ကို ပိတ်ထားပါသည်။ တည်နေရာမျှဝေခွင့်ပြုရန် ဆက်တင်များကို ဖွင့်လိုပါသလား?";
-                    
-                    if (typeof Swal !== "undefined") {
-                        Swal.fire({
-                            title: titleText,
-                            text: bodyText,
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: currentLang === "en" ? "Share Location" : "တည်နေရာမျှဝေမည်",
-                            cancelButtonText: currentLang === "en" ? "Enter Address" : "လိပ်စာရိုက်ထည့်မည်",
-                            confirmButtonColor: '#e65100',
-                            cancelButtonColor: '#3085d6'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.fetchGPS();
-                            } else {
-                                window.switchLocationMode('address');
-                            }
-                        });
-                    }
-                });
+            if (typeof window.updateUI === "function") {
+                window.updateUI();
             }
         };
 
         window.addEventListener("languageChanged", function(e) {
-            window.updateUI();
+            if (typeof window.updateUI === "function") {
+                window.updateUI();
+            }
         });
     </script>
 </body>

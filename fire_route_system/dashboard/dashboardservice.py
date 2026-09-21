@@ -1,8 +1,16 @@
 import json
+import csv
+from io import BytesIO
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.loader import get_template
 from django.utils import timezone
+from xhtml2pdf import pisa
 from DataAccess.models import FireReport, FireStation, Dispatch, Tbl_Notification
+from DataAccess.decorators import responder_required, dispatcher_required
 
+
+@responder_required
 def dashboard_view(request):
     # Active statuses list
     active_statuses = ['Pending', 'Dispatched']
@@ -15,8 +23,10 @@ def dashboard_view(request):
     # Available Stations (Count of active stations)
     available_stations = FireStation.objects.filter(status='Active').count()
     # Total Dispatches today
-    today = timezone.now().date()
-    total_dispatches_today = Dispatch.objects.filter(dispatched_at__date=today).count()
+    now = timezone.now()
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+    total_dispatches_today = Dispatch.objects.filter(dispatched_at__range=(start_of_day, end_of_day)).count()
 
     # 2. Bottom Row (Actionable Tables)
     # Pending Reports (Need immediate operator action)
@@ -141,6 +151,7 @@ def get_filtered_reports(request):
     return reports
 
 
+@dispatcher_required
 def report_portal(request):
     reports = get_filtered_reports(request)
     
@@ -154,6 +165,7 @@ def report_portal(request):
     return render(request, 'dashboard/report_preview.html', context)
 
 
+@dispatcher_required
 def export_csv(request):
     reports = get_filtered_reports(request)
     
@@ -164,12 +176,12 @@ def export_csv(request):
     writer.writerow(['No', 'Reporter Phone', 'Fire Scale', 'Status', 'Location', 'Logged At'])
     
     for idx, report in enumerate(reports, 1):
-        loc = f"{report.latitude}, {report.longitude}" if (report.latitude and report.longitude) else (report.address or 'N/A')
+        loc = f"{report.latitude}, {report.longitude}" if (report.latitude and report.longitude) else (report.address or 'တည်နေရာ မဖော်ပြထားပါ')
         writer.writerow([
             idx,
-            report.reporter_phone or 'Anonymous',
-            '\u1014\u101a\u103a\u1019\u103c\u1031\u1001\u1036' if report.fire_scale == 0 else f"Level {report.fire_scale}",
-            report.status,
+            report.reporter_phone or 'အမည်မသိ သတင်းပို့သူ',
+            report.scale_display,
+            report.status_display,
             loc,
             report.reported_at.strftime('%d-%m-%Y %I:%M %p')
         ])
@@ -177,6 +189,7 @@ def export_csv(request):
     return response
 
 
+@dispatcher_required
 def export_pdf(request):
     reports = get_filtered_reports(request)
     

@@ -15,8 +15,10 @@ def dashboard_view(request):
     # Available Stations (Count of active stations)
     available_stations = FireStation.objects.filter(status='Active').count()
     # Total Dispatches today
-    today = timezone.now().date()
-    total_dispatches_today = Dispatch.objects.filter(dispatched_at__date=today).count()
+    now = timezone.now()
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+    total_dispatches_today = Dispatch.objects.filter(dispatched_at__range=(start_of_day, end_of_day)).count()
 
     # 2. Bottom Row (Actionable Tables)
     # Pending Reports (Need immediate operator action)

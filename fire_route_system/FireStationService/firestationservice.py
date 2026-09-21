@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from DataAccess.decorators import responder_required, admin_required
 from .models import FireStation
 
 # ==========================
 # READ (Display All)
 # ==========================
+@responder_required
 def firestation_list(request):
     from django.db.models import Q
     query = request.GET.get('q', '').strip()
@@ -46,6 +48,7 @@ def firestation_list(request):
 # ==========================
 # CREATE
 # ==========================
+@admin_required
 def firestation_create(request):
 
     if request.method == "POST":
@@ -67,6 +70,7 @@ def firestation_create(request):
 # ==========================
 # UPDATE
 # ==========================
+@admin_required
 def firestation_update(request, station_id):
 
     station = get_object_or_404(FireStation, pk=station_id)
@@ -94,6 +98,7 @@ def firestation_update(request, station_id):
 # ==========================
 # DELETE
 # ==========================
+@admin_required
 def firestation_delete(request, station_id):
 
     station = get_object_or_404(FireStation, pk=station_id)

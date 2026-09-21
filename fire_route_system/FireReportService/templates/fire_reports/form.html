@@ -1,43 +1,83 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ title }} - Fire Route System{% endblock %}
+{% block title %}{{ title }} - Fire Department CAD{% endblock %}
+{% block breadcrumb %}{{ title }}{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="report-form-title">{{ title }}</h1>
-
-    <div class="card">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <span style="font-size: 0.8rem; color: var(--gray-dark);">{{ field.help_text }}</span>
-                    {% endif %}
-                    {% if field.errors %}
-                        <div style="color: var(--btn-red); font-size: 0.85rem; margin-top: 0.25rem;">
-                            {{ field.errors|striptags }}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-orange" id="report-form-save">Save Report</button>
-                <a href="{% url 'fire_report_list' %}" class="btn btn-outline" id="report-form-cancel">Cancel</a>
+<div style="max-width: 680px; margin: 1rem auto;">
+    <div class="cad-panel">
+        <div class="cad-panel-header" style="background: linear-gradient(90deg, var(--cad-navy-deep) 0%, var(--cad-navy-surface) 100%); color: #fff;">
+            <div class="cad-panel-title" style="color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
+                <span id="report-form-title">{{ title }}</span>
             </div>
-        </form>
+            <span class="cad-badge cad-badge-pending">OPERATIONAL RECORD</span>
+        </div>
+
+        <div class="cad-panel-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="cad-form-group">
+                        <label for="{{ field.id_for_label }}" class="cad-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="cad-input-hint">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="cad-input-error" style="display: flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                                <span>{{ field.errors|striptags }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--cad-border); padding-top: 1.25rem;">
+                    <a href="{% url 'fire_report_list' %}" class="cad-btn cad-btn-outline" id="report-form-cancel">Cancel</a>
+                    <button type="submit" class="cad-btn cad-btn-emergency" id="report-form-save">Save Report</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("form select, form input[type='text'], form input[type='number'], form textarea").forEach(el => {
+        el.classList.add("cad-input");
+    });
+});
+
 (function() {
     const translations = {
-        en: { save: "Save Report", cancel: "Cancel" },
-        my: { save: "မှတ်တမ်း သိမ်းဆည်းမည်", cancel: "မလုပ်တော့ပါ" }
+        en: {
+            save: "Save Incident Report",
+            cancel: "Cancel",
+            fields: {
+                reporter_phone: "Reporter Phone",
+                latitude: "Latitude",
+                longitude: "Longitude",
+                address: "Address",
+                fire_scale: "Fire Severity Scale",
+                status: "Operational Status",
+                fire_image: "Incident Scene Photo"
+            }
+        },
+        my: {
+            save: "မှတ်တမ်း သိမ်းဆည်းမည်",
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                reporter_phone: "သတင်းပို့သူ ဖုန်းနံပါတ်",
+                latitude: "လတ္တီတွဒ် (Latitude)",
+                longitude: "လောင်ဂျီတွဒ် (Longitude)",
+                address: "ဖြစ်ပွားရာ လိပ်စာ",
+                fire_scale: "မီးပြင်းထန်မှု အဆင့်",
+                status: "လက်ရှိ အခြေအနေ",
+                fire_image: "မီးလောင်မှု ဓာတ်ပုံ"
+            }
+        }
     };
 
     function updateReportFormUI(lang) {
@@ -46,6 +86,13 @@
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("report-form-save", d.save);
         set("report-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

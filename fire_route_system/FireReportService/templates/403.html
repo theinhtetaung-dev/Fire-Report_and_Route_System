@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}403 Access Denied - Fire CAD System{% endblock %}
+
+{% block content %}
+<div style="max-width: 620px; margin: 3rem auto;">
+    <div class="cad-panel" style="border: 2px solid var(--cad-red); box-shadow: var(--cad-glow-red); text-align: center; padding: 2.5rem 2rem;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; color: var(--cad-red); margin: 0 auto 1.5rem auto;">
+            <svg class="cad-icon cad-icon-xl cad-icon-emergency"><use href="#cad-icon-shield"/></svg>
+        </div>
+
+        <h1 style="margin: 0 0 0.5rem 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-red);" id="forbidden-title">
+            403 - Restricted Access
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--cad-text-muted); margin: 0 0 1.5rem 0;" id="forbidden-subtitle">
+            You do not have the required command authority to access this system module.
+        </p>
+
+        <div style="background: var(--cad-surface-hover); border-radius: 8px; border-left: 4px solid var(--cad-red); padding: 1rem; text-align: left; margin-bottom: 2rem; font-size: 0.875rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--cad-text-muted);" id="lbl-403-account">Current Account:</span>
+                <strong style="color: var(--cad-text);">{{ request.user.username }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--cad-text-muted);" id="lbl-403-role">Current Role:</span>
+                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-shield"/></svg>
+                    <span>{{ user_role|default:request.user.role_name }}</span>
+                </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--cad-text-muted);" id="lbl-403-required">Required Authority:</span>
+                <strong style="color: var(--cad-red);">
+                    {% for r in required_roles %}{{ r }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </strong>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            {% if request.user.is_dispatcher or request.user.is_admin or request.user.is_firefighter %}
+                <a href="{% url 'dashboard' %}" class="btn btn-orange" id="btn-403-primary" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-dashboard"/></svg>
+                    <span id="btn-403-primary-text">Return to Dashboard</span>
+                </a>
+            {% else %}
+                <a href="{% url 'report_fire' %}" class="btn btn-orange" id="btn-403-primary" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-siren"/></svg>
+                    <span id="btn-403-primary-text">Emergency Report</span>
+                </a>
+            {% endif %}
+            <a href="{% url 'login' %}?next={{ attempted_url }}" class="btn btn-outline" id="btn-403-switch" style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-user"/></svg>
+                <span id="btn-403-switch-text">Switch Account</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const isOfficer = {{ request.user.is_dispatcher|yesno:"true," }}{{ request.user.is_admin|yesno:"true," }}{{ request.user.is_firefighter|yesno:"true,false" }};
+    const translations = {
+        en: {
+            title: "403 - Restricted Access",
+            subtitle: "You do not have the required command authority to access this system module.",
+            lblAccount: "Current Account:",
+            lblRole: "Current Role:",
+            lblRequired: "Required Authority:",
+            btnPrimary: isOfficer ? "Return to Dashboard" : "Emergency Report",
+            btnSwitch: "Switch Account"
+        },
+        my: {
+            title: "၄၀၃ - ဝင်ရောက်ခွင့် ကန့်သတ်ထားသည်",
+            subtitle: "ဤစနစ်အပိုင်းသို့ ဝင်ရောက်အသုံးပြုရန် သင့်တွင် လိုအပ်သော ခွင့်ပြုချက် အဆင့် မရှိပါ။",
+            lblAccount: "လက်ရှိ အကောင့်:",
+            lblRole: "လက်ရှိ ရာထူးတာဝန်:",
+            lblRequired: "လိုအပ်သော လုပ်ပိုင်ခွင့်အဆင့်:",
+            btnPrimary: isOfficer ? "ပင်မကွပ်ကဲမှုစာမျက်နှာသို့ ပြန်သွားမည်" : "အရေးပေါ် မီးသတင်းပို့ရန်",
+            btnSwitch: "အခြားအကောင့်ဖြင့် ဝင်ရောက်မည်"
+        }
+    };
+
+    function updateForbiddenUI(lang) {
+        const d = translations[lang];
+        if (!d) return;
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        set("forbidden-title", d.title);
+        set("forbidden-subtitle", d.subtitle);
+        set("lbl-403-account", d.lblAccount);
+        set("lbl-403-role", d.lblRole);
+        set("lbl-403-required", d.lblRequired);
+        set("btn-403-primary-text", d.btnPrimary);
+        set("btn-403-switch-text", d.btnSwitch);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateForbiddenUI(localStorage.getItem("lang") || "my");
+    });
+    window.addEventListener("languageChanged", function(e) {
+        updateForbiddenUI(e.detail.lang);
+    });
+})();
+</script>
+{% endblock %}

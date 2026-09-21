@@ -1,433 +1,302 @@
-/* --- Custom Theme Mappings --- */
-:root {
-    --bg-color-fallback: var(--bg-white, #ffffff);
-    --text-color-fallback: var(--color-black, #111111);
-    --card-bg: var(--bg-white, #ffffff);
-    --card-border: var(--gray-medium, #e0e0e0);
-    --text-muted: var(--gray-dark, #666666);
-    --dash-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ==========================================================================
+   CAD CONTROL DASHBOARD — SPECIALIZED STYLES
+   ========================================================================== */
 
-[data-theme="dark"] {
-    --card-bg: var(--bg-white, #121212);
-    --card-border: var(--gray-medium, #333333);
-    --text-muted: var(--gray-dark, #a0a0a0);
-}
-
-/* --- Header Section --- */
-.dashboard-header {
+/* Dashboard Header & Live Telemetry */
+.cad-dash-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--cad-border);
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.dashboard-title {
-    font-size: 1.75rem;
+.cad-dash-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.cad-dash-title {
+    font-size: 1.65rem;
     font-weight: 800;
     letter-spacing: -0.5px;
-    margin-bottom: 0.25rem;
-    color: var(--text-color-fallback);
-}
-
-.dashboard-subtitle {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 0;
-}
-
-.live-indicator {
+    color: var(--cad-text-main);
     display: flex;
     align-items: center;
+    gap: 0.6rem;
+}
+
+.cad-dash-subtitle {
+    font-size: 0.85rem;
+    color: var(--cad-text-muted);
+}
+
+.cad-dash-live-badge {
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
-    background-color: rgba(46, 125, 50, 0.1);
-    padding: 0.4rem 0.8rem;
-    border-radius: 50px;
-    border: 1px solid rgba(46, 125, 50, 0.2);
+    background-color: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-full);
 }
 
-.blink-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #2e7d32;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #2e7d32;
-    animation: blink 1.5s infinite ease-in-out;
-}
-
-.live-text {
+.cad-dash-live-badge .cad-live-text {
     font-size: 0.75rem;
     font-weight: 800;
-    color: #2e7d32;
+    color: var(--cad-green-active);
     letter-spacing: 0.5px;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-}
-
-/* --- KPI Grid & Cards --- */
-.kpi-grid {
+/* KPI Strip */
+.cad-kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
-.kpi-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 1.25rem;
+.cad-kpi-card {
+    background-color: var(--cad-card-bg);
+    border: 1px solid var(--cad-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.35rem;
     display: flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: var(--dash-transition);
+    box-shadow: var(--cad-shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
 }
 
-.kpi-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+.cad-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
 }
 
-.kpi-icon {
-    font-size: 2rem;
-    width: 50px;
-    height: 50px;
-    background-color: var(--gray-light, #f5f5f5);
-    border-radius: 10px;
+.cad-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--cad-shadow-md);
+}
+
+/* Card Specific Themes */
+.cad-kpi-danger::before {
+    background-color: var(--cad-red-primary);
+}
+.cad-kpi-danger .cad-kpi-icon-wrap {
+    background-color: var(--cad-red-subtle);
+    color: var(--cad-red-primary);
+    border: 1px solid rgba(253, 0, 1, 0.2);
+}
+
+.cad-kpi-warning::before {
+    background-color: var(--cad-gold-primary);
+}
+.cad-kpi-warning .cad-kpi-icon-wrap {
+    background-color: var(--cad-gold-subtle);
+    color: var(--cad-gold-primary);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.cad-kpi-success::before {
+    background-color: var(--cad-green-active);
+}
+.cad-kpi-success .cad-kpi-icon-wrap {
+    background-color: var(--cad-green-subtle);
+    color: var(--cad-green-active);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.cad-kpi-info::before {
+    background-color: var(--cad-blue-info);
+}
+.cad-kpi-info .cad-kpi-icon-wrap {
+    background-color: var(--cad-blue-subtle);
+    color: var(--cad-blue-info);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.cad-kpi-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--dash-transition);
+    font-size: 1.6rem;
+    flex-shrink: 0;
 }
 
-.kpi-data {
+.cad-kpi-data {
     display: flex;
     flex-direction: column;
 }
 
-.kpi-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
+.cad-kpi-label {
+    font-size: 0.78rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: var(--cad-text-muted);
 }
 
-.kpi-value {
-    font-size: 1.75rem;
+.cad-kpi-value {
+    font-size: 1.85rem;
     font-weight: 800;
-    line-height: 1.2;
-    margin: 0.1rem 0;
-    color: var(--text-color-fallback);
+    color: var(--cad-text-main);
+    line-height: 1.1;
+    margin: 0.2rem 0;
+    font-feature-settings: 'tnum' 1;
 }
 
-.kpi-trend {
+.cad-kpi-trend {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--cad-text-muted);
 }
 
-/* Specific Card Stylings */
-.danger-card:hover { border-color: var(--btn-red, #c30010); }
-.danger-card:hover .kpi-icon { background-color: rgba(195, 0, 16, 0.1); }
-
-.warning-card:hover { border-color: var(--btn-orange, #e25225); }
-.warning-card:hover .kpi-icon { background-color: rgba(226, 82, 37, 0.1); }
-
-.success-card:hover { border-color: #2e7d32; }
-.success-card:hover .kpi-icon { background-color: rgba(46, 125, 50, 0.1); }
-
-.info-card:hover { border-color: #0288d1; }
-.info-card:hover .kpi-icon { background-color: rgba(2, 136, 209, 0.1); }
-
-/* --- Middle Grid (Map & Analytics) --- */
-.middle-grid {
+/* Middle Row: Tactical Map & Analytics Chart */
+.cad-middle-grid {
     display: grid;
-    grid-template-columns: 2.2fr 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 1.25rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
-.dashboard-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+.cad-map-panel {
     display: flex;
     flex-direction: column;
+    min-height: 480px;
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.card-header h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-color-fallback);
-    margin: 0;
-}
-
-.card-action-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.map-wrapper-inner {
-    height: 380px;
-    border-radius: 8px;
+.cad-map-wrapper {
+    flex: 1;
+    min-height: 420px;
+    position: relative;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
     overflow: hidden;
-    border: 1px solid var(--card-border);
 }
 
 #dashboard-map {
     width: 100%;
     height: 100%;
-    z-index: 1;
+    min-height: 420px;
 }
 
-.chart-wrapper-inner {
-    height: 380px;
-    padding: 0.5rem;
-    box-sizing: border-box;
+.cad-chart-panel {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
-/* --- Bottom Grid (Actionable Tables) --- */
-.bottom-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-}
-
-.table-card {
-    min-height: 250px;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
+.cad-chart-wrapper {
     flex: 1;
+    padding: 1.25rem;
+    position: relative;
+    min-height: 380px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-
-th, td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--card-border);
-    color: var(--text-color-fallback);
-}
-
-th {
-    background-color: var(--gray-light, #f5f5f5);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--card-border);
-}
-
-tr:hover td {
-    background-color: var(--tr-hover-bg, rgba(226, 82, 37, 0.03));
-}
-
-.no-records {
-    text-align: center;
-    color: var(--text-muted);
-    padding: 2rem;
-    font-style: italic;
-}
-
-/* --- Badges & Buttons --- */
-.severity-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.7rem;
-    font-weight: 700;
-    border-radius: 4px;
-}
-
-.severity-badge.scale-0 { background-color: rgba(21, 101, 192, 0.1); color: #1565c0; }
-.severity-badge.scale-1 { background-color: rgba(46, 125, 50, 0.1); color: #2e7d32; }
-.severity-badge.scale-2 { background-color: rgba(249, 168, 37, 0.1); color: #f9a825; }
-.severity-badge.scale-3 { background-color: rgba(226, 82, 37, 0.1); color: var(--btn-orange, #e25225); }
-.severity-badge.scale-4 { background-color: rgba(191, 54, 12, 0.1); color: #bf360c; }
-.severity-badge.scale-5 { background-color: rgba(195, 0, 16, 0.1); color: var(--btn-red, #c30010); }
-
-.btn-dispatch-action {
-    display: inline-block;
-    background-color: var(--btn-orange, #e25225);
-    color: #ffffff;
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    transition: var(--dash-transition);
-    border: none;
-    cursor: pointer;
-}
-
-.btn-dispatch-action:hover {
-    background-color: var(--btn-red, #c30010);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(195, 0, 16, 0.2);
-}
-
-.btn-manage-action {
-    display: inline-block;
-    background-color: var(--gray-light, #f5f5f5);
-    color: var(--text-color-fallback);
-    font-weight: 600;
-    text-decoration: none;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid var(--card-border);
-    font-size: 0.75rem;
-    transition: var(--dash-transition);
-    text-align: center;
-}
-
-.btn-manage-action:hover {
-    background-color: var(--text-color-fallback);
-    color: var(--bg-white, #ffffff);
-    border-color: var(--text-color-fallback);
-    transform: translateY(-2px);
-}
-
-/* --- Map Popup Styles --- */
-.map-popup-card {
-    font-family: inherit;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    color: var(--text-color-fallback);
-}
-
-.map-popup-card p {
-    margin: 2px 0;
-}
-
-/* --- Map Custom Markers --- */
-/* Station Pins */
+/* Custom Tactical Leaflet Map Markers */
 .marker-pin-station {
-    width: 28px;
-    height: 28px;
-    background-color: #2e7d32;
-    border: 2px solid #ffffff;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    color: #ffffff;
-    font-size: 14px;
+    background-color: var(--cad-navy-deep);
+    border: 2px solid var(--cad-gold-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 10px rgba(46, 125, 50, 0.5);
-    transition: var(--dash-transition);
+    font-size: 1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
-
 .marker-pin-station:hover {
     transform: scale(1.15);
 }
 
-/* Active Fire Pins with Pulse Rings */
 .marker-pin-fire {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
     position: relative;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-    border: 2px solid #ffffff;
-    transition: var(--dash-transition);
 }
-
-.marker-pin-fire:hover {
-    transform: scale(1.15);
-}
-
-.marker-pin-fire.scale-1 { background-color: #4caf50; }
-.marker-pin-fire.scale-2 { background-color: #ff9800; }
-.marker-pin-fire.scale-3 { background-color: #f44336; }
 
 .marker-pin-fire .inner-dot {
-    width: 6px;
-    height: 6px;
-    background-color: #ffffff;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
+    background-color: var(--cad-red-primary);
+    box-shadow: 0 0 10px var(--cad-red-primary);
+    z-index: 2;
 }
 
 .marker-pin-fire .pulse-ring {
     position: absolute;
-    top: -2px;
-    left: -2px;
-    width: 22px;
-    height: 22px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    animation: marker-pulse-anim 1.8s infinite ease-out;
+    background-color: rgba(253, 0, 1, 0.35);
+    animation: mapPulse 1.8s infinite ease-out;
+    z-index: 1;
 }
 
-.marker-pin-fire.scale-1 .pulse-ring { border: 3px solid rgba(76, 175, 80, 0.6); }
-.marker-pin-fire.scale-2 .pulse-ring { border: 3px solid rgba(255, 152, 0, 0.6); }
-.marker-pin-fire.scale-3 .pulse-ring { border: 3px solid rgba(244, 67, 54, 0.6); }
-
-@keyframes marker-pulse-anim {
-    0% {
-        transform: scale(0.8);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(2.2);
-        opacity: 0;
-    }
+@keyframes mapPulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
 }
 
-/* --- Responsive Media Queries --- */
+.map-popup-card {
+    font-family: var(--font-sans);
+    padding: 0.35rem;
+    min-width: 180px;
+}
+
+.map-popup-card h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.map-popup-card p {
+    font-size: 0.8rem;
+    color: #333333;
+}
+
+/* Actionable Tables Grid */
+.cad-tables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Responsive Rules */
 @media (max-width: 1200px) {
-    .middle-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 992px) {
-    .kpi-grid {
+    .cad-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .bottom-grid {
+    .cad-middle-grid {
+        grid-template-columns: 1fr;
+    }
+    .cad-tables-grid {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 576px) {
-    .kpi-grid {
+@media (max-width: 640px) {
+    .cad-kpi-grid {
         grid-template-columns: 1fr;
     }
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-    .live-indicator {
-        align-self: flex-end;
+    .cad-map-wrapper, #dashboard-map {
+        min-height: 320px;
     }
 }

@@ -1,66 +1,115 @@
 {% extends 'base.html' %}
 
-{% block title %}Emergency Dispatches - Fire Route System{% endblock %}
+{% block title %}Emergency Dispatches - Fire Department CAD{% endblock %}
+{% block breadcrumb %}Fleet & Unit Dispatches{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-    <h1 id="dispatch-title">📋 Emergency Dispatches</h1>
-    <a href="{% url 'dispatch_create' %}" class="btn btn-orange" id="dispatch-new-btn">🚒 New Dispatch Deployment</a>
+<div class="cad-dash-header">
+    <div class="cad-dash-title-group">
+        <h1 class="cad-dash-title">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-dispatch"/></svg>
+            <span id="dispatch-title">Emergency Dispatches</span>
+        </h1>
+        <p class="cad-dash-subtitle" id="dispatch-subtitle">Field deployments, responding fire stations, deployed apparatus, and resolution logs.</p>
+    </div>
+    <a href="{% url 'dispatch_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+        <span id="dispatch-new-btn">New Dispatch Deployment</span>
+    </a>
 </div>
 
-<div class="card" style="padding: 1.5rem;">
+<div class="cad-panel">
+    <div class="cad-panel-header">
+        <div class="cad-panel-title">
+            <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-radio"/></svg>
+            <span id="dispatch-panel-title">Active & Resolved Mission Records</span>
+        </div>
+        <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="dispatch-panel-subtitle">Real-Time Fleet Deployment</span>
+    </div>
+
     {% if dispatches %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th id="th-disp-id">No.</th>
-                        <th id="th-disp-incident">Incident</th>
-                        <th id="th-disp-station">Responding Station</th>
-                        <th id="th-disp-operator">Operator</th>
-                        <th id="th-disp-dispatched">Dispatched At</th>
-                        <th id="th-disp-resolved">Resolved At</th>
-                        <th id="th-disp-resources">Resources Deployed</th>
-                        <th id="th-disp-actions">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for dispatch in dispatches %}
-                        <tr>
-                            <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
-                            <td>
-                                <a href="{% url 'fire_report_update' dispatch.report.id %}" style="color: var(--color-black); font-weight: 600;">
-                                    Report #{{ dispatch.report.id }} ({% if dispatch.report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ dispatch.report.fire_scale }}{% endif %})
-                                </a>
-                            </td>
-                            <td>{{ dispatch.station.name }}</td>
-                            <td>{{ dispatch.operator.username }}</td>
-                            <td>{{ dispatch.dispatched_at|date:"d-m-Y h:i A" }}</td>
-                            <td>
-                                {% if dispatch.resolved_at %}
-                                    <span class="badge badge-active">{{ dispatch.resolved_at|date:"d-m-Y h:i A" }}</span>
-                                {% else %}
-                                    <span class="badge badge-pending disp-active-badge">Active</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ dispatch.resources_deployed|default:"-" }}</td>
-                            <td>
-                                <div style="display: flex; gap: 0.5rem; align-items: center; white-space: nowrap;">
-                                    <a href="{% url 'dispatch_update' dispatch.id %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
-                                    <a href="{% url 'dispatch_delete' dispatch.id %}" class="btn btn-red" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="cad-table-container">
+        <table class="cad-table">
+            <thead>
+                <tr>
+                    <th id="th-disp-id" style="width: 50px;">No.</th>
+                    <th id="th-disp-incident">Target Incident</th>
+                    <th id="th-disp-station">Responding Station</th>
+                    <th id="th-disp-operator">Command Operator</th>
+                    <th id="th-disp-dispatched">Dispatched Time</th>
+                    <th id="th-disp-resolved">Status / Resolved</th>
+                    <th id="th-disp-resources">Resources Deployed</th>
+                    <th id="th-disp-actions" style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dispatch in dispatches %}
+                <tr class="{% if not dispatch.resolved_at %}row-urgent{% endif %}">
+                    <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
+                    <td>
+                        <a href="{% url 'fire_report_update' dispatch.report.id %}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                            <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
+                            <span>Incident #{{ dispatch.report.id }}</span>
+                            <span class="cad-badge cad-badge-scale-{{ dispatch.report.fire_scale }}">
+                                {{ dispatch.report.scale_display }}
+                            </span>
+                        </a>
+                    </td>
+                    <td>
+                        <strong>{{ dispatch.station.name }}</strong>
+                    </td>
+                    <td>
+                        <span style="color: var(--cad-text-secondary);">{{ dispatch.operator.username }}</span>
+                    </td>
+                    <td>
+                        <span class="font-numeric" style="font-weight: 600;">{{ dispatch.dispatched_at|date:"d-m-Y" }}</span>
+                        <span style="font-size: 0.78rem; color: var(--cad-text-muted);">{{ dispatch.dispatched_at|date:"h:i A" }}</span>
+                    </td>
+                    <td>
+                        {% if dispatch.resolved_at %}
+                            <span class="cad-badge cad-badge-resolved" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-green"><use href="#cad-icon-check"/></svg>
+                                <span>ငြှိမ်းသတ်ပြီးစီး ({{ dispatch.resolved_at|date:"h:i A" }})</span>
+                            </span>
+                        {% else %}
+                            <span class="cad-badge cad-badge-dispatched disp-active-badge">
+                                တာဝန်ထမ်းဆောင်ဆဲ
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span style="font-size: 0.85rem;">{{ dispatch.resources_deployed|default:"စံသတ်မှတ် မီးသတ်ယာဉ်တပ်ဖွဲ့" }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="cad-table-actions" style="justify-content: flex-end;">
+                            <a href="{% url 'dispatch_update' dispatch.id %}" class="cad-btn cad-btn-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">
+                                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-edit"/></svg>
+                                <span data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</span>
+                            </a>
+                            <a href="{% url 'dispatch_delete' dispatch.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;" data-en="Delete" data-my="ဖျက်မည်">
+                                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                                <span data-en="Delete" data-my="ဖျက်မည်">Delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="padding: 0 1.25rem 1.25rem 1.25rem;">
         {% include 'pagination.html' %}
+    </div>
     {% else %}
-        <div style="text-align: center; padding: 3rem 0; color: var(--gray-dark);">
-            <p style="font-size: 1.2rem; margin-bottom: 1rem;" id="dispatch-empty">No dispatch operations logged yet.</p>
-            <a href="{% url 'dispatch_create' %}" class="btn btn-orange" id="dispatch-first-btn">Log the First Dispatch</a>
-        </div>
+    <div class="cad-empty-state">
+        <span class="cad-empty-icon"><svg class="cad-icon cad-icon-muted" style="width: 3.5rem; height: 3.5rem;"><use href="#cad-icon-dispatch"/></svg></span>
+        <h3 class="cad-empty-title" id="dispatch-empty">No dispatch operations logged yet</h3>
+        <p class="cad-empty-desc" id="dispatch-empty-desc">Create the first emergency unit deployment when an incident is confirmed.</p>
+        <a href="{% url 'dispatch_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+            <span id="dispatch-first-btn">Log the First Dispatch</span>
+        </a>
+    </div>
     {% endif %}
 </div>
 
@@ -68,24 +117,32 @@
 (function() {
     const dispatchTranslations = {
         en: {
-            title: "📋 Emergency Dispatches",
-            newBtn: "🚒 New Dispatch Deployment",
-            thId: "No.", thIncident: "Incident", thStation: "Responding Station",
-            thOperator: "Operator", thDispatched: "Dispatched At", thResolved: "Resolved At",
+            title: "Emergency Dispatches",
+            subtitle: "Field deployments, responding fire stations, deployed apparatus, and resolution logs.",
+            newBtn: "New Dispatch Deployment",
+            panelTitle: "Active & Resolved Mission Records",
+            panelSubtitle: "Real-Time Fleet Deployment",
+            thId: "No.", thIncident: "Target Incident", thStation: "Responding Station",
+            thOperator: "Command Operator", thDispatched: "Dispatched Time", thResolved: "Status / Resolved",
             thResources: "Resources Deployed", thActions: "Actions",
-            activeBadge: "Active",
-            emptyText: "No dispatch operations logged yet.",
+            activeBadge: "Active In Field",
+            emptyText: "No dispatch operations logged yet",
+            emptyDesc: "Create the first emergency unit deployment when an incident is confirmed.",
             firstBtn: "Log the First Dispatch"
         },
         my: {
-            title: "📋 အရေးပေါ် စေလွှတ်မှုများ",
-            newBtn: "🚒 စေလွှတ်မှုအသစ် ထည့်သွင်းမည်",
-            thId: "No.", thIncident: "ဖြစ်စဉ်", thStation: "တုံ့ပြန်သောစခန်း",
-            thOperator: "တာဝန်ခံ", thDispatched: "စေလွှတ်ချိန်", thResolved: "ဖြေရှင်းချိန်",
-            thResources: "ဖြန့်ချထားသော အရင်းအမြစ်", thActions: "လုပ်ဆောင်ချက်",
-            activeBadge: "ဆောင်ရွက်နေဆဲ",
-            emptyText: "စေလွှတ်မှု မှတ်တမ်းမရှိသေးပါ။",
-            firstBtn: "ပထမ စေလွှတ်မှု မှတ်တမ်းတင်မည်"
+            title: "အရေးပေါ် မီးသတ်ယာဉ်/တပ်ဖွဲ့ စေလွှတ်မှုများ",
+            subtitle: "မြေပြင်မီးငြှိမ်းသတ်ရေး တပ်ဖွဲ့များ၊ တာဝန်ကျမီးသတ်စခန်းများ၊ စေလွှတ်သည့်ယာဉ်များနှင့် ပြီးဆုံးမှုမှတ်တမ်းများ။",
+            newBtn: "စေလွှတ်မှု အသစ်ဖွင့်ရန်",
+            panelTitle: "စစ်ဆင်ရေး ဆောင်ရွက်ဆဲနှင့် ပြီးဆုံးပြီးသော မှတ်တမ်းများ",
+            panelSubtitle: "အချိန်နှင့်တစ်ပြေးညီ မီးသတ်တပ်ဖွဲ့ စေလွှတ်မှုများ",
+            thId: "စဉ်", thIncident: "မီးလောင်မှုဖြစ်စဉ်", thStation: "တာဝန်ကျ မီးသတ်စခန်း",
+            thOperator: "တာဝန်ကျ အရာရှိ", thDispatched: "စေလွှတ်ချိန်", thResolved: "အခြေအနေ / ပြီးဆုံးချိန်",
+            thResources: "စေလွှတ်သည့် မီးသတ်ယာဉ်နှင့် လူအင်အား", thActions: "လုပ်ဆောင်ချက်",
+            activeBadge: "စစ်ဆင်ရေးဆောင်ရွက်ဆဲ",
+            emptyText: "လက်ရှိ စေလွှတ်မှု မှတ်တမ်းများ မရှိသေးပါ",
+            emptyDesc: "မီးလောင်မှုဖြစ်စဉ် အတည်ပြုပြီးပါက ပထမဆုံး အရေးပေါ်တပ်ဖွဲ့ စေလွှတ်မှုကို စတင်နိုင်ပါသည်။",
+            firstBtn: "ပထမဆုံး စေလွှတ်မှု စတင်မည်"
         }
     };
 
@@ -94,7 +151,10 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("dispatch-title", d.title);
+        set("dispatch-subtitle", d.subtitle);
         set("dispatch-new-btn", d.newBtn);
+        set("dispatch-panel-title", d.panelTitle);
+        set("dispatch-panel-subtitle", d.panelSubtitle);
         set("th-disp-id", d.thId);
         set("th-disp-incident", d.thIncident);
         set("th-disp-station", d.thStation);
@@ -104,6 +164,7 @@
         set("th-disp-resources", d.thResources);
         set("th-disp-actions", d.thActions);
         set("dispatch-empty", d.emptyText);
+        set("dispatch-empty-desc", d.emptyDesc);
         set("dispatch-first-btn", d.firstBtn);
         document.querySelectorAll(".disp-active-badge").forEach(el => { el.innerText = d.activeBadge; });
         document.querySelectorAll("[data-en][data-my]").forEach(el => {

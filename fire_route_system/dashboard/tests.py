@@ -64,6 +64,7 @@ class DashboardViewTests(TestCase):
             operator=self.operator,
             resources_deployed="2 fire trucks"
         )
+        self.client.force_login(self.operator)
 
     def test_dashboard_url_status_code(self):
         """
@@ -159,6 +160,15 @@ class DashboardReportPortalTests(TestCase):
             fire_scale=3,
             status="Resolved"
         )
+        self.role = Role.objects.create(role_name="Operator", description="Operator role")
+        self.operator = User.objects.create(
+            role=self.role,
+            username="portal_operator",
+            email="portal@test.com",
+            password_hash="hashed_pw",
+            status="Active"
+        )
+        self.client.force_login(self.operator)
 
     def test_report_portal_preview_renders(self):
         response = self.client.get(reverse('report_portal'))
@@ -184,8 +194,8 @@ class DashboardReportPortalTests(TestCase):
         
         # Decode and verify content
         content = response.content.decode('utf-8-sig')
-        self.assertIn("Level 2", content)
-        self.assertNotIn("Level 3", content)
+        self.assertTrue("အဆင့် ၂" in content or "Level 2" in content)
+        self.assertNotIn("အဆင့် ၃", content)
 
     def test_export_pdf_download(self):
         response = self.client.get(reverse('export_pdf'), {'level': '1'})

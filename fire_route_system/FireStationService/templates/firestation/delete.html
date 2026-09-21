@@ -3,20 +3,38 @@
 {% block title %}Delete Fire Station - Fire Route System{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="station-del-title">Delete Fire Station</h1>
+<div style="max-width: 580px; margin: 2rem auto;">
+    <div class="cad-panel" style="border: 2px solid var(--cad-red); box-shadow: var(--cad-glow-red);">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; color: var(--cad-red); flex-shrink: 0;">
+                <svg class="cad-icon cad-icon-lg cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+            </div>
+            <div>
+                <h1 id="station-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
+                    Delete Fire Station
+                </h1>
+                <span id="station-del-badge" style="font-size: 0.8rem; color: var(--cad-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Irreversible Action</span>
+            </div>
+        </div>
 
-    <div class="card" style="border-color: var(--btn-red);">
-        <h3 style="color: var(--btn-red); margin-bottom: 1rem;" id="station-del-warning">⚠️ Warning: This action cannot be undone!</h3>
-        <p style="margin-bottom: 1.5rem; font-size: 1.05rem;" id="station-del-desc">
-            Are you sure you want to delete the fire station <strong>"{{ station.name }}"</strong>?
-        </p>
+        <div style="background: var(--cad-surface-hover); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--cad-red); margin-bottom: 1.5rem;">
+            <h3 style="color: var(--cad-red); margin: 0 0 0.5rem 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                <span id="station-del-warning">Warning: This action cannot be undone!</span>
+            </h3>
+            <p style="margin: 0; font-size: 0.95rem; color: var(--cad-text); line-height: 1.5;" id="station-del-desc">
+                Are you sure you want to delete the fire station <strong>"{{ station.name }}"</strong>?
+            </p>
+        </div>
 
         <form method="POST">
             {% csrf_token %}
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-red" id="station-del-confirm">Delete Permanently</button>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end;">
                 <a href="{% url 'firestation_list' %}" class="btn btn-outline" id="station-del-cancel">Cancel</a>
+                <button type="submit" class="btn btn-red" id="station-del-confirm" style="background: var(--cad-red); color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                    <span id="station-del-confirm-text">Delete Permanently</span>
+                </button>
             </div>
         </form>
     </div>
@@ -27,16 +45,18 @@
     const translations = {
         en: {
             title: "Delete Fire Station",
-            warning: "⚠️ Warning: This action cannot be undone!",
-            desc: 'Are you sure you want to delete the fire station "{{ station.name }}"?',
+            badge: "Irreversible Action",
+            warning: "Warning: This action cannot be undone!",
+            desc: 'Are you sure you want to delete the fire station <strong>"{{ station.name }}"</strong>?',
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
-            title: "မီးသတ်စခန်း ဖျက်မည်",
-            warning: "⚠️ သတိပေးချက်: ဤလုပ်ဆောင်ချက်ကို မပြန်နိုင်ပါ!",
-            desc: '"{{ station.name }}" မီးသတ်စခန်းကို ဖျက်မှာ သေချာပါသလား?',
-            confirm: "အပြီးအပိုင် ဖျက်မည်",
+            title: "မီးသတ်စခန်း အချက်အလက် ဖျက်ပယ်ရန်",
+            badge: "ပြန်လည်ပြင်ဆင်၍မရသော လုပ်ဆောင်ချက်",
+            warning: "သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            desc: '<strong>"{{ station.name }}"</strong> မီးသတ်စခန်းကို စနစ်ထဲမှ အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?',
+            confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
         }
     };
@@ -45,10 +65,12 @@
         const d = translations[lang];
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
         set("station-del-title", d.title);
+        set("station-del-badge", d.badge);
         set("station-del-warning", d.warning);
-        set("station-del-desc", d.desc);
-        set("station-del-confirm", d.confirm);
+        setHtml("station-del-desc", d.desc);
+        set("station-del-confirm-text", d.confirm);
         set("station-del-cancel", d.cancel);
     }
 

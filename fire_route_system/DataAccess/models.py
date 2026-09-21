@@ -5,15 +5,35 @@ class Role(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def display_name(self):
+        role_burmese_map = {
+            'admin': 'စနစ်အုပ်ချုပ်သူ (Administrator)',
+            'administrator': 'စနစ်အုပ်ချုပ်သူ (Administrator)',
+            'dispatcher': 'အရေးပေါ်ကွပ်ကဲရေးမှူး (Dispatcher)',
+            'operator': 'အရေးပေါ်ကွပ်ကဲရေးမှူး (Dispatcher)',
+            'firefighter': 'မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)',
+            'responder': 'မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)',
+            'citizen': 'သတင်းပို့သူ ပြည်သူ (Citizen)',
+            'reporter': 'သတင်းပို့သူ ပြည်သူ (Citizen)',
+        }
+        return role_burmese_map.get(self.role_name.lower().strip(), self.role_name)
+
     def __str__(self):
         return self.role_name
 
 
+import hmac
+import hashlib
+from django.conf import settings
+from django.contrib.auth.hashers import make_password, check_password
+
+
 class User(models.Model):
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('Suspended', 'Suspended'),
-        ('Inactive', 'Inactive'),
+        ('Active', 'အသုံးပြုဆဲ'),
+        ('Suspended', 'ယာယီရပ်ဆိုင်း'),
+        ('Inactive', 'ပိတ်ထား'),
     ]
 
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
@@ -22,18 +42,139 @@ class User(models.Model):
     password_hash = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+    last_login = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    # ── Django Authentication Protocol Support ────────────────────────────
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    @property
+    def is_active(self):
+        return self.status == 'Active'
+
+    def get_username(self):
         return self.username
+
+    def get_session_auth_hash(self):
+        key_salt = "DataAccess.models.User.get_session_auth_hash"
+        return hmac.new(
+            settings.SECRET_KEY.encode(),
+            f"{self.password_hash}:{key_salt}".encode(),
+            hashlib.sha256
+        ).hexdigest()
+
+    def set_password(self, raw_password):
+        self.password_hash = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        if not self.password_hash:
+            return False
+        # Dual-support: verify Django PBKDF2 hash or plaintext fallback
+        if check_password(raw_password, self.password_hash):
+            return True
+        elif self.password_hash == raw_password:
+            # Upgrade legacy/plaintext password to PBKDF2 hash automatically
+            self.set_password(raw_password)
+            if self.pk:
+                User.objects.filter(pk=self.pk).update(password_hash=self.password_hash)
+            return True
+        return False
+
+    # ── Role-Based Authorization Helpers ─────────────────────────────────
+    @property
+    def role_name(self):
+        return self.role.role_name if self.role else ""
+
+    @property
+    def role_display(self):
+        return self.role.display_name if self.role else ""
+
+    def has_role(self, *role_names):
+        """
+        Check if user's role matches any of the specified roles or aliases.
+        Aliases:
+          Admin <-> Administrator
+          Operator <-> Dispatcher
+          Responder <-> Firefighter
+          Reporter <-> Citizen
+        """
+        if not self.role:
+            return False
+        current_role = self.role.role_name.lower().strip()
+        role_map = {
+            'admin': {'admin', 'administrator'},
+            'administrator': {'admin', 'administrator'},
+            'dispatcher': {'dispatcher', 'operator'},
+            'operator': {'dispatcher', 'operator'},
+            'firefighter': {'firefighter', 'responder'},
+            'responder': {'firefighter', 'responder'},
+            'citizen': {'citizen', 'reporter'},
+            'reporter': {'citizen', 'reporter'},
+        }
+
+        for target in role_names:
+            t = target.lower().strip()
+            aliases = role_map.get(t, {t})
+            if current_role in aliases:
+                return True
+        return False
+
+    @property
+    def is_admin(self):
+        return self.has_role('Admin', 'Administrator')
+
+    @property
+    def is_dispatcher(self):
+        return self.has_role('Dispatcher', 'Operator')
+
+    @property
+    def is_firefighter(self):
+        return self.has_role('Firefighter', 'Responder')
+
+    @property
+    def is_citizen(self):
+        return self.has_role('Citizen', 'Reporter')
+
+    # ── Django Permissions Compatibility ─────────────────────────────────
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
+
+    def __str__(self):
+        return f"{self.username} ({self.role_name})"
 
 
 class FireStation(models.Model):
     STATUS_CHOICES = [
-        ("Active", "Active"),
-        ("Inactive", "Inactive"),
-        ("Maintenance", "Maintenance"),
+        ("Active", "အသင့်ရှိ"),
+        ("Inactive", "ယာယီပိတ်ထား"),
+        ("Maintenance", "ပြုပြင်ထိန်းသိမ်းဆဲ"),
     ]
+
+    @property
+    def status_display(self):
+        status_map = {
+            'Active': 'အသင့်ရှိ',
+            'Inactive': 'ယာယီပိတ်ထား',
+            'Maintenance': 'ပြုပြင်ထိန်းသိမ်းဆဲ',
+        }
+        return status_map.get(self.status, self.get_status_display() or self.status)
 
     station_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -55,21 +196,46 @@ class FireStation(models.Model):
 
 class FireReport(models.Model):
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Dispatched', 'Dispatched'),
-        ('Under Control', 'Under Control'),
-        ('Resolved', 'Resolved'),
-        ('False Alarm', 'False Alarm'),
+        ('Pending', 'ဆိုင်းငံ့ / စိစစ်ဆဲ'),
+        ('Confirmed', 'အတည်ပြုပြီး'),
+        ('Dispatched', 'တပ်ဖွဲ့စေလွှတ်ပြီး'),
+        ('Under Control', 'မီးထိန်းချုပ်နိုင်ပြီ'),
+        ('Resolved', 'ငြှိမ်းသတ်ပြီးစီး'),
+        ('False Alarm', 'သတင်းမှား'),
     ]
 
     FIRE_SCALE_CHOICES = [
         (0, 'နယ်မြေခံ'),
-        (1, 'Level 1'),
-        (2, 'Level 2'),
-        (3, 'Level 3'),
-        (4, 'Level 4'),
-        (5, 'Level 5'),
+        (1, 'အဆင့် ၁'),
+        (2, 'အဆင့် ၂'),
+        (3, 'အဆင့် ၃'),
+        (4, 'အဆင့် ၄'),
+        (5, 'အဆင့် ၅'),
     ]
+
+    @property
+    def scale_display(self):
+        scale_map = {
+            0: 'နယ်မြေခံ',
+            1: 'အဆင့် ၁',
+            2: 'အဆင့် ၂',
+            3: 'အဆင့် ၃',
+            4: 'အဆင့် ၄',
+            5: 'အဆင့် ၅',
+        }
+        return scale_map.get(self.fire_scale, f"အဆင့် {self.fire_scale}")
+
+    @property
+    def status_display(self):
+        status_map = {
+            'Pending': 'ဆိုင်းငံ့ / စိစစ်ဆဲ',
+            'Confirmed': 'အတည်ပြုပြီး',
+            'Dispatched': 'တပ်ဖွဲ့စေလွှတ်ပြီး',
+            'Under Control': 'မီးထိန်းချုပ်နိုင်ပြီ',
+            'Resolved': 'ငြှိမ်းသတ်ပြီးစီး',
+            'False Alarm': 'သတင်းမှား',
+        }
+        return status_map.get(self.status, self.get_status_display() or self.status)
 
     user_id = models.IntegerField(
         null=True, 

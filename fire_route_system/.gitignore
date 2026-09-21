@@ -1,6 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
 venv/
-<<<<<<< HEAD
-fire_route_system/db.sqlite3
-=======
-fire_route_system/db.sqlite3
->>>>>>> 8411e2b0841025dabce418887528ea5942e93fad
+.venv/
+env/
+
+# SQLite Database
+db.sqlite3
+db.sqlite3-journal
+
+# Logs
+*.log
+
+# Environment variables & secrets
+.env
+*.env
+.env.local

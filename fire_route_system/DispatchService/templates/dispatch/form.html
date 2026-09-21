@@ -1,53 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}Dispatch Form - Fire Route System{% endblock %}
+{% block title %}Dispatch Operation - Fire Department CAD{% endblock %}
+{% block breadcrumb %}Dispatch Deployment Console{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 id="dispatch-form-title">{% if form.instance.pk %}Edit Dispatch Operation{% else %}Log Dispatch Operation{% endif %}</h1>
-
-    <div class="card">
-        <form method="post">
-            {% csrf_token %}
-            
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <span style="font-size: 0.8rem; color: var(--gray-dark);">{{ field.help_text }}</span>
-                    {% endif %}
-                    {% if field.errors %}
-                        <div style="color: var(--btn-red); font-size: 0.85rem; margin-top: 0.25rem;">
-                            {{ field.errors|striptags }}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                <button type="submit" class="btn btn-orange" id="dispatch-form-save">Save Dispatch</button>
-                <a href="{% url 'dispatch_list' %}" class="btn btn-outline" id="dispatch-form-cancel">Cancel</a>
+<div style="max-width: 680px; margin: 1rem auto;">
+    <div class="cad-panel">
+        <div class="cad-panel-header" style="background: linear-gradient(90deg, var(--cad-navy-deep) 0%, var(--cad-navy-surface) 100%); color: #fff;">
+            <div class="cad-panel-title" style="color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-dispatch"/></svg>
+                <span id="dispatch-form-title">{% if form.instance.pk %}Edit Dispatch Operation{% else %}Log Dispatch Deployment{% endif %}</span>
             </div>
-        </form>
+            <span class="cad-badge cad-badge-pending" id="dispatch-form-badge">MISSION ASSIGNMENT</span>
+        </div>
+
+        <div class="cad-panel-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="cad-form-group">
+                        <label for="{{ field.id_for_label }}" class="cad-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="cad-input-hint">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="cad-input-error" style="display: flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                                <span>{{ field.errors|striptags }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 2rem; justify-content: flex-end; border-top: 1px solid var(--cad-border); padding-top: 1.25rem;">
+                    <a href="{% url 'dispatch_list' %}" class="cad-btn cad-btn-outline" id="dispatch-form-cancel">Cancel</a>
+                    <button type="submit" class="cad-btn cad-btn-emergency" id="dispatch-form-save">Save & Deploy</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Style Django default form elements
+    document.querySelectorAll("form select, form input[type='text'], form input[type='datetime-local'], form textarea").forEach(el => {
+        el.classList.add("cad-input");
+    });
+});
+
 (function() {
     const isEdit = {{ form.instance.pk|yesno:"true,false" }};
     const translations = {
         en: {
-            titleCreate: "Log Dispatch Operation",
+            titleCreate: "Log Dispatch Deployment",
             titleEdit: "Edit Dispatch Operation",
-            save: "Save Dispatch",
-            cancel: "Cancel"
+            badge: "MISSION ASSIGNMENT",
+            save: "Save & Deploy",
+            cancel: "Cancel",
+            fields: {
+                report: "Target Incident",
+                station: "Responding Station",
+                dispatched_at: "Dispatched Time",
+                resolved_at: "Resolved Time",
+                resources_deployed: "Resources Deployed",
+                notes: "Operational Notes"
+            }
         },
         my: {
-            titleCreate: "စေလွှတ်မှု မှတ်တမ်းတင်မည်",
-            titleEdit: "စေလွှတ်မှု တည်းဖြတ်မည်",
-            save: "စေလွှတ်မှု သိမ်းဆည်းမည်",
-            cancel: "မလုပ်တော့ပါ"
+            titleCreate: "မီးသတ်တပ်ဖွဲ့ စေလွှတ်မှု အသစ်ဖွင့်ရန်",
+            titleEdit: "စေလွှတ်မှု အချက်အလက် ပြင်ဆင်ရန်",
+            badge: "တာဝန်စေလွှတ်မှု အမိန့်",
+            save: "သိမ်းဆည်းပြီး စေလွှတ်မည်",
+            cancel: "မလုပ်တော့ပါ",
+            fields: {
+                report: "မီးလောင်မှုဖြစ်စဉ်",
+                station: "တာဝန်ကျ မီးသတ်စခန်း",
+                dispatched_at: "စေလွှတ်သည့် အချိန်",
+                resolved_at: "မီးငြှိမ်းသတ်ပြီးဆုံးသည့် အချိန်",
+                resources_deployed: "စေလွှတ်သည့် မီးသတ်ယာဉ်နှင့် လူအင်အား",
+                notes: "မှတ်ချက်"
+            }
         }
     };
 
@@ -56,8 +91,16 @@
         if (!d) return;
         const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
         set("dispatch-form-title", isEdit ? d.titleEdit : d.titleCreate);
+        set("dispatch-form-badge", d.badge);
         set("dispatch-form-save", d.save);
         set("dispatch-form-cancel", d.cancel);
+
+        if (d.fields) {
+            for (const [key, labelText] of Object.entries(d.fields)) {
+                const label = document.querySelector(`label[for="id_${key}"]`);
+                if (label) label.innerText = labelText;
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", function() {

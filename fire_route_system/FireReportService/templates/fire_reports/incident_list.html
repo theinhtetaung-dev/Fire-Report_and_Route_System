@@ -1,420 +1,452 @@
 {% extends 'base.html' %}
 
-{% block title %}Incidents List - Fire Route System{% endblock %}
+{% block title %}Confirmed Fire Incidents - Fire Department CAD{% endblock %}
+{% block breadcrumb %}Incident Operations Directory{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-    /* ── View Toggle Buttons ── */
-    .view-toggle-group {
-        display: flex;
-        gap: 0.4rem;
+    .cad-view-toggle-group {
+        display: inline-flex;
+        background-color: var(--cad-card-bg);
+        border: 1px solid var(--cad-border);
+        border-radius: var(--radius-sm);
+        padding: 0.25rem;
+        gap: 0.25rem;
     }
-    .view-toggle-btn {
+    .cad-view-btn {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.4rem 1rem;
-        font-size: 0.875rem;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.825rem;
         font-weight: 600;
-        border: 2px solid var(--gray-medium);
-        border-radius: 8px;
-        background: var(--bg-white);
-        color: var(--gray-dark);
+        border: none;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--cad-text-muted);
         cursor: pointer;
-        transition: all 0.18s ease;
-        font-family: var(--font-family);
+        transition: var(--transition);
+        font-family: var(--font-sans);
     }
-    .view-toggle-btn:hover {
-        border-color: var(--btn-orange);
-        color: var(--btn-orange);
+    .cad-view-btn:hover {
+        color: var(--cad-text-main);
+        background-color: var(--cad-table-hover-bg);
     }
-    .view-toggle-btn.active {
-        background: var(--btn-orange);
-        border-color: var(--btn-orange);
-        color: #fff;
+    .cad-view-btn.active {
+        background: var(--cad-navy-deep);
+        color: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    [data-theme="dark"] .cad-view-btn.active {
+        background: var(--cad-navy-surface-2);
+        color: var(--cad-gold-primary);
+        border: 1px solid var(--cad-gold-primary);
     }
 
-    /* ── List View cards ── */
-    .incident-list-view {
+    .cad-incident-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.25rem;
     }
-    .incident-card {
-        border: 1px solid var(--gray-medium);
-        border-radius: 10px;
-        padding: 1.1rem 1.25rem;
-        background: var(--bg-white);
-        transition: box-shadow 0.18s ease, transform 0.18s ease;
-    }
-    .incident-card:hover {
-        box-shadow: 0 6px 20px rgba(226,82,37,0.1);
-        transform: translateY(-2px);
-    }
-    .incident-card-header {
+    .cad-incident-card {
+        background-color: var(--cad-card-bg);
+        border: 1px solid var(--cad-border);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        box-shadow: var(--cad-shadow-sm);
+        transition: var(--transition);
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.6rem;
     }
-    .incident-card-id {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--color-black);
-    }
-    .incident-card-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: var(--gray-dark);
-        margin-bottom: 0.3rem;
-    }
-    .incident-card-actions {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+    .cad-incident-card:hover {
+        border-color: var(--cad-gold-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--cad-shadow-md);
     }
 
-    /* ── Map View ── */
     #incident-map {
         width: 100%;
-        height: 520px;
-        border-radius: 10px;
+        height: 540px;
+        border-radius: var(--radius-md);
         overflow: hidden;
     }
-
-    /* ── Scale badge helpers ── */
-    .scale-badge {
-        display: inline-block;
-        padding: 0.15rem 0.55rem;
-        border-radius: 50px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        border: 1px solid currentColor;
-    }
-    .scale-0 { background:#e3f2fd; color:#1565c0; }
-    .scale-1 { background:#e8f5e9; color:#2e7d32; }
-    .scale-2 { background:#fff8e1; color:#f9a825; }
-    .scale-3 { background:#fff3e0; color:var(--btn-orange); }
-    .scale-4 { background:#fbe9e7; color:#bf360c; }
-    .scale-5 { background:#ffebee; color:var(--btn-red); }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- ── Page Header ── -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-    <div>
-        <h1 style="margin: 0; font-size: 2rem;" id="inc-title">🔥 Confirmed Fire Incidents</h1>
-        <p style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--gray-dark);" id="inc-subtitle">Manage and monitor confirmed active and historical fire incidents.</p>
+<!-- Page Header & View Toggles -->
+<div class="cad-dash-header">
+    <div class="cad-dash-title-group">
+        <h1 class="cad-dash-title">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
+            <span id="inc-title">Confirmed Fire Incidents</span>
+        </h1>
+        <p class="cad-dash-subtitle" id="inc-subtitle">Operational incident records, response logs, and tactical monitoring.</p>
     </div>
     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-        <!-- View toggle buttons -->
-        <div class="view-toggle-group" id="viewToggleGroup">
-            <button class="view-toggle-btn active" id="btn-table" onclick="switchView('table')" title="Table View">
-                ☰ Table
+        <!-- View Toggle Pills -->
+        <div class="cad-view-toggle-group" id="viewToggleGroup">
+            <button class="cad-view-btn active" id="btn-table" onclick="switchView('table')" title="Table View">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-table"/></svg>
+                <span class="view-btn-text" data-en="Table" data-my="ဇယား">Table</span>
             </button>
-            <button class="view-toggle-btn" id="btn-list" onclick="switchView('list')" title="List View">
-                ▦ List
+            <button class="cad-view-btn" id="btn-list" onclick="switchView('list')" title="Card Grid">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-grid"/></svg>
+                <span class="view-btn-text" data-en="Grid" data-my="ကတ်ပြား">Grid</span>
             </button>
-            <button class="view-toggle-btn" id="btn-map" onclick="switchView('map')" title="Map View">
-                🗺 Map
+            <button class="cad-view-btn" id="btn-map" onclick="switchView('map')" title="Map Overview">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-map"/></svg>
+                <span class="view-btn-text" data-en="Map" data-my="မြေပုံ">Map</span>
             </button>
         </div>
-        <a href="{% url 'fire_report_create' %}" class="btn btn-orange" id="inc-log-btn">🚨 Log New Incident</a>
+        <a href="{% url 'fire_report_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+            <span id="inc-log-btn">Log Incident</span>
+        </a>
     </div>
 </div>
 
 {% if messages %}
     {% for message in messages %}
-        <div class="card" style="padding: 1rem; border-left: 5px solid {% if message.tags == 'success' %}#2e7d32{% else %}var(--btn-red){% endif %}; margin-bottom: 1.5rem; background-color: #f9f9f9;">
+        <div style="padding: 0.85rem 1.25rem; border-left: 4px solid {% if message.tags == 'success' %}var(--cad-green-active){% else %}var(--cad-red-primary){% endif %}; background-color: var(--cad-card-bg); border-radius: var(--radius-sm); margin-bottom: 1.25rem; font-weight: 600;">
             {{ message }}
         </div>
     {% endfor %}
 {% endif %}
 
-<!-- ── Search & Filter Bar ── -->
-<div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem; background-color: var(--gray-light); width: 100%;">
-    <form method="GET" action="" style="display: flex !important; flex-direction: row !important; gap: 1rem; align-items: flex-end; flex-wrap: wrap; width: 100%;">
-        <!-- Text search -->
-        <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1.5; min-width: 200px;">
-            <label style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-dark);" id="lbl-search-text">Search Text</label>
-            <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                <span style="position: absolute; left: 0.75rem; color: var(--gray-dark); pointer-events: none; font-size: 1rem; line-height: 1;">🔍</span>
-                <input type="text" name="q" value="{{ query|default:'' }}" id="inc-search-input" placeholder="Search by phone, status..."
-                       style="width: 100%; padding: 0.4rem 1rem 0.4rem 2.25rem; font-family: var(--font-family); font-size: 0.9rem; line-height: 1.4; border: 1px solid var(--gray-medium); border-radius: 6px; background-color: var(--bg-white); color: var(--color-black);">
+<!-- Search & Filter Card -->
+<div class="cad-panel" style="margin-bottom: 1.5rem;">
+    <div style="padding: 1.25rem;">
+        <form method="GET" action="" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; width: 100%;">
+            <!-- Text Search -->
+            <div style="flex: 1.5; min-width: 200px;" class="cad-form-group">
+                <label class="cad-label" id="lbl-search-text">Search Query</label>
+                <div class="cad-search-input-group" style="max-width: 100%;">
+                    <span class="cad-search-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-search"/></svg></span>
+                    <input type="text" name="q" value="{{ query|default:'' }}" id="inc-search-input" placeholder="Search by phone, address..." class="cad-input cad-search-input">
+                </div>
             </div>
-        </div>
-        <!-- Date -->
-        <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 150px;">
-            <label style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-dark);" id="lbl-filter-date">Filter by Date</label>
-            <input type="text" name="date" id="inc-date-input" value="{{ selected_date }}" placeholder="dd-mm-yyyy" autocomplete="off"
-                   style="width: 100%; padding: 0.4rem 0.75rem; font-family: var(--font-family); font-size: 0.9rem; line-height: 1.4; border: 1px solid var(--gray-medium); border-radius: 6px; background-color: var(--bg-white); color: var(--color-black); box-sizing: border-box;">
-        </div>
-        <!-- Status -->
-        <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 150px;">
-            <label style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-dark);" id="lbl-filter-status">Filter by Status</label>
-            <select name="status" style="width: 100%; padding: 0.4rem 0.75rem; font-family: var(--font-family); font-size: 0.9rem; line-height: 1.4; border: 1px solid var(--gray-medium); border-radius: 6px; background-color: var(--bg-white); color: var(--color-black);">
-                <option value="" id="opt-status-all">All Statuses</option>
-                <option value="Confirmed" {% if selected_status == 'Confirmed' %}selected{% endif %} id="opt-status-confirmed">Confirmed</option>
-                <option value="Dispatched" {% if selected_status == 'Dispatched' %}selected{% endif %} id="opt-status-dispatched">Dispatched</option>
-                <option value="Under Control" {% if selected_status == 'Under Control' %}selected{% endif %} id="opt-status-control">Under Control</option>
-                <option value="Resolved" {% if selected_status == 'Resolved' %}selected{% endif %} id="opt-status-resolved">Resolved</option>
-                <option value="False Alarm" {% if selected_status == 'False Alarm' %}selected{% endif %} id="opt-status-alarm">False Alarm</option>
-            </select>
-        </div>
-        <!-- Scale -->
-        <div style="display: flex; flex-direction: column; gap: 0.25rem; flex: 1; min-width: 150px;">
-            <label style="font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-dark);" id="lbl-filter-scale">Filter by Scale</label>
-            <select name="scale" style="width: 100%; padding: 0.4rem 0.75rem; font-family: var(--font-family); font-size: 0.9rem; line-height: 1.4; border: 1px solid var(--gray-medium); border-radius: 6px; background-color: var(--bg-white); color: var(--color-black);">
-                <option value="" id="opt-scale-all">All Scales</option>
-                <option value="0" {% if selected_scale == '0' %}selected{% endif %} id="opt-scale-0">နယ်မြေခံ</option>
-                <option value="1" {% if selected_scale == '1' %}selected{% endif %} id="opt-scale-1">Level 1</option>
-                <option value="2" {% if selected_scale == '2' %}selected{% endif %} id="opt-scale-2">Level 2</option>
-                <option value="3" {% if selected_scale == '3' %}selected{% endif %} id="opt-scale-3">Level 3</option>
-                <option value="4" {% if selected_scale == '4' %}selected{% endif %} id="opt-scale-4">Level 4</option>
-                <option value="5" {% if selected_scale == '5' %}selected{% endif %} id="opt-scale-5">Level 5</option>
-            </select>
-        </div>
-        <!-- Buttons -->
-        <div style="display: flex; gap: 0.5rem; height: 38px;">
-            <button type="submit" class="btn btn-orange" id="inc-apply-btn" style="height: 100%; font-size: 0.9rem; font-weight: 600; padding: 0 1.25rem;">Apply</button>
-            {% if query or selected_date or selected_status or selected_scale %}
-                <a href="{% url 'fire_report_list' %}" class="btn btn-outline" id="inc-reset-btn" style="height: 100%; font-size: 0.9rem; font-weight: 600; padding: 0 1.25rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; box-sizing: border-box;">Reset</a>
-            {% endif %}
-        </div>
-    </form>
+
+            <!-- Date Filter -->
+            <div style="flex: 1; min-width: 140px;" class="cad-form-group">
+                <label class="cad-label" id="lbl-filter-date">Incident Date</label>
+                <input type="text" name="date" id="inc-date-input" value="{{ selected_date }}" placeholder="dd-mm-yyyy" autocomplete="off" class="cad-input">
+            </div>
+
+            <!-- Status Filter -->
+            <div style="flex: 1; min-width: 140px;" class="cad-form-group">
+                <label class="cad-label" id="lbl-filter-status">Status</label>
+                <select name="status" class="cad-select">
+                    <option value="" id="opt-status-all">All Statuses</option>
+                    <option value="Confirmed" {% if selected_status == 'Confirmed' %}selected{% endif %} id="opt-status-confirmed">Confirmed</option>
+                    <option value="Dispatched" {% if selected_status == 'Dispatched' %}selected{% endif %} id="opt-status-dispatched">Dispatched</option>
+                    <option value="Under Control" {% if selected_status == 'Under Control' %}selected{% endif %} id="opt-status-control">Under Control</option>
+                    <option value="Resolved" {% if selected_status == 'Resolved' %}selected{% endif %} id="opt-status-resolved">Resolved</option>
+                    <option value="False Alarm" {% if selected_status == 'False Alarm' %}selected{% endif %} id="opt-status-alarm">False Alarm</option>
+                </select>
+            </div>
+
+            <!-- Scale Filter -->
+            <div style="flex: 1; min-width: 140px;" class="cad-form-group">
+                <label class="cad-label" id="lbl-filter-scale">Severity</label>
+                <select name="scale" class="cad-select">
+                    <option value="" id="opt-scale-all">ပြင်းထန်မှု အားလုံး</option>
+                    <option value="0" {% if selected_scale == '0' %}selected{% endif %} id="opt-scale-0">နယ်မြေခံ</option>
+                    <option value="1" {% if selected_scale == '1' %}selected{% endif %} id="opt-scale-1">အဆင့် ၁</option>
+                    <option value="2" {% if selected_scale == '2' %}selected{% endif %} id="opt-scale-2">အဆင့် ၂</option>
+                    <option value="3" {% if selected_scale == '3' %}selected{% endif %} id="opt-scale-3">အဆင့် ၃</option>
+                    <option value="4" {% if selected_scale == '4' %}selected{% endif %} id="opt-scale-4">အဆင့် ၄</option>
+                    <option value="5" {% if selected_scale == '5' %}selected{% endif %} id="opt-scale-5">အဆင့် ၅</option>
+                </select>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.15rem;">
+                <button type="submit" class="cad-btn cad-btn-navy" id="inc-apply-btn">Apply</button>
+                {% if query or selected_date or selected_status or selected_scale %}
+                    <a href="{% url 'fire_report_list' %}" class="cad-btn cad-btn-outline" id="inc-reset-btn">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
 </div>
 
-<!-- ══════════════════════════════════════════ -->
-<!--  TABLE VIEW                                -->
-<!-- ══════════════════════════════════════════ -->
+<!-- 1. TABLE VIEW -->
 <div id="view-table">
-<div class="card" style="padding: 1.5rem;">
-    {% if reports %}
-        <div class="table-responsive">
-            <table>
+    <div class="cad-panel">
+        {% if reports %}
+        <div class="cad-table-container">
+            <table class="cad-table">
                 <thead>
                     <tr>
-                        <th id="th-inc-no">No</th>
+                        <th id="th-inc-no" style="width: 50px;">No</th>
                         <th id="th-inc-phone">Reporter Phone</th>
                         <th id="th-inc-severity">Severity Scale</th>
-                        <th id="th-inc-location">Location (Lat, Lng)</th>
+                        <th id="th-inc-location">Location / Coordinates</th>
                         <th id="th-inc-status">Status</th>
-                        <th id="th-inc-time">Reported At</th>
-                        <th id="th-inc-actions">Actions</th>
+                        <th id="th-inc-time">Reported Time</th>
+                        <th id="th-inc-actions" style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for report in reports %}
-                        <tr>
-                            <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
-                            <td>{{ report.reporter_phone|default:"Anonymous" }}</td>
-                            <td>
-                                <span class="scale-badge scale-{{ report.fire_scale }}">{% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}</span>
-                            </td>
-                            <td>
-                                {% if report.latitude and report.longitude %}
-                                <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--color-black); text-decoration: underline;">
-                                    {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
+                    <tr class="{% if report.fire_scale >= 4 %}row-urgent{% endif %}">
+                        <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
+                        <td>
+                            {% if report.reporter_phone %}
+                            <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                                <span>{{ report.reporter_phone }}</span>
+                            </a>
+                            {% else %}
+                            <span style="color: var(--cad-text-muted); font-style: italic;">အမည်မသိ သတင်းပို့သူ</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="cad-badge cad-badge-scale-{{ report.fire_scale }}">
+                                {{ report.scale_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if report.latitude and report.longitude %}
+                            <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-blue"><use href="#cad-icon-pin"/></svg>
+                                <span>{{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗</span>
+                            </a>
+                            {% else %}
+                            <span>{{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
+                                {{ report.status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="font-numeric" style="font-weight: 600;">{{ report.reported_at|date:"d-m-Y" }}</span>
+                            <span style="font-size: 0.78rem; color: var(--cad-text-muted);">{{ report.reported_at|date:"h:i A" }}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="cad-table-actions" style="justify-content: flex-end;">
+                                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-edit"/></svg>
+                                    <span data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</span>
                                 </a>
-                                {% else %}
-                                <span style="color: var(--gray-dark); font-size: 0.85rem;">No GPS</span>
+                                {% if report.status == 'Resolved' %}
+                                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                                    <span data-en="Delete" data-my="ဖျက်မည်">Delete</span>
+                                </a>
                                 {% endif %}
-                            </td>
-                            <td>
-                                <span class="badge badge-{% if report.status|lower == 'confirmed' %}confirmed{% elif report.status|lower == 'pending' %}pending{% elif report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'false alarm' %}false-alarm{% else %}active{% endif %}">
-                                    {{ report.status }}
-                                </span>
-                            </td>
-                            <td>{{ report.reported_at|date:"d-m-Y h:i A" }}</td>
-                            <td>
-                                <div style="display: flex; gap: 0.5rem; align-items: center; white-space: nowrap;">
-                                    <a href="{% url 'fire_report_update' report.id %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
-                                    {% if report.status|lower == 'resolved' %}
-                                        <a href="{% url 'fire_report_delete' report.id %}" class="btn btn-red" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        {% include 'pagination.html' %}
-    {% else %}
-        <div style="text-align: center; padding: 3.5rem 0; color: var(--gray-dark);">
+        <div style="padding: 0 1.25rem 1.25rem 1.25rem;">
+            {% include 'pagination.html' %}
+        </div>
+        {% else %}
+        <div class="cad-empty-state">
+            <span class="cad-empty-icon"><svg class="cad-icon cad-icon-muted" style="width: 3.5rem; height: 3.5rem;"><use href="#cad-icon-search"/></svg></span>
+            <h3 class="cad-empty-title" id="inc-no-match-title">No matching reports found</h3>
+            <p class="cad-empty-desc" id="inc-no-match-desc">Try clearing your search query or selecting a broader date range.</p>
             {% if query or selected_date or selected_status or selected_scale %}
-                <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🔍</span>
-                <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; color: var(--color-black);" id="inc-no-match-title">No matching reports found</h3>
-                <p style="margin: 0; font-size: 0.95rem;" id="inc-no-match-desc">No results for the current search / filter options.</p>
-                <a href="{% url 'fire_report_list' %}" class="btn btn-orange" style="margin-top: 1.25rem; display: inline-block;" id="inc-reset-filter-btn">Reset Filters</a>
-            {% else %}
-                <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🔥</span>
-                <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem; color: var(--color-black);" id="inc-no-data-title">No incidents logged within time window</h3>
-                <p style="margin: 0; font-size: 0.95rem;" id="inc-no-data-desc">No confirmed incidents recorded in the last 7 days.</p>
-                <a href="{% url 'report_fire' %}" class="btn btn-orange" style="margin-top: 1.25rem; display: inline-block;" id="inc-goto-report-btn">Go to Emergency Reporting Form</a>
+            <a href="{% url 'fire_report_list' %}" class="cad-btn cad-btn-outline" id="inc-reset-filter-btn">Reset Filters</a>
             {% endif %}
         </div>
-    {% endif %}
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  LIST VIEW (cards grid)                    -->
-<!-- ══════════════════════════════════════════ -->
-<div id="view-list" style="display: none;">
-    {% if reports %}
-        <div class="incident-list-view">
-            {% for report in reports %}
-            <div class="incident-card">
-                <div class="incident-card-header">
-                    <span class="incident-card-id">No {% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</span>
-                <span class="scale-badge scale-{{ report.fire_scale }}">{% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}</span>
-                </div>
-                <div class="incident-card-row">
-                    📞 {{ report.reporter_phone|default:"Anonymous" }}
-                </div>
-                <div class="incident-card-row">
-                    🕐 {{ report.reported_at|date:"d-m-Y h:i A" }}
-                </div>
-                {% if report.latitude and report.longitude %}
-                <div class="incident-card-row">
-                    📍 <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--btn-orange); text-decoration: none;">
-                        {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
-                    </a>
-                </div>
-                {% endif %}
-                <div class="incident-card-row" style="margin-top: 0.4rem;">
-                    <span class="badge badge-{% if report.status|lower == 'confirmed' %}confirmed{% elif report.status|lower == 'pending' %}pending{% elif report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'false alarm' %}false-alarm{% else %}active{% endif %}">{{ report.status }}</span>
-                </div>
-                <div class="incident-card-actions">
-                    <a href="{% url 'fire_report_update' report.id %}" class="btn btn-outline" style="padding: 0.3rem 0.75rem; font-size: 0.82rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
-                    {% if report.status|lower == 'resolved' %}
-                        <a href="{% url 'fire_report_delete' report.id %}" class="btn btn-red" style="padding: 0.3rem 0.75rem; font-size: 0.82rem;" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="card" style="padding: 3rem; text-align: center; color: var(--gray-dark);">
-            <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🔥</span>
-            <p>No incidents to display.</p>
-        </div>
-    {% endif %}
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  MAP VIEW                                  -->
-<!-- ══════════════════════════════════════════ -->
-<div id="view-map" style="display: none;">
-    <div class="card" style="padding: 1.25rem;">
-        <div style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--gray-dark);">
-            🗺 Showing <strong>{{ reports|length }}</strong> incident(s) on the map. Click a pin for details.
-        </div>
-        <div id="incident-map"></div>
+        {% endif %}
     </div>
 </div>
 
+<!-- 2. GRID CARD VIEW -->
+<div id="view-list" style="display: none;">
+    {% if reports %}
+    <div class="cad-incident-grid">
+        {% for report in reports %}
+        <div class="cad-incident-card">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.85rem;">
+                    <div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--cad-text-muted);">INCIDENT #{{ report.id }}</span>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin: 0.2rem 0; color: var(--cad-text-main);">
+                            {{ report.reporter_phone|default:"အမည်မသိ သတင်းပို့သူ" }}
+                        </h4>
+                    </div>
+                    <span class="cad-badge cad-badge-scale-{{ report.fire_scale }}">
+                        {{ report.scale_display }}
+                    </span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: var(--cad-text-secondary); display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <strong style="color: var(--cad-text-muted);">တည်နေရာ:</strong>
+                        {% if report.latitude and report.longitude %}
+                        <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--cad-blue-info); text-decoration: none;">
+                            {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
+                        </a>
+                        {% else %}
+                        <span>{{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong style="color: var(--cad-text-muted);">အခြေအနေ:</strong>
+                        <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
+                            {{ report.status_display }}
+                        </span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--cad-text-muted);">Reported:</strong>
+                        <span>{{ report.reported_at|date:"d-m-Y h:i A" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--cad-border); padding-top: 0.85rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-edit"/></svg>
+                    <span data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</span>
+                </a>
+                {% if report.status == 'Resolved' %}
+                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                    <span data-en="Delete" data-my="ဖျက်မည်">Delete</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="margin-top: 1.5rem;">
+        {% include 'pagination.html' %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- 3. MAP VIEW -->
+<div id="view-map" style="display: none;">
+    <div class="cad-panel" style="padding: 1rem;">
+        <div id="incident-map"></div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        flatpickr("#inc-date-input", {
-            dateFormat: "d-m-Y",
-            allowInput: true
-        });
+    flatpickr("#inc-date-input", {
+        dateFormat: "d-m-Y",
+        allowInput: true
     });
-</script>
-<script>
-    // ── View switcher ──────────────────────────────
-    let mapInitialised = false;
 
-    function switchView(mode) {
+    const viewKey = 'incident_list_view';
+    let currentView = localStorage.getItem(viewKey) || 'table';
+
+    function switchView(view) {
+        currentView = view;
+        localStorage.setItem(viewKey, view);
+
+        document.getElementById('view-table').style.display = view === 'table' ? 'block' : 'none';
+        document.getElementById('view-list').style.display  = view === 'list'  ? 'block' : 'none';
+        document.getElementById('view-map').style.display   = view === 'map'   ? 'block' : 'none';
+
         ['table', 'list', 'map'].forEach(v => {
-            document.getElementById('view-' + v).style.display = (v === mode) ? '' : 'none';
-            document.getElementById('btn-' + v).classList.toggle('active', v === mode);
+            const btn = document.getElementById('btn-' + v);
+            if (btn) btn.classList.toggle('active', v === view);
         });
-        // Initialise Leaflet map lazily on first switch to map view
-        if (mode === 'map' && !mapInitialised) {
+
+        if (view === 'map') {
             initIncidentMap();
-            mapInitialised = true;
         }
     }
 
-    // ── Leaflet incident map ───────────────────────
+    document.addEventListener('DOMContentLoaded', () => switchView(currentView));
+
+    let incidentMap = null;
     function initIncidentMap() {
-        const map = L.map('incident-map', {
-            scrollWheelZoom: true,
-            minZoom: 5
+        if (incidentMap) {
+            incidentMap.invalidateSize();
+            return;
+        }
+
+        const reportsData = [
+            {% for r in reports %}
+                {% if r.latitude and r.longitude %}
+                {
+                    id: {{ r.id }},
+                    lat: {{ r.latitude }},
+                    lng: {{ r.longitude }},
+                    phone: "{{ r.reporter_phone|default:'Anonymous'|escapejs }}",
+                    scale: {{ r.fire_scale }},
+                    status: "{{ r.status|escapejs }}",
+                    time: "{{ r.reported_at|date:'d-m-Y h:i A'|escapejs }}"
+                },
+                {% endif %}
+            {% endfor %}
+        ];
+
+        const southWest = L.latLng(21.7500, 95.9000);
+        const northEast = L.latLng(22.2000, 96.2500);
+        const bounds = L.latLngBounds(southWest, northEast);
+
+        incidentMap = L.map('incident-map', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 10
         }).setView([21.9750, 96.0830], 12);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(incidentMap);
 
-        const incidents = {{ reports_json|safe }};
         const markerGroup = L.featureGroup();
 
-        function scaleColor(s) {
-            if (s === 5) return '#c30010';
-            if (s === 4) return '#bf360c';
-            if (s === 3) return '#e25225';
-            if (s === 2) return '#f9a825';
-            if (s === 1) return '#2e7d32';
-            return '#1565c0'; // scale 0 = နယ်မြေခံ
-        }
-
-        incidents.forEach(function(r) {
-            const color = scaleColor(r.fire_scale);
-            const icon = L.divIcon({
-                className: '',
-                html: `<div style="background:${color};width:15px;height:15px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 8px ${color}99;"></div>`,
-                iconSize: [21, 21],
-                iconAnchor: [10, 10]
+        reportsData.forEach(r => {
+            const fireIcon = L.divIcon({
+                className: 'custom-marker-fire',
+                html: `<div class="marker-pin-fire scale-${r.scale}"><span class="inner-dot"></span><span class="pulse-ring"></span></div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
             });
 
-            const scaleLabels = {0: 'နယ်မြေခံ', 1: 'Level 1', 2: 'Level 2', 3: 'Level 3', 4: 'Level 4', 5: 'Level 5'};
             const popup = `
-                <div style="min-width:180px;font-family:inherit;">
-                    <p style="margin:0 0 4px;font-weight:700;font-size:0.95rem;color:${color};">🔥 Incident #${r.id}</p>
-                    <p style="margin:0 0 3px;font-size:0.82rem;">📞 ${r.reporter_phone}</p>
-                    <p style="margin:0 0 3px;font-size:0.82rem;">🕐 ${r.reported_at}</p>
-                    <p style="margin:0 0 6px;font-size:0.82rem;">Scale ${r.fire_scale} (${scaleLabels[r.fire_scale] || ''})</p>
-                    <span style="display:inline-block;padding:2px 8px;border-radius:50px;font-size:0.7rem;font-weight:700;background:${color}20;color:${color};border:1px solid ${color};">
-                        ${r.status}
-                    </span>
-                </div>`;
-
-            L.marker([r.latitude, r.longitude], {icon}).bindPopup(popup).addTo(markerGroup);
+                <div class="map-popup-card">
+                    <h4>Incident #${r.id}</h4>
+                    <p><strong>Caller:</strong> ${r.phone}</p>
+                    <p><strong>Severity:</strong> Level ${r.scale}</p>
+                    <p><strong>Status:</strong> ${r.status}</p>
+                    <p><strong>Time:</strong> ${r.time}</p>
+                </div>
+            `;
+            const m = L.marker([r.lat, r.lng], {icon: fireIcon}).bindPopup(popup);
+            markerGroup.addLayer(m);
         });
 
-        markerGroup.addTo(map);
-        if (markerGroup.getLayers().length > 0) {
-            map.fitBounds(markerGroup.getBounds(), {padding: [50, 50]});
-        }
+        markerGroup.addTo(incidentMap);
 
-        setTimeout(() => map.invalidateSize(), 200);
+        if (markerGroup.getLayers().length > 0) {
+            incidentMap.fitBounds(markerGroup.getBounds(), {padding: [50, 50]});
+        }
+        setTimeout(() => incidentMap.invalidateSize(), 200);
     }
 
-    // ── Incident List Page Language Translations ───────────────────────
+    // ── Incident List Bilingual Translations ───────────────────────
     (function() {
         const incTranslations = {
             en: {
-                title: "🔥 Confirmed Fire Incidents",
-                subtitle: "Manage and monitor confirmed active and historical fire incidents.",
-                logBtn: "🚨 Log New Incident",
-                searchLabel: "Search Text",
-                searchPlaceholder: "Search by phone, status...",
-                dateLabel: "Filter by Date",
-                statusLabel: "Filter by Status",
-                scaleLabel: "Filter by Scale",
+                title: "Confirmed Fire Incidents",
+                subtitle: "Operational incident records, response logs, and tactical monitoring.",
+                logBtn: "Log Incident",
+                searchLabel: "Search Query",
+                searchPlaceholder: "Search by phone, address...",
+                dateLabel: "Incident Date",
+                statusLabel: "Status",
+                scaleLabel: "Severity",
                 applyBtn: "Apply",
                 resetBtn: "Reset",
                 optStatusAll: "All Statuses",
@@ -424,63 +456,57 @@
                 optStatusResolved: "Resolved",
                 optStatusAlarm: "False Alarm",
                 optScaleAll: "All Scales",
-                optScale0: "နယ်မြေခံ",
+                optScale0: "နယ်မြေခံ (Local)",
                 optScale1: "Level 1",
                 optScale2: "Level 2",
                 optScale3: "Level 3",
                 optScale4: "Level 4",
-                optScale5: "Level 5",
+                optScale5: "Level 5 (Severe)",
                 thNo: "No",
                 thPhone: "Reporter Phone",
                 thSeverity: "Severity Scale",
-                thLocation: "Location (Lat, Lng)",
+                thLocation: "Location / Coordinates",
                 thStatus: "Status",
-                thTime: "Reported At",
+                thTime: "Reported Time",
                 thActions: "Actions",
                 noMatchTitle: "No matching reports found",
-                noMatchDesc: "No results for the current search / filter options.",
-                resetFilterBtn: "Reset Filters",
-                noDataTitle: "No incidents logged within time window",
-                noDataDesc: "No confirmed incidents recorded in the last 7 days.",
-                gotoReportBtn: "Go to Emergency Reporting Form"
+                noMatchDesc: "Try clearing your search query or selecting a broader date range.",
+                resetFilterBtn: "Reset Filters"
             },
             my: {
-                title: "🔥 အတည်ပြုပြီးသော မီးလောင်မှု ဖြစ်စဉ်များ",
-                subtitle: "အတည်ပြုပြီးသော တက်ကြွနှင့် သမိုင်းဆိုင်ရာ မီးလောင်မှု ဖြစ်စဉ်များကို စီမံခန့်ခွဲနှင့် ကြီးကြပ်ပါ။",
-                logBtn: "🚨 ဖြစ်စဉ်အသစ် မှတ်တမ်းတင်မည်",
-                searchLabel: "ရှာဖွေစာသား",
-                searchPlaceholder: "ဖုန်းနံပါတ်၊ အခြေအနေဖြင့် ရှာဖွေပါ...",
-                dateLabel: "ရက်စွဲဖြင့် စစ်ထုတ်မည်",
-                statusLabel: "အခြေအနေဖြင့် စစ်ထုတ်မည်",
-                scaleLabel: "အဆင့်ဖြင့် စစ်ထုတ်မည်",
-                applyBtn: "စစ်ထုတ်မည်",
-                resetBtn: "မူလပြန်ရန်",
-                optStatusAll: "အခြေအနေအားလုံး",
-                optStatusConfirmed: "အတည်ပြုပြီး",
-                optStatusDispatched: "စေလွှတ်ပြီး",
-                optStatusControl: "ထိန်းချုပ်နေဆဲ",
-                optStatusResolved: "ဖြေရှင်းပြီး",
-                optStatusAlarm: "မှားယွင်းသောသတင်း",
-                optScaleAll: "အဆင့်အားလုံး",
-                optScale0: "နယ်မြေခံ",
+                title: "အတည်ပြုပြီးသော မီးလောင်မှုဖြစ်စဉ်များ",
+                subtitle: "လက်ရှိဖြစ်ပွားဆဲနှင့် ပြီးဆုံးပြီးသော မီးလောင်မှုဖြစ်စဉ် မှတ်တမ်းများ၊ တုံ့ပြန်ဆောင်ရွက်မှုများနှင့် မြေပြင်အခြေအနေများ။",
+                logBtn: "မီးလောင်မှုဖြစ်စဉ် အသစ်ဖွင့်ရန်",
+                searchLabel: "ရှာဖွေရန် စကားလုံး",
+                searchPlaceholder: "ဖုန်းနံပါတ်၊ လိပ်စာ စသည်ဖြင့် ရှာဖွေပါ...",
+                dateLabel: "ဖြစ်စဉ် ရက်စွဲ",
+                statusLabel: "လက်ရှိ အခြေအနေ",
+                scaleLabel: "မီးပြင်းထန်မှု အဆင့်",
+                applyBtn: "ရှာဖွေမည်",
+                resetBtn: "မူလအတိုင်း ပြန်ထားမည်",
+                optStatusAll: "အခြေအနေ အားလုံး",
+                optStatusConfirmed: "အတည်ပြုပြီး (Confirmed)",
+                optStatusDispatched: "တပ်ဖွဲ့ထွက်ခွာပြီး (Dispatched)",
+                optStatusControl: "မီးထိန်းနိုင်ပြီ (Under Control)",
+                optStatusResolved: "မီးငြှိမ်းသတ်ပြီး (Resolved)",
+                optStatusAlarm: "သတင်းမှား (False Alarm)",
+                optScaleAll: "မီးအဆင့် အားလုံး",
+                optScale0: "နယ်မြေခံ (Local)",
                 optScale1: "Level 1",
                 optScale2: "Level 2",
                 optScale3: "Level 3",
                 optScale4: "Level 4",
-                optScale5: "Level 5",
-                thNo: "နံပါတ်",
+                optScale5: "Level 5 (အထူးပြင်းထန်)",
+                thNo: "စဉ်",
                 thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်",
-                thSeverity: "မီးပြင်းထန်မှုအဆင့်",
-                thLocation: "တည်နေရာ (Lat, Lng)",
+                thSeverity: "မီးအဆင့်",
+                thLocation: "တည်နေရာ / GPS ကိုဩဒိနိတ်",
                 thStatus: "အခြေအနေ",
-                thTime: "သတင်းပို့ချိန်",
-                thActions: "လုပ်ဆောင်ချက်များ",
-                noMatchTitle: "ကိုက်ညီသော မှတ်တမ်းမတွေ့ပါ",
-                noMatchDesc: "လက်ရှိ ရှာဖွေ/စစ်ထုတ်ချက်နှင့် ကိုက်ညီသောဒေတာ မရှိပါ။",
-                resetFilterBtn: "စစ်ထုတ်ချက်မူလပြန်ရန်",
-                noDataTitle: "သတ်မှတ်ချိန်ကာလတွင် ဖြစ်စဉ်မှတ်တမ်းမရှိ",
-                noDataDesc: "နောက်ဆုံး ၇ ရက်တွင် အတည်ပြုပြီးသော ဖြစ်စဉ်မှတ်တမ်းမရှိပါ။",
-                gotoReportBtn: "အရေးပေါ်သတင်းပို့ ဖောင်သို့ သွားရန်"
+                thTime: "သတင်းရရှိချိန်",
+                thActions: "လုပ်ဆောင်ချက်",
+                noMatchTitle: "ရှာဖွေမှုနှင့် ကိုက်ညီသော ဖြစ်စဉ်မှတ်တမ်း မတွေ့ပါ",
+                noMatchDesc: "ရှာဖွေမှု စကားလုံးကို ပြန်လည်စစ်ဆေးပါ သို့မဟုတ် ရက်စွဲအပိုင်းအခြားကို ချဲ့ထွင်၍ ရှာဖွေပါ။",
+                resetFilterBtn: "ရှာဖွေမှု စစ်ထုတ်ချက်များ ဖျက်မည်"
             }
         };
 
@@ -523,11 +549,7 @@
             set("inc-no-match-title", d.noMatchTitle);
             set("inc-no-match-desc", d.noMatchDesc);
             set("inc-reset-filter-btn", d.resetFilterBtn);
-            set("inc-no-data-title", d.noDataTitle);
-            set("inc-no-data-desc", d.noDataDesc);
-            set("inc-goto-report-btn", d.gotoReportBtn);
 
-            // data-en / data-my action buttons
             document.querySelectorAll("[data-en][data-my]").forEach(el => {
                 el.innerText = lang === "my" ? el.getAttribute("data-my") : el.getAttribute("data-en");
             });
