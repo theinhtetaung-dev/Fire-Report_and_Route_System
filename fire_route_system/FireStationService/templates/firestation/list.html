@@ -205,15 +205,17 @@
     <div class="stations-header">
         <div class="stations-title-row">
             <div>
-                <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.75rem;" id="stations-title">
-                    🚒 Fire Stations
+                <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.75rem;">
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-station"/></svg>
+                    <span id="stations-title">Fire Stations</span>
                 </h1>
                 <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: var(--cad-text-muted);" id="stations-subtitle">
                     Registered fire stations and regional coverage units.
                 </p>
             </div>
-            <a href="{% url 'firestation_create' %}" class="cad-btn cad-btn-emergency" id="stations-register-btn">
-                ➕ Register Fire Station
+            <a href="{% url 'firestation_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+                <span id="stations-register-btn">Register Fire Station</span>
             </a>
         </div>
         
@@ -221,7 +223,7 @@
         <div class="search-bar-container" style="max-width: 500px; width: 100%;">
             <form method="GET" action="" style="display: flex; gap: 0.5rem; width: 100%;">
                 <div class="search-input-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
-                    <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; font-size: 0.95rem; line-height: 1;">🔍</span>
+                    <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; display: flex; align-items: center; justify-content: center;"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-search"/></svg></span>
                     <input type="text" name="q" value="{{ query|default:'' }}" id="stations-search-input" placeholder="Search by name, contact, status..." 
                            style="width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; font-family: var(--font-family, inherit); font-size: 0.875rem; line-height: 1.4; border: 1px solid var(--cad-border); border-radius: 8px; background-color: var(--cad-surface); color: var(--cad-text); box-sizing: border-box;">
                 </div>
@@ -238,13 +240,16 @@
 
         <div class="station-tabs">
             <button class="tab-btn active" data-view="table" id="tab-table">
-                <span>📋</span> Table View
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-table"/></svg>
+                <span id="tab-table-text">Table View</span>
             </button>
             <button class="tab-btn" data-view="card" id="tab-card">
-                <span>🗂️</span> Card View
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-grid"/></svg>
+                <span id="tab-card-text">Card View</span>
             </button>
             <button class="tab-btn" data-view="map" id="tab-map">
-                <span>🗺️</span> Map View
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-map"/></svg>
+                <span id="tab-map-text">Map View</span>
             </button>
         </div>
     </div>
@@ -274,12 +279,16 @@
                                     <tr>
                                         <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
                                         <td style="font-weight: 700; color: var(--cad-text);">
-                                            🚒 {{ station.name }}
+                                            <div style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                                                <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-station"/></svg>
+                                                <span>{{ station.name }}</span>
+                                            </div>
                                         </td>
                                         <td style="color: var(--cad-text-muted);">{{ station.address }}</td>
                                         <td>
-                                            <a href="tel:{{ station.contact_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none;">
-                                                📞 {{ station.contact_number }}
+                                            <a href="tel:{{ station.contact_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                                <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                                                <span>{{ station.contact_number }}</span>
                                             </a>
                                         </td>
                                         <td>
@@ -289,7 +298,7 @@
                                         </td>
                                         <td>
                                             <span class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}">
-                                                {{ station.status }}
+                                                {{ station.status_display }}
                                             </span>
                                         </td>
                                         <td style="text-align: right;">
@@ -326,32 +335,36 @@
                     {% for station in stations %}
                         <div class="station-card status-{{ station.status|lower }}">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-                                <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--cad-text);">🚒 {{ station.name }}</h3>
+                                <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--cad-text); display: flex; align-items: center; gap: 0.45rem;">
+                                    <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-station"/></svg>
+                                    <span>{{ station.name }}</span>
+                                </h3>
                                 <span class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}" style="font-size: 0.75rem;">
-                                    {{ station.status }}
+                                    {{ station.status_display }}
                                 </span>
                             </div>
                             
                             <div style="display: flex; flex-direction: column; gap: 0.65rem; flex: 1;">
                                 <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.875rem; color: var(--cad-text-muted);">
-                                    <span style="font-size: 0.95rem;">📍</span>
+                                    <svg class="cad-icon cad-icon-sm cad-icon-muted" style="flex-shrink:0; margin-top:2px;"><use href="#cad-icon-pin"/></svg>
                                     <p style="margin: 0; line-height: 1.4;">{{ station.address }}</p>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
-                                    <span style="font-size: 0.95rem;">📞</span>
+                                    <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
                                     <a href="tel:{{ station.contact_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none;">
                                         {{ station.contact_number }}
                                     </a>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-family: monospace; color: var(--cad-text-muted);">
-                                    <span style="font-size: 0.95rem;">🌐</span>
+                                    <svg class="cad-icon cad-icon-sm cad-icon-blue"><use href="#cad-icon-map"/></svg>
                                     <span>{{ station.latitude|floatformat:4 }}, {{ station.longitude|floatformat:4 }}</span>
                                 </div>
                             </div>
 
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--cad-border); gap: 0.5rem;">
-                                <button class="btn btn-outline locate-btn" data-lat="{{ station.latitude }}" data-lng="{{ station.longitude }}" data-id="{{ station.station_id }}" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px; width: 100%; justify-content: center;" data-en="🗺️ View on Map" data-my="🗺️ မြေပုံတွင် ကြည့်မည်">
-                                    🗺️ View on Map
+                                <button class="btn btn-outline locate-btn" data-lat="{{ station.latitude }}" data-lng="{{ station.longitude }}" data-id="{{ station.station_id }}" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-radius: 6px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 0.35rem;" data-en="View on Map" data-my="မြေပုံတွင် ကြည့်မည်">
+                                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-map"/></svg>
+                                    <span data-en="View on Map" data-my="မြေပုံတွင် ကြည့်မည်">View on Map</span>
                                 </button>
                             </div>
 
@@ -384,7 +397,8 @@
                 <button class="panel-close-btn" onclick="closeDetailsPanel()">&times;</button>
                 <div class="panel-content">
                     <h3 id="panel-station-name" style="color: var(--cad-amber); font-size: 1.15rem; font-weight: 800; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                        🚒 Station Name
+                        <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-station"/></svg>
+                        <span id="panel-station-name-text">Station Name</span>
                     </h3>
                     
                     <div style="display: flex; flex-direction: column; gap: 0.85rem;">
@@ -496,14 +510,29 @@
 
     function openDetailsPanel(station) {
         const panel = document.getElementById("station-details-panel");
-        document.getElementById("panel-station-name").innerText = `🚒 ${station.name}`;
+        const nameText = document.getElementById("panel-station-name-text");
+        if (nameText) {
+            nameText.innerText = station.name;
+        } else {
+            document.getElementById("panel-station-name").innerText = station.name;
+        }
         document.getElementById("panel-station-address").innerText = station.address;
         document.getElementById("panel-station-contact").innerText = station.contact_number;
         document.getElementById("panel-station-coords").innerText = `${station.latitude.toFixed(4)}, ${station.longitude.toFixed(4)}`;
         
         // Setup Status Badge
         const badge = document.getElementById("panel-station-status-badge");
-        badge.innerText = station.status;
+        const statusMap = {
+            'active': 'အသင့်ရှိ',
+            'inactive': 'ယာယီပိတ်ထား',
+            'maintenance': 'ပြုပြင်ထိန်းသိမ်းဆဲ'
+        };
+        const currentLang = localStorage.getItem("lang") || "my";
+        if (currentLang === "my") {
+            badge.innerText = statusMap[station.status.toLowerCase()] || station.status;
+        } else {
+            badge.innerText = station.status;
+        }
         badge.className = "badge"; // Clear existing classes
         
         const statusLower = station.status.toLowerCase();
@@ -596,8 +625,8 @@
     (function() {
         const stationTranslations = {
             en: {
-                title: "🚒 Fire Stations",
-                registerBtn: "➕ Register Fire Station",
+                title: "Fire Stations",
+                registerBtn: "Register Fire Station",
                 searchPlaceholder: "Search by name, contact, status...",
                 searchBtn: "Search",
                 clearBtn: "Clear",
@@ -617,8 +646,8 @@
                 panelLblCoords: "Coordinates"
             },
             my: {
-                title: "🚒 မီးသတ်စခန်းများ",
-                registerBtn: "➕ မီးသတ်စခန်း အသစ်ထည့်ရန်",
+                title: "မီးသတ်စခန်းများ",
+                registerBtn: "မီးသတ်စခန်း အသစ်ထည့်ရန်",
                 searchPlaceholder: "စခန်းအမည်၊ ဖုန်းနံပါတ်၊ အခြေအနေဖြင့် ရှာဖွေပါ...",
                 searchBtn: "ရှာဖွေမည်",
                 clearBtn: "ရှင်းလင်းမည်",
@@ -650,9 +679,9 @@
             setAttr("stations-search-input", "placeholder", d.searchPlaceholder);
             set("stations-search-btn", d.searchBtn);
             set("stations-clear-btn", d.clearBtn);
-            set("tab-table", d.tabTable);
-            set("tab-card", d.tabCard);
-            set("tab-map", d.tabMap);
+            set("tab-table-text", d.tabTable);
+            set("tab-card-text", d.tabCard);
+            set("tab-map-text", d.tabMap);
             set("th-st-id", d.thId);
             set("th-st-name", d.thName);
             set("th-st-address", d.thAddress);

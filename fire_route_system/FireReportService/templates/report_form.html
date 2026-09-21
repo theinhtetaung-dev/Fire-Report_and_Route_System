@@ -17,7 +17,7 @@
         <div id="form-content">
             {% if success %}
             <div class="cad-empty-state" style="padding: 2.5rem 1rem;">
-                <div style="font-size: 3.5rem; margin-bottom: 1rem;">🚒</div>
+                <span class="cad-empty-icon" style="margin-bottom: 1rem;"><svg class="cad-icon cad-icon-green" style="width: 3.5rem; height: 3.5rem;"><use href="#cad-icon-check"/></svg></span>
                 <h2 id="success-title" style="font-size: 1.5rem; font-weight: 800; color: var(--cad-green-active); margin-bottom: 0.5rem;">
                     မီးသတင်းပေးပို့ခြင်း အောင်မြင်ပါသည်
                 </h2>
@@ -32,7 +32,7 @@
             
             <div style="margin-bottom: 1.5rem; padding-right: 5.5rem;">
                 <h2 id="title-text" style="font-size: 1.45rem; font-weight: 800; color: var(--cad-red-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.35rem 0;">
-                    <span>🔥</span>
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
                     <span id="title-text-span">အရေးပေါ် မီးလောင်မှု သတင်းပို့ရန်</span>
                 </h2>
                 <p id="subtitle-text" style="font-size: 0.85rem; color: var(--cad-text-muted); margin: 0;">
@@ -41,8 +41,9 @@
             </div>
 
             {% if error %}
-            <div style="padding: 0.85rem 1.25rem; border-left: 4px solid var(--cad-red-primary); background-color: var(--cad-red-subtle); color: var(--cad-red-primary); font-weight: 700; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.875rem;">
-                ⚠️ {{ error }}
+            <div style="padding: 0.85rem 1.25rem; border-left: 4px solid var(--cad-red-primary); background-color: var(--cad-red-subtle); color: var(--cad-red-primary); font-weight: 700; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                <span>{{ error }}</span>
             </div>
             {% endif %}
 
@@ -60,10 +61,12 @@
                     <label id="location-choice-label" class="cad-label">သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:</label>
                     <div style="display: flex; gap: 0.75rem; margin-top: 0.35rem;">
                         <button type="button" id="btn-tab-gps" class="cad-btn cad-btn-navy" style="flex: 1; justify-content: center;" onclick="switchLocationMode('gps')">
-                            📡 GPS တည်နေရာ
+                            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-pin"/></svg>
+                            <span id="tab-gps-text">GPS တည်နေရာ</span>
                         </button>
                         <button type="button" id="btn-tab-addr" class="cad-btn cad-btn-outline" style="flex: 1; justify-content: center;" onclick="switchLocationMode('address')">
-                            ✍️ လိပ်စာ အသေးစိတ်
+                            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-file-text"/></svg>
+                            <span id="tab-addr-text">လိပ်စာ အသေးစိတ်</span>
                         </button>
                     </div>
                 </div>
@@ -71,10 +74,12 @@
                 <!-- GPS Acquisition Block -->
                 <div id="gps-block" style="background-color: var(--cad-table-header-bg); border: 1px solid var(--cad-border); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1.25rem;">
                     <button type="button" id="btn-gps-fetch" class="cad-btn cad-btn-gold" onclick="fetchGPS()" style="width: 100%; margin-bottom: 0.85rem; font-size: 0.95rem; padding: 0.65rem 1rem;">
-                        📡 လက်ရှိတည်နေရာကို ရယူမည်
+                        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-pin"/></svg>
+                        <span id="btn-gps-fetch-text">လက်ရှိတည်နေရာကို ရယူမည်</span>
                     </button>
                     <div id="gps-status" class="cad-badge cad-badge-pending" style="width: 100%; justify-content: center; padding: 0.5rem; font-size: 0.82rem; border-radius: var(--radius-sm);">
-                        <span>📍</span> <span id="gps-text">တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...</span>
+                        <svg class="cad-icon cad-icon-sm cad-icon-blue"><use href="#cad-icon-pin"/></svg>
+                        <span id="gps-text">တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...</span>
                     </div>
                 </div>
 
@@ -96,7 +101,8 @@
 
                 <!-- Submit Button -->
                 <button type="submit" id="submitBtn" class="cad-btn cad-btn-emergency" style="width: 100%; padding: 0.9rem; font-size: 1.15rem; font-weight: 800; text-transform: uppercase; margin-top: 1.5rem; letter-spacing: 0.5px;">
-                    🚨 အခုချက်ချင်း သတင်းပို့မည်
+                    <svg class="cad-icon cad-icon-lg"><use href="#cad-icon-siren"/></svg>
+                    <span id="submit-btn-text">အခုချက်ချင်း သတင်းပို့မည်</span>
                 </button>
             </form>
             {% endif %}
@@ -112,9 +118,9 @@
             phoneLabel: "Reporter's Phone Number (Optional):",
             phonePlaceholder: "e.g. 09xxxxxxxxx",
             locChoiceLabel: "Select Location Method:",
-            tabGps: "📡 GPS Location",
-            tabAddr: "✍️ Manual Address",
-            gpsFetchBtn: "📡 Acquire Current Location",
+            tabGps: "GPS Location",
+            tabAddr: "Manual Address",
+            gpsFetchBtn: "Acquire Current Location",
             gpsWaiting: "Waiting for GPS location access...",
             gpsFetching: "Acquiring GPS coordinates...",
             gpsReady: "GPS location acquired successfully",
@@ -122,7 +128,7 @@
             addrLabel: "Incident Location Address:",
             addrPlaceholder: "Street, ward, township, or nearby landmarks (e.g. 73rd x 26th street)...",
             photoLabel: "Upload Fire Condition Photo (Optional):",
-            submitBtn: "🚨 Report Fire Immediately",
+            submitBtn: "Report Fire Immediately",
             successTitle: "Report Submitted Successfully",
             successDesc: "Fire rescue teams and engines will be dispatched immediately.",
             successBtn: "Send Another Report",
@@ -134,9 +140,9 @@
             phoneLabel: "သတင်းပို့သူ ဖုန်းနံပါတ် (မဖြစ်မနေ မဟုတ်ပါ):",
             phonePlaceholder: "ဥပမာ- ၀၉xxxxxxxxx",
             locChoiceLabel: "သတင်းပို့မည့်နည်းလမ်း ရွေးချယ်ပါ:",
-            tabGps: "📡 GPS တည်နေရာ",
-            tabAddr: "✍️ လိပ်စာ အသေးစိတ်",
-            gpsFetchBtn: "📡 လက်ရှိတည်နေရာကို ရယူမည်",
+            tabGps: "GPS တည်နေရာ",
+            tabAddr: "လိပ်စာ အသေးစိတ်",
+            gpsFetchBtn: "လက်ရှိတည်နေရာကို ရယူမည်",
             gpsWaiting: "တည်နေရာကို ရယူရန် စောင့်ဆိုင်းနေပါသည်...",
             gpsFetching: "တည်နေရာကို ရှာဖွေရယူနေပါသည်...",
             gpsReady: "တည်နေရာကို အောင်မြင်စွာ ရရှိပါပြီ",
@@ -144,7 +150,7 @@
             addrLabel: "မီးလောင်မှု ဖြစ်ပွားရာ လိပ်စာ:",
             addrPlaceholder: "လမ်း၊ ရပ်ကွက်၊ မြို့နယ် သို့မဟုတ် အနီးနားရှိ ထင်ရှားသော နေရာ (ဥပမာ- ၇၃ လမ်း၊ ၂၆ လမ်းထောင့်)...",
             photoLabel: "မီးလောင်မှု အခြေအနေ ဓာတ်ပုံ (ရွေးချယ်နိုင်သည်):",
-            submitBtn: "🚨 အခုချက်ချင်း သတင်းပို့မည်",
+            submitBtn: "အခုချက်ချင်း သတင်းပို့မည်",
             successTitle: "မီးသတင်းပေးပို့ခြင်း အောင်မြင်ပါသည်",
             successDesc: "မီးသတ်ယာဉ်များနှင့် အရေးပေါ်ကယ်ဆယ်ရေးတပ်ဖွဲ့များ ချက်ချင်း ထွက်ခွာပါမည်။",
             successBtn: "သတင်းအသစ် ထပ်မံပေးပို့ရန်",
@@ -221,13 +227,13 @@
         set("phone-label", d.phoneLabel);
         setPlaceholder("phone-input", d.phonePlaceholder);
         set("location-choice-label", d.locChoiceLabel);
-        set("btn-tab-gps", d.tabGps);
-        set("btn-tab-addr", d.tabAddr);
-        set("btn-gps-fetch", d.gpsFetchBtn);
+        set("tab-gps-text", d.tabGps);
+        set("tab-addr-text", d.tabAddr);
+        set("btn-gps-fetch-text", d.gpsFetchBtn);
         set("address-label", d.addrLabel);
         setPlaceholder("address-input", d.addrPlaceholder);
         set("photo-label", d.photoLabel);
-        set("submitBtn", d.submitBtn);
+        set("submit-btn-text", d.submitBtn);
         set("success-title", d.successTitle);
         set("success-desc", d.successDesc);
         set("success-btn", d.successBtn);

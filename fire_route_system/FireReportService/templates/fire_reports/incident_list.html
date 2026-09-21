@@ -79,27 +79,31 @@
 <!-- Page Header & View Toggles -->
 <div class="cad-dash-header">
     <div class="cad-dash-title-group">
-        <h1 class="cad-dash-title" id="inc-title">
-            <span>🔥</span>
-            <span>Confirmed Fire Incidents</span>
+        <h1 class="cad-dash-title">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
+            <span id="inc-title">Confirmed Fire Incidents</span>
         </h1>
         <p class="cad-dash-subtitle" id="inc-subtitle">Operational incident records, response logs, and tactical monitoring.</p>
     </div>
     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
         <!-- View Toggle Pills -->
         <div class="cad-view-toggle-group" id="viewToggleGroup">
-            <button class="cad-view-btn active" id="btn-table" onclick="switchView('table')" title="Table View" data-en="☰ Table" data-my="☰ ဇယား">
-                ☰ Table
+            <button class="cad-view-btn active" id="btn-table" onclick="switchView('table')" title="Table View">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-table"/></svg>
+                <span class="view-btn-text" data-en="Table" data-my="ဇယား">Table</span>
             </button>
-            <button class="cad-view-btn" id="btn-list" onclick="switchView('list')" title="Card Grid" data-en="▦ Grid" data-my="▦ ကတ်ပြား">
-                ▦ Grid
+            <button class="cad-view-btn" id="btn-list" onclick="switchView('list')" title="Card Grid">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-grid"/></svg>
+                <span class="view-btn-text" data-en="Grid" data-my="ကတ်ပြား">Grid</span>
             </button>
-            <button class="cad-view-btn" id="btn-map" onclick="switchView('map')" title="Map Overview" data-en="🗺 Map" data-my="🗺 မြေပုံ">
-                🗺 Map
+            <button class="cad-view-btn" id="btn-map" onclick="switchView('map')" title="Map Overview">
+                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-map"/></svg>
+                <span class="view-btn-text" data-en="Map" data-my="မြေပုံ">Map</span>
             </button>
         </div>
-        <a href="{% url 'fire_report_create' %}" class="cad-btn cad-btn-emergency" id="inc-log-btn">
-            🚨 Log Incident
+        <a href="{% url 'fire_report_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+            <span id="inc-log-btn">Log Incident</span>
         </a>
     </div>
 </div>
@@ -120,7 +124,7 @@
             <div style="flex: 1.5; min-width: 200px;" class="cad-form-group">
                 <label class="cad-label" id="lbl-search-text">Search Query</label>
                 <div class="cad-search-input-group" style="max-width: 100%;">
-                    <span class="cad-search-icon">🔍</span>
+                    <span class="cad-search-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-search"/></svg></span>
                     <input type="text" name="q" value="{{ query|default:'' }}" id="inc-search-input" placeholder="Search by phone, address..." class="cad-input cad-search-input">
                 </div>
             </div>
@@ -148,13 +152,13 @@
             <div style="flex: 1; min-width: 140px;" class="cad-form-group">
                 <label class="cad-label" id="lbl-filter-scale">Severity</label>
                 <select name="scale" class="cad-select">
-                    <option value="" id="opt-scale-all">All Scales</option>
-                    <option value="0" {% if selected_scale == '0' %}selected{% endif %} id="opt-scale-0">နယ်မြေခံ (Local)</option>
-                    <option value="1" {% if selected_scale == '1' %}selected{% endif %} id="opt-scale-1">Level 1</option>
-                    <option value="2" {% if selected_scale == '2' %}selected{% endif %} id="opt-scale-2">Level 2</option>
-                    <option value="3" {% if selected_scale == '3' %}selected{% endif %} id="opt-scale-3">Level 3</option>
-                    <option value="4" {% if selected_scale == '4' %}selected{% endif %} id="opt-scale-4">Level 4</option>
-                    <option value="5" {% if selected_scale == '5' %}selected{% endif %} id="opt-scale-5">Level 5 (Severe)</option>
+                    <option value="" id="opt-scale-all">ပြင်းထန်မှု အားလုံး</option>
+                    <option value="0" {% if selected_scale == '0' %}selected{% endif %} id="opt-scale-0">နယ်မြေခံ</option>
+                    <option value="1" {% if selected_scale == '1' %}selected{% endif %} id="opt-scale-1">အဆင့် ၁</option>
+                    <option value="2" {% if selected_scale == '2' %}selected{% endif %} id="opt-scale-2">အဆင့် ၂</option>
+                    <option value="3" {% if selected_scale == '3' %}selected{% endif %} id="opt-scale-3">အဆင့် ၃</option>
+                    <option value="4" {% if selected_scale == '4' %}selected{% endif %} id="opt-scale-4">အဆင့် ၄</option>
+                    <option value="5" {% if selected_scale == '5' %}selected{% endif %} id="opt-scale-5">အဆင့် ၅</option>
                 </select>
             </div>
 
@@ -192,30 +196,32 @@
                         <td><strong>{% if page_obj %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}</strong></td>
                         <td>
                             {% if report.reporter_phone %}
-                            <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none;">
-                                📞 {{ report.reporter_phone }}
+                            <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                                <span>{{ report.reporter_phone }}</span>
                             </a>
                             {% else %}
-                            <span style="color: var(--cad-text-muted); font-style: italic;">Anonymous</span>
+                            <span style="color: var(--cad-text-muted); font-style: italic;">အမည်မသိ သတင်းပို့သူ</span>
                             {% endif %}
                         </td>
                         <td>
                             <span class="cad-badge cad-badge-scale-{{ report.fire_scale }}">
-                                {% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}
+                                {{ report.scale_display }}
                             </span>
                         </td>
                         <td>
                             {% if report.latitude and report.longitude %}
-                            <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem;">
-                                📍 {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
+                            <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-blue"><use href="#cad-icon-pin"/></svg>
+                                <span>{{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗</span>
                             </a>
                             {% else %}
-                            <span>{{ report.address|default:"Location N/A" }}</span>
+                            <span>{{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
                             {% endif %}
                         </td>
                         <td>
                             <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
-                                {{ report.status }}
+                                {{ report.status_display }}
                             </span>
                         </td>
                         <td>
@@ -224,9 +230,15 @@
                         </td>
                         <td style="text-align: right;">
                             <div class="cad-table-actions" style="justify-content: flex-end;">
-                                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
+                                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-edit"/></svg>
+                                    <span data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</span>
+                                </a>
                                 {% if report.status == 'Resolved' %}
-                                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
+                                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                                    <span data-en="Delete" data-my="ဖျက်မည်">Delete</span>
+                                </a>
                                 {% endif %}
                             </div>
                         </td>
@@ -240,7 +252,7 @@
         </div>
         {% else %}
         <div class="cad-empty-state">
-            <span class="cad-empty-icon">🔍</span>
+            <span class="cad-empty-icon"><svg class="cad-icon cad-icon-muted" style="width: 3.5rem; height: 3.5rem;"><use href="#cad-icon-search"/></svg></span>
             <h3 class="cad-empty-title" id="inc-no-match-title">No matching reports found</h3>
             <p class="cad-empty-desc" id="inc-no-match-desc">Try clearing your search query or selecting a broader date range.</p>
             {% if query or selected_date or selected_status or selected_scale %}
@@ -262,29 +274,29 @@
                     <div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: var(--cad-text-muted);">INCIDENT #{{ report.id }}</span>
                         <h4 style="font-size: 1.05rem; font-weight: 700; margin: 0.2rem 0; color: var(--cad-text-main);">
-                            {{ report.reporter_phone|default:"Anonymous Caller" }}
+                            {{ report.reporter_phone|default:"အမည်မသိ သတင်းပို့သူ" }}
                         </h4>
                     </div>
                     <span class="cad-badge cad-badge-scale-{{ report.fire_scale }}">
-                        {% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}
+                        {{ report.scale_display }}
                     </span>
                 </div>
 
                 <div style="font-size: 0.85rem; color: var(--cad-text-secondary); display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem;">
                     <div>
-                        <strong style="color: var(--cad-text-muted);">Location:</strong>
+                        <strong style="color: var(--cad-text-muted);">တည်နေရာ:</strong>
                         {% if report.latitude and report.longitude %}
                         <a href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" target="_blank" style="color: var(--cad-blue-info); text-decoration: none;">
                             {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
                         </a>
                         {% else %}
-                        <span>{{ report.address|default:"Location N/A" }}</span>
+                        <span>{{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
                         {% endif %}
                     </div>
                     <div>
-                        <strong style="color: var(--cad-text-muted);">Status:</strong>
+                        <strong style="color: var(--cad-text-muted);">အခြေအနေ:</strong>
                         <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
-                            {{ report.status }}
+                            {{ report.status_display }}
                         </span>
                     </div>
                     <div>
@@ -295,9 +307,15 @@
             </div>
 
             <div style="border-top: 1px solid var(--cad-border); padding-top: 0.85rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
-                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
+                <a href="{% url 'fire_report_update' report.id %}" class="cad-btn cad-btn-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-edit"/></svg>
+                    <span data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</span>
+                </a>
                 {% if report.status == 'Resolved' %}
-                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" data-en="Delete" data-my="ဖျက်မည်">Delete</a>
+                <a href="{% url 'fire_report_delete' report.id %}" class="cad-btn cad-btn-danger-outline cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                    <span data-en="Delete" data-my="ဖျက်မည်">Delete</span>
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -398,7 +416,7 @@
 
             const popup = `
                 <div class="map-popup-card">
-                    <h4>🔥 Incident #${r.id}</h4>
+                    <h4>Incident #${r.id}</h4>
                     <p><strong>Caller:</strong> ${r.phone}</p>
                     <p><strong>Severity:</strong> Level ${r.scale}</p>
                     <p><strong>Status:</strong> ${r.status}</p>
@@ -423,7 +441,7 @@
             en: {
                 title: "Confirmed Fire Incidents",
                 subtitle: "Operational incident records, response logs, and tactical monitoring.",
-                logBtn: "🚨 Log Incident",
+                logBtn: "Log Incident",
                 searchLabel: "Search Query",
                 searchPlaceholder: "Search by phone, address...",
                 dateLabel: "Incident Date",
@@ -458,7 +476,7 @@
             my: {
                 title: "အတည်ပြုပြီးသော မီးလောင်မှုဖြစ်စဉ်များ",
                 subtitle: "လက်ရှိဖြစ်ပွားဆဲနှင့် ပြီးဆုံးပြီးသော မီးလောင်မှုဖြစ်စဉ် မှတ်တမ်းများ၊ တုံ့ပြန်ဆောင်ရွက်မှုများနှင့် မြေပြင်အခြေအနေများ။",
-                logBtn: "🚨 မီးလောင်မှုဖြစ်စဉ် အသစ်ဖွင့်ရန်",
+                logBtn: "မီးလောင်မှုဖြစ်စဉ် အသစ်ဖွင့်ရန်",
                 searchLabel: "ရှာဖွေရန် စကားလုံး",
                 searchPlaceholder: "ဖုန်းနံပါတ်၊ လိပ်စာ စသည်ဖြင့် ရှာဖွေပါ...",
                 dateLabel: "ဖြစ်စဉ် ရက်စွဲ",

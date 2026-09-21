@@ -6,8 +6,9 @@
 <div style="max-width: 680px; margin: 1rem auto;">
     <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
         <div>
-            <h1 id="station-create-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
-                🚒 Register Fire Station
+            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-station"/></svg>
+                <span id="station-create-title">Register Fire Station</span>
             </h1>
             <p id="station-create-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Add a new active or reserve fire station to the dispatch grid.
@@ -52,9 +53,9 @@
             <div class="form-group">
                 <label for="status" id="lbl-station-status">Status</label>
                 <select id="status" name="status" required class="cad-select">
-                    <option value="Active" selected id="opt-station-active">Active</option>
-                    <option value="Inactive" id="opt-station-inactive">Inactive</option>
-                    <option value="Maintenance" id="opt-station-maintenance">Maintenance</option>
+                    <option value="Active" selected id="opt-station-active">အသင့်ရှိ</option>
+                    <option value="Inactive" id="opt-station-inactive">ယာယီပိတ်ထား</option>
+                    <option value="Maintenance" id="opt-station-maintenance">ပြုပြင်ထိန်းသိမ်းဆဲ</option>
                 </select>
             </div>
 
@@ -70,7 +71,7 @@
 (function() {
     const translations = {
         en: {
-            title: "🚒 Register Fire Station",
+            title: "Register Fire Station",
             subtitle: "Add a new active or reserve fire station to the dispatch grid.",
             back: "← Back to List",
             lblName: "Station Name", lblAddress: "Address", lblContact: "Contact Number",
@@ -79,7 +80,7 @@
             save: "Register Station", cancel: "Cancel"
         },
         my: {
-            title: "🚒 မီးသတ်စခန်း အသစ်ထည့်သွင်းရန်",
+            title: "မီးသတ်စခန်း အသစ်ထည့်သွင်းရန်",
             subtitle: "အရေးပေါ် စေလွှတ်မှုကွန်ရက်ထဲသို့ မီးသတ်စခန်း အသစ်တစ်ခု ထည့်သွင်းသတ်မှတ်ပါ။",
             back: "← စခန်းများစာရင်းသို့",
             lblName: "မီးသတ်စခန်း အမည်", lblAddress: "တည်နေရာ လိပ်စာအပြည့်အစုံ", lblContact: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",

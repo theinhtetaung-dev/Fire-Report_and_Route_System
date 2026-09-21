@@ -12,10 +12,10 @@ class Command(BaseCommand):
 
         # 1. Ensure Standard Roles
         roles_data = [
-            ("Administrator", "System Administrator with full access to accounts and configuration"),
-            ("Dispatcher", "Emergency CAD Dispatch Operator managing calls and unit dispatches"),
-            ("Firefighter", "Field Responder handling active dispatches and on-scene status updates"),
-            ("Citizen", "Public citizen reporter submitting fire alerts"),
+            ("Administrator", "အကောင့်များနှင့် စနစ်ဆက်တင်များကို အပြည့်အဝ စီမံခန့်ခွဲနိုင်သော စနစ်အုပ်ချုပ်သူ"),
+            ("Dispatcher", "အရေးပေါ်ဖုန်းခေါ်ဆိုမှုများ လက်ခံစိစစ်ခြင်းနှင့် မီးသတ်တပ်ဖွဲ့များ စေလွှတ်ခြင်းကို ကိုင်တွယ်သည့် အရေးပေါ်ကွပ်ကဲရေးအရာရှိ"),
+            ("Firefighter", "မီးလောင်ရာ မြေပြင်သို့ သွားရောက်ငြှိမ်းသတ်ပြီး အခြေအနေသတင်းပို့သော မြေပြင်မီးသတ်တပ်ဖွဲ့ဝင်"),
+            ("Citizen", "အရေးပေါ် မီးလောင်မှုများကို အချိန်နှင့်တစ်ပြေးညီ သတင်းပေးပို့တိုင်ကြားသူ ပြည်သူလူထု"),
         ]
 
         role_objs = {}
@@ -24,6 +24,9 @@ class Command(BaseCommand):
                 role_name=r_name,
                 defaults={'description': r_desc}
             )
+            if not created and role_obj.description != r_desc:
+                role_obj.description = r_desc
+                role_obj.save()
             role_objs[r_name] = role_obj
             status_str = "Created" if created else "Exists"
             self.stdout.write(f"  Role '{r_name}': {status_str}")
@@ -164,9 +167,12 @@ class Command(BaseCommand):
                         st = FireStation.objects.filter(station_id=r[6]).first()
                         op = User.objects.filter(id=r[4]).first() or admin_role
                         if rep and st and op:
+                            res = r[3]
+                            if res and ('Fire Engine' in res or 'Personnel' in res):
+                                res = 'မီးသတ်ယာဉ် ၂ စီး၊ ရေသယ်ယာဉ် ၁ စီး၊ မီးသတ်တပ်ဖွဲ့ဝင် ၈ ဦး'
                             Dispatch.objects.create(
                                 id=r[0],
-                                resources_deployed=r[3],
+                                resources_deployed=res,
                                 operator=op,
                                 report=rep,
                                 station=st

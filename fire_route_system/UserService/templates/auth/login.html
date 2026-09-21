@@ -1,166 +1,855 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="my" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Login - Fire CAD System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'dashboard/img/logo.svg' %}">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+    
+    <style>
+        :root {
+            --cad-red: #FD0001;
+            --cad-red-hover: #D50000;
+            --cad-red-glow: rgba(253, 0, 1, 0.4);
+            --cad-gold: #F59E0B;
+            --cad-gold-hover: #D97706;
+            --cad-gold-glow: rgba(245, 158, 11, 0.35);
+            --cad-green: #10B981;
+            
+            /* Dark Command Theme (Default for CAD) */
+            --bg-canvas: #060B11;
+            --card-bg: rgba(13, 23, 36, 0.95);
+            --card-border: rgba(255, 255, 255, 0.09);
+            --card-header-bg: rgba(9, 16, 26, 0.6);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --input-bg: #08121C;
+            --input-border: #1E2E42;
+            --input-focus-border: #F59E0B;
+            --quick-btn-bg: rgba(15, 27, 43, 0.7);
+            --quick-btn-border: #1B2C42;
+            --quick-btn-hover: #192D47;
+            --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(253, 0, 1, 0.08);
+            --font-stack: 'Inter', 'Pyidaungsu', 'Padauk', 'Noto Sans Myanmar', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-{% block title %}Officer Login - Fire CAD System{% endblock %}
+        [data-theme="light"] {
+            --bg-canvas: #EDF2F7;
+            --card-bg: #FFFFFF;
+            --card-border: #E2E8F0;
+            --card-header-bg: #F8FAFC;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #64748B;
+            --input-bg: #F8FAFC;
+            --input-border: #CBD5E1;
+            --input-focus-border: #FD0001;
+            --quick-btn-bg: #F1F5F9;
+            --quick-btn-border: #E2E8F0;
+            --quick-btn-hover: #E2E8F0;
+            --shadow-card: 0 20px 40px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-{% block content %}
-<div style="max-width: 480px; margin: 2rem auto; width: 100%;">
-    <div class="cad-panel" style="padding: 2.5rem 2rem; border-top: 4px solid var(--cad-red); box-shadow: var(--cad-shadow-md);">
-        
-        <!-- Header / Emblem -->
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="width: 56px; height: 56px; margin: 0 auto 1rem auto; background: linear-gradient(135deg, #FD0001, #B91C1C); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(253, 0, 1, 0.35);">
-                <span style="font-size: 1.75rem;">🚒</span>
-            </div>
-            <h1 style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text);" id="login-title">
-                CAD Officer Login
-            </h1>
-            <p style="margin: 0.35rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);" id="login-subtitle">
-                Access authorized emergency dispatch and command operations.
-            </p>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 15%, rgba(253, 0, 1, 0.07) 0%, transparent 60%),
+                radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+            padding: 1.5rem 1rem;
+        }
+
+        /* Ambient Top Controls */
+        .auth-top-bar {
+            position: absolute;
+            top: 1.25rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 20;
+        }
+
+        .auth-telemetry {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--cad-green);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .telemetry-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--cad-green);
+            box-shadow: 0 0 8px var(--cad-green);
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .auth-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-icon-btn {
+            background: var(--quick-btn-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .auth-icon-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--cad-gold);
+            background: var(--quick-btn-hover);
+        }
+
+        /* Main Login Modal Container */
+        .auth-container {
+            width: 100%;
+            max-width: 460px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-top: 4px solid var(--cad-red);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(12px);
+            padding: 2.25rem 2rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle Corner Accent */
+        .auth-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Emblem & Header */
+        .auth-header {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .emblem-wrapper {
+            margin: 0 auto 1rem auto;
+            width: 76px;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .emblem-img {
+            width: 76px;
+            height: 76px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 14px rgba(253, 0, 1, 0.35));
+            transition: transform 0.3s ease;
+        }
+
+        .emblem-wrapper:hover .emblem-img {
+            transform: scale(1.04);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--cad-gold);
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            padding: 0.2rem 0.65rem;
+            border-radius: 9999px;
+            margin-bottom: 0.65rem;
+        }
+
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+            line-height: 1.25;
+            margin-bottom: 0.35rem;
+        }
+
+        .brand-subtitle {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* Alerts */
+        .auth-alert {
+            padding: 0.75rem 0.95rem;
+            border-radius: 8px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .auth-alert-error {
+            background: rgba(253, 0, 1, 0.1);
+            border: 1px solid rgba(253, 0, 1, 0.3);
+            border-left: 4px solid var(--cad-red);
+            color: #FF4D4D;
+        }
+
+        .auth-alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-left: 4px solid var(--cad-green);
+            color: var(--cad-green);
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 1.15rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.45rem;
+            letter-spacing: 0.2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.9rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-input {
+            width: 100%;
+            height: 46px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            padding-left: 2.6rem;
+            padding-right: 2.6rem;
+            transition: all 0.2s ease;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            background-color: var(--input-bg);
+        }
+
+        .auth-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.75;
+        }
+
+        .pwd-toggle-btn {
+            position: absolute;
+            right: 0.75rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.3rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s ease;
+        }
+
+        .pwd-toggle-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* Submit Button */
+        .auth-submit-btn {
+            width: 100%;
+            height: 46px;
+            background: linear-gradient(135deg, var(--cad-red) 0%, #C80001 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #FFFFFF;
+            font-size: 0.925rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 14px var(--cad-red-glow);
+            transition: all 0.2s ease;
+            margin-top: 0.75rem;
+        }
+
+        .auth-submit-btn:hover {
+            background: linear-gradient(135deg, #FF1A1A 0%, var(--cad-red) 100%);
+            box-shadow: 0 6px 20px var(--cad-red-glow);
+            transform: translateY(-1px);
+        }
+
+        .auth-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quick Role Credentials Section */
+        .quick-roles-section {
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .quick-roles-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-roles-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .quick-roles-hint {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--cad-gold);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .quick-roles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .quick-role-card {
+            background: var(--quick-btn-bg);
+            border: 1px solid var(--quick-btn-border);
+            border-radius: 8px;
+            padding: 0.55rem 0.65rem;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--text-primary);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .quick-role-card:hover {
+            background: var(--quick-btn-hover);
+            border-color: var(--cad-gold);
+            transform: translateY(-1px);
+        }
+
+        .role-icon {
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .role-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .role-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .role-tag {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Emergency Direct Link */
+        .emergency-link-box {
+            margin-top: 1.5rem;
+            text-align: center;
+            background: rgba(253, 0, 1, 0.05);
+            border: 1px solid rgba(253, 0, 1, 0.15);
+            border-radius: 8px;
+            padding: 0.65rem 0.85rem;
+        }
+
+        .emergency-link {
+            color: #FF4D4D;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s ease;
+        }
+
+        .emergency-link:hover {
+            color: #FF8080;
+            text-decoration: underline;
+        }
+
+        /* Footer Telemetry */
+        .auth-footer {
+            margin-top: 1.25rem;
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.75rem;
+            }
+            .auth-card {
+                padding: 1.75rem 1.25rem 1.5rem 1.25rem;
+            }
+            .brand-title {
+                font-size: 1.2rem;
+            }
+            .auth-top-bar {
+                left: 1rem;
+                right: 1rem;
+                top: 0.85rem;
+            }
+            .quick-roles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Vector CAD Icons */
+        .cad-icon {
+            width: 1.2em;
+            height: 1.2em;
+            display: inline-block;
+            vertical-align: -0.22em;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+            transition: stroke 0.15s ease, transform 0.15s ease;
+        }
+        .cad-icon-sm { width: 0.95em; height: 0.95em; vertical-align: -0.15em; }
+        .cad-icon-lg { width: 1.5em; height: 1.5em; }
+        .cad-icon-emergency { stroke: var(--cad-red); }
+        .cad-icon-gold { stroke: var(--cad-gold); }
+        .cad-icon-green { stroke: var(--cad-green); }
+        .cad-icon-blue { stroke: #38BDF8; }
+        .cad-icon-muted { stroke: var(--text-muted); }
+    </style>
+</head>
+<body>
+    {% include 'cad_icons.html' %}
+
+    <!-- Top Status & Ambient Controls -->
+    <header class="auth-top-bar">
+        <div class="auth-telemetry">
+            <span class="telemetry-dot"></span>
+            <span id="telemetry-status">စနစ်အသင့်ရှိ • CAD OPERATIONAL</span>
         </div>
+        
+        <div class="auth-controls">
+            <!-- Theme Toggle -->
+            <button type="button" class="auth-icon-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                <svg class="cad-icon cad-icon-sm" id="themeIconSvg"><use id="themeIconUse" href="#cad-icon-sun"/></svg>
+                <span id="themeText">အလင်းမုဒ်</span>
+            </button>
+            <!-- Language Toggle -->
+            <button type="button" class="auth-icon-btn" id="langToggleBtn" onclick="toggleLanguage()" aria-label="Toggle Language">
+                <span id="langIcon">🇺🇸</span>
+                <span id="langText">English</span>
+            </button>
+        </div>
+    </header>
 
-        {% if error_message %}
-            <div style="background: rgba(253, 0, 1, 0.1); border-left: 4px solid var(--cad-red); padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: var(--cad-red); font-size: 0.875rem; font-weight: 600;">
-                ⚠️ {{ error_message }}
-            </div>
-        {% endif %}
-
-        {% if success_message %}
-            <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: #10B981; font-size: 0.875rem; font-weight: 600;">
-                ✓ {{ success_message }}
-            </div>
-        {% endif %}
-
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next|default:'' }}">
-
-            <div class="form-group">
-                <label for="username" id="lbl-login-user" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.4rem; display: block;">
-                    Username or Email
-                </label>
-                <div style="position: relative;">
-                    <input type="text" id="username" name="username" required 
-                           placeholder="e.g. admin or operator" 
-                           class="cad-input" style="width: 100%; box-sizing: border-box; padding-left: 2.4rem;"
-                           value="{{ username|default:'' }}">
-                    <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--cad-text-muted); pointer-events: none;">👤</span>
+    <!-- Main Authentication Viewport -->
+    <main class="auth-container">
+        <div class="auth-card">
+            
+            <!-- Branding Header & Emblem -->
+            <div class="auth-header">
+                <div class="emblem-wrapper">
+                    <img src="{% static 'dashboard/img/logo.svg' %}" alt="Fire Department Logo" class="emblem-img">
                 </div>
+                
+                <div class="brand-badge">
+                    <span id="badge-dept">မြန်မာနိုင်ငံ မီးသတ်တပ်ဖွဲ့</span>
+                    <span>•</span>
+                    <span>CAD COMMAND</span>
+                </div>
+                
+                <h1 class="brand-title" id="login-title">
+                    တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်
+                </h1>
+                
+                <p class="brand-subtitle" id="login-subtitle">
+                    အရေးပေါ် မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်
+                </p>
             </div>
 
-            <div class="form-group">
-                <label for="password" id="lbl-login-pass" style="font-weight: 700; font-size: 0.85rem; color: var(--cad-text); margin-bottom: 0.4rem; display: block;">
-                    Password
-                </label>
-                <div style="position: relative;">
-                    <input type="password" id="password" name="password" required 
-                           placeholder="••••••••" 
-                           class="cad-input" style="width: 100%; box-sizing: border-box; padding-left: 2.4rem; padding-right: 2.4rem;">
-                    <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--cad-text-muted); pointer-events: none;">🔒</span>
-                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--cad-text-muted);" aria-label="Toggle password visibility">
-                        👁️
+            <!-- Error / Validation Alert -->
+            {% if error_message %}
+                <div class="auth-alert auth-alert-error" role="alert">
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                    <div>{{ error_message }}</div>
+                </div>
+            {% endif %}
+
+            <!-- Success Alert -->
+            {% if success_message %}
+                <div class="auth-alert auth-alert-success" role="alert">
+                    <svg class="cad-icon cad-icon-green"><use href="#cad-icon-check"/></svg>
+                    <div>{{ success_message }}</div>
+                </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+                <div class="form-group">
+                    <label for="username" class="form-label" id="lbl-username">
+                        အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်
+                    </label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-user"/></svg></span>
+                        <input type="text" id="username" name="username" required 
+                               placeholder="ဥပမာ - admin သို့မဟုတ် operator" 
+                               class="auth-input"
+                               value="{{ username|default:'' }}"
+                               autocomplete="username"
+                               autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label" id="lbl-password">
+                        စကားဝှက် (Password)
+                    </label>
+                    <div class="input-wrapper">
+                        <span class="input-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-lock"/></svg></span>
+                        <input type="password" id="password" name="password" required 
+                               placeholder="••••••••" 
+                               class="auth-input"
+                               autocomplete="current-password">
+                        <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                            <svg class="cad-icon cad-icon-sm" id="pwdToggleSvg"><use id="pwdToggleUse" href="#cad-icon-eye"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="btn-login-submit">
+                    <svg class="cad-icon"><use href="#cad-icon-shield"/></svg>
+                    <span id="btn-submit-text">စနစ်သို့ ဝင်ရောက်မည်</span>
+                </button>
+            </form>
+
+            <!-- Quick Demo Roles Selector -->
+            <section class="quick-roles-section" aria-label="Demo Accounts">
+                <div class="quick-roles-header">
+                    <span class="quick-roles-title">
+                        <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-key"/></svg>
+                        <span id="demo-title">စမ်းသပ်အသုံးပြုရန် အကောင့်များ</span>
+                    </span>
+                    <span class="quick-roles-hint" id="demo-hint">Click to fill</span>
+                </div>
+                
+                <div class="quick-roles-grid">
+                    <button type="button" class="quick-role-card" onclick="fillDemo('admin', 'adminpass')">
+                        <span class="role-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-shield"/></svg></span>
+                        <div class="role-info">
+                            <span class="role-name" data-my="စနစ်အုပ်ချုပ်သူ" data-en="Admin">စနစ်အုပ်ချုပ်သူ</span>
+                            <span class="role-tag">Super Admin</span>
+                        </div>
+                    </button>
+                    
+                    <button type="button" class="quick-role-card" onclick="fillDemo('operator_hnin', 'operatorpass')">
+                        <span class="role-icon"><svg class="cad-icon cad-icon-blue"><use href="#cad-icon-dispatch"/></svg></span>
+                        <div class="role-info">
+                            <span class="role-name" data-my="တာဝန်စေလွှတ်သူ" data-en="Dispatcher">တာဝန်စေလွှတ်သူ</span>
+                            <span class="role-tag">CAD Operator</span>
+                        </div>
+                    </button>
+                    
+                    <button type="button" class="quick-role-card" onclick="fillDemo('firefighter_zaw', 'firefighter123')">
+                        <span class="role-icon"><svg class="cad-icon cad-icon-gold"><use href="#cad-icon-station"/></svg></span>
+                        <div class="role-info">
+                            <span class="role-name" data-my="မီးသတ်တပ်ဖွဲ့ဝင်" data-en="Firefighter">မီးသတ်တပ်ဖွဲ့ဝင်</span>
+                            <span class="role-tag">First Responder</span>
+                        </div>
+                    </button>
+                    
+                    <button type="button" class="quick-role-card" onclick="fillDemo('citizen_kyaw', 'citizen123')">
+                        <span class="role-icon"><svg class="cad-icon cad-icon-muted"><use href="#cad-icon-user"/></svg></span>
+                        <div class="role-info">
+                            <span class="role-name" data-my="ပြည်သူ" data-en="Citizen">ပြည်သူ</span>
+                            <span class="role-tag">Reporter</span>
+                        </div>
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <button type="submit" class="cad-btn cad-btn-emergency" style="width: 100%; justify-content: center; height: 44px; margin-top: 1rem; font-size: 0.95rem;" id="btn-login-submit">
-                🔐 Sign In to Console
-            </button>
-        </form>
-
-        <!-- Quick Demo Credentials Selector -->
-        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--cad-border);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--cad-text-muted); letter-spacing: 0.5px;" id="demo-title">
-                    ⚡ Quick Test Accounts
-                </span>
-                <span style="font-size: 0.7rem; color: var(--cad-amber); font-weight: 700;">Click to fill</span>
+            <!-- Immediate Public Fire Report Callout -->
+            <div class="emergency-link-box">
+                <a href="{% url 'report_fire' %}" class="emergency-link" id="link-public-report">
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-siren"/></svg>
+                    <span id="emergency-report-text">အရေးပေါ် မီးလောင်မှု ချက်ချင်းသတင်းပို့ရန် ဤနေရာကို နှိပ်ပါ</span>
+                </a>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('admin', 'adminpass')">
-                    🛡️ <strong data-en="Admin" data-my="စနစ်အုပ်ချုပ်သူ (Admin)">Admin</strong>
-                </button>
-                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('operator_hnin', 'operatorpass')">
-                    📞 <strong data-en="Dispatcher" data-my="တာဝန်စေလွှတ်သူ (Dispatcher)">Dispatcher</strong>
-                </button>
-                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('firefighter_zaw', 'firefighter123')">
-                    🚒 <strong data-en="Firefighter" data-my="မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)">Firefighter</strong>
-                </button>
-                <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.5rem; justify-content: flex-start;" onclick="fillDemo('citizen_kyaw', 'citizen123')">
-                    👤 <strong data-en="Citizen" data-my="ပြည်သူ (Citizen)">Citizen</strong>
-                </button>
-            </div>
         </div>
 
-        <div style="margin-top: 1.5rem; text-align: center;">
-            <a href="{% url 'report_fire' %}" style="font-size: 0.85rem; color: var(--cad-amber); text-decoration: none; font-weight: 600;" id="link-public-report">
-                🚨 Need to report a fire immediately? Click here.
-            </a>
-        </div>
-    </div>
-</div>
+        <!-- System Footer Note -->
+        <footer class="auth-footer">
+            <span>မန္တလေးတိုင်းဒေသကြီး မီးသတ်ဦးစီးဌာန • CAD COMMAND & CONTROL</span>
+        </footer>
+    </main>
 
-<script>
-function fillDemo(username, password) {
-    document.getElementById('username').value = username;
-    document.getElementById('password').value = password;
-}
-
-function togglePasswordVisibility() {
-    const passInput = document.getElementById('password');
-    if (passInput.type === 'password') {
-        passInput.type = 'text';
-    } else {
-        passInput.type = 'password';
-    }
-}
-
-(function() {
-    const translations = {
-        en: {
-            title: "CAD Officer Login",
-            subtitle: "Access authorized emergency dispatch and command operations.",
-            lblUser: "Username or Email",
-            lblPass: "Password",
-            submitBtn: "🔐 Sign In to Console",
-            demoTitle: "⚡ Quick Test Accounts",
-            publicReport: "🚨 Need to report a fire immediately? Click here."
-        },
-        my: {
-            title: "တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်",
-            subtitle: "အရေးပေါ်မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်။",
-            lblUser: "အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်",
-            lblPass: "စကားဝှက် (Password)",
-            submitBtn: "🔐 စနစ်သို့ ဝင်ရောက်မည်",
-            demoTitle: "⚡ စမ်းသပ်အသုံးပြုနိုင်သော အကောင့်များ",
-            publicReport: "🚨 အရေးပေါ် မီးလောင်မှု သတင်းပို့လိုပါသလား? ဤနေရာကို နှိပ်ပါ။"
+    <script>
+    function fillDemo(username, password) {
+        const u = document.getElementById('username');
+        const p = document.getElementById('password');
+        if (u) {
+            u.value = username;
+            u.focus();
         }
-    };
+        if (p) {
+            p.value = password;
+        }
+    }
 
-    function updateLoginUI(lang) {
-        const d = translations[lang];
-        if (!d) return;
-        const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-        set("login-title", d.title);
-        set("login-subtitle", d.subtitle);
-        set("lbl-login-user", d.lblUser);
-        set("lbl-login-pass", d.lblPass);
-        set("btn-login-submit", d.submitBtn);
-        set("demo-title", d.demoTitle);
-        set("link-public-report", d.publicReport);
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('password');
+        const iconUse = document.getElementById('pwdToggleUse');
+        if (!passInput) return;
+        if (passInput.type === 'password') {
+            passInput.type = 'text';
+            if (iconUse) iconUse.setAttribute('href', '#cad-icon-eye-off');
+        } else {
+            passInput.type = 'password';
+            if (iconUse) iconUse.setAttribute('href', '#cad-icon-eye');
+        }
+    }
 
-        document.querySelectorAll("[data-en][data-my]").forEach(el => {
-            el.innerText = lang === "my" ? el.getAttribute("data-my") : el.getAttribute("data-en");
+    // Theme Switcher Logic
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIconUse = document.getElementById('themeIconUse');
+    const themeText = document.getElementById('themeText');
+
+    function syncThemeUI(theme) {
+        const lang = localStorage.getItem('lang') || 'my';
+        if (theme === 'light') {
+            if (themeIconUse) themeIconUse.setAttribute('href', '#cad-icon-moon');
+            if (themeText) themeText.innerText = lang === 'my' ? 'အမှောင်မုဒ်' : 'Dark Mode';
+        } else {
+            if (themeIconUse) themeIconUse.setAttribute('href', '#cad-icon-sun');
+            if (themeText) themeText.innerText = lang === 'my' ? 'အလင်းမုဒ်' : 'Light Mode';
+        }
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', function() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            syncThemeUI(next);
         });
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        updateLoginUI(localStorage.getItem("lang") || "my");
+    // Language Dictionary
+    const i18n = {
+        en: {
+            telemetry: "CAD OPERATIONAL • ONLINE",
+            badgeDept: "Myanmar Fire Services",
+            title: "CAD Officer Login",
+            subtitle: "Authorized Emergency Command & Dispatch Console",
+            lblUser: "Username or Email",
+            placeholderUser: "e.g. admin or operator",
+            lblPass: "Password",
+            btnSubmit: "Sign In to Console",
+            demoTitle: "Quick Demo Accounts",
+            demoHint: "Click to fill",
+            reportText: "Need to report a fire immediately? Click here.",
+            themeLight: "Light Mode",
+            themeDark: "Dark Mode",
+            langText: "မြန်မာ",
+            langIcon: "🇲🇲"
+        },
+        my: {
+            telemetry: "စနစ်အသင့်ရှိ • CAD OPERATIONAL",
+            badgeDept: "မြန်မာနိုင်ငံ မီးသတ်တပ်ဖွဲ့",
+            title: "တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်",
+            subtitle: "အရေးပေါ် မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်",
+            lblUser: "အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်",
+            placeholderUser: "ဥပမာ - admin သို့မဟုတ် operator",
+            lblPass: "စကားဝှက် (Password)",
+            btnSubmit: "စနစ်သို့ ဝင်ရောက်မည်",
+            demoTitle: "စမ်းသပ်အသုံးပြုရန် အကောင့်များ",
+            demoHint: "Click to fill",
+            reportText: "အရေးပေါ် မီးလောင်မှု ချက်ချင်းသတင်းပို့ရန် ဤနေရာကို နှိပ်ပါ",
+            themeLight: "အလင်းမုဒ်",
+            themeDark: "အမှောင်မုဒ်",
+            langText: "English",
+            langIcon: "🇺🇸"
+        }
+    };
+
+    function applyLanguage(lang) {
+        const d = i18n[lang] || i18n.my;
+        const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
+        
+        set('telemetry-status', d.telemetry);
+        set('badge-dept', d.badgeDept);
+        set('login-title', d.title);
+        set('login-subtitle', d.subtitle);
+        set('lbl-username', d.lblUser);
+        set('lbl-password', d.lblPass);
+        set('btn-submit-text', d.btnSubmit);
+        set('demo-title', d.demoTitle);
+        set('demo-hint', d.demoHint);
+        set('emergency-report-text', d.reportText);
+        set('langText', d.langText);
+        set('langIcon', d.langIcon);
+
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) usernameInput.placeholder = d.placeholderUser;
+
+        document.querySelectorAll('.quick-role-card .role-name').forEach(el => {
+            const attr = el.getAttribute('data-' + lang);
+            if (attr) el.innerText = attr;
+        });
+
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        syncThemeUI(currentTheme);
+    }
+
+    function toggleLanguage() {
+        const current = localStorage.getItem('lang') || 'my';
+        const next = current === 'my' ? 'en' : 'my';
+        localStorage.setItem('lang', next);
+        applyLanguage(next);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        syncThemeUI(savedTheme);
+        const savedLang = localStorage.getItem('lang') || 'my';
+        applyLanguage(savedLang);
     });
-    window.addEventListener("languageChanged", function(e) {
-        updateLoginUI(e.detail.lang);
-    });
-})();
-</script>
-{% endblock %}
+    </script>
+</body>
+</html>

@@ -5,15 +5,17 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 id="users-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
-            👥 User Accounts
+        <h1 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-users"/></svg>
+            <span id="users-title">User Accounts</span>
         </h1>
         <p id="users-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
             Manage authorized personnel, command roles, and credentials.
         </p>
     </div>
-    <a href="{% url 'user_create' %}" class="cad-btn cad-btn-emergency" id="users-create-btn">
-        ➕ Create User
+    <a href="{% url 'user_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+        <span id="users-create-btn">Create User</span>
     </a>
 </div>
 
@@ -21,7 +23,7 @@
 <div class="search-bar-container" style="margin-bottom: 1.5rem; width: 100%; max-width: 500px;">
     <form method="GET" action="" style="display: flex; gap: 0.5rem; width: 100%;">
         <div class="search-input-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
-            <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; font-size: 0.95rem; line-height: 1;">🔍</span>
+            <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; display: flex; align-items: center; justify-content: center;"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-search"/></svg></span>
             <input type="text" name="q" value="{{ query|default:'' }}" id="users-search-input" placeholder="Search by username, email, phone..." 
                    style="width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; font-family: var(--font-family, inherit); font-size: 0.875rem; line-height: 1.4; border: 1px solid var(--cad-border); border-radius: 8px; background-color: var(--cad-surface); color: var(--cad-text); box-sizing: border-box;">
         </div>
@@ -61,16 +63,18 @@
                             <td style="color: var(--cad-text-muted);">{{ user.email }}</td>
                             <td>
                                 {% if user.phone_number %}
-                                <a href="tel:{{ user.phone_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none;">
-                                    📞 {{ user.phone_number }}
+                                <a href="tel:{{ user.phone_number }}" style="color: var(--cad-amber); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                                    <span>{{ user.phone_number }}</span>
                                 </a>
                                 {% else %}
                                 <span style="color: var(--cad-text-muted);">-</span>
                                 {% endif %}
                             </td>
                             <td>
-                                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700;">
-                                    🛡️ {{ user.role.role_name }}
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-shield"/></svg>
+                                    <span>{{ user.role.role_name }}</span>
                                 </span>
                             </td>
                             <td>
@@ -107,9 +111,9 @@
 (function() {
     const userTranslations = {
         en: {
-            title: "👥 User Accounts",
+            title: "User Accounts",
             subtitle: "Manage authorized personnel, command roles, and credentials.",
-            createBtn: "➕ Create User",
+            createBtn: "Create User",
             searchPlaceholder: "Search by username, email, phone...",
             searchBtn: "Search",
             clearBtn: "Clear",
@@ -121,9 +125,9 @@
             createFirst: "Create the First User Account"
         },
         my: {
-            title: "👥 အသုံးပြုသူ အကောင့်များ",
+            title: "အသုံးပြုသူ အကောင့်များ",
             subtitle: "ခွင့်ပြုချက်ရရှိထားသော တာဝန်ထမ်းဆောင်သူများ၊ ရာထူးတာဝန်များနှင့် အကောင့်များကို စီမံခန့်ခွဲပါ။",
-            createBtn: "➕ အသုံးပြုသူ အသစ်ထည့်ရန်",
+            createBtn: "အသုံးပြုသူ အသစ်ထည့်ရန်",
             searchPlaceholder: "အသုံးပြုသူ အမည်၊ အီးမေးလ်၊ ဖုန်းနံပါတ်ဖြင့် ရှာဖွေပါ...",
             searchBtn: "ရှာဖွေမည်",
             clearBtn: "ရှင်းလင်းမည်",

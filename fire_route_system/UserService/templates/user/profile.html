@@ -6,8 +6,9 @@
 <div style="max-width: 620px; margin: 1.5rem auto;">
     <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
         <div>
-            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;" id="profile-title">
-                👤 Officer Profile
+            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-user"/></svg>
+                <span id="profile-title">Officer Profile</span>
             </h1>
             <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);" id="profile-subtitle">
                 Manage your credentials and view assigned operational role.
@@ -19,14 +20,16 @@
     </div>
 
     {% if message %}
-        <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: #10B981; font-size: 0.875rem; font-weight: 600;">
-            ✓ {{ message }}
+        <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: #10B981; font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <svg class="cad-icon cad-icon-green"><use href="#cad-icon-check"/></svg>
+            <span>{{ message }}</span>
         </div>
     {% endif %}
 
     {% if error %}
-        <div style="background: rgba(253, 0, 1, 0.1); border-left: 4px solid var(--cad-red); padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: var(--cad-red); font-size: 0.875rem; font-weight: 600;">
-            ⚠️ {{ error }}
+        <div style="background: rgba(253, 0, 1, 0.1); border-left: 4px solid var(--cad-red); padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; color: var(--cad-red); font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+            <span>{{ error }}</span>
         </div>
     {% endif %}
 
@@ -40,8 +43,9 @@
                 </div>
                 <div>
                     <h3 style="margin: 0; font-size: 1.15rem; color: var(--cad-text);">{{ request.user.username }}</h3>
-                    <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700; margin-top: 0.25rem;">
-                        🛡️ {{ request.user.role_name }}
+                    <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--cad-amber); font-weight: 700; margin-top: 0.25rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-shield"/></svg>
+                        <span>{{ request.user.role_name }}</span>
                     </span>
                 </div>
             </div>
@@ -61,8 +65,9 @@
             </div>
 
             <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--cad-border);">
-                <h4 id="sec-profile-password" style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--cad-text); font-weight: 700;">
-                    🔒 Change Password (leave blank to keep current)
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--cad-text); font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-lock"/></svg>
+                    <span id="sec-profile-password">Change Password (leave blank to keep current)</span>
                 </h4>
                 
                 <div class="form-group">
@@ -93,23 +98,23 @@
 (function() {
     const profileTranslations = {
         en: {
-            title: "👤 Officer Profile",
+            title: "Officer Profile",
             subtitle: "Manage your credentials and view assigned operational role.",
             back: "← Back to Dashboard",
             email: "Email Address",
             phone: "Phone Number",
-            secPass: "🔒 Change Password (leave blank to keep current)",
+            secPass: "Change Password (leave blank to keep current)",
             newPass: "New Password",
             confirmPass: "Confirm New Password",
             saveBtn: "Save Profile Changes"
         },
         my: {
-            title: "👤 အရာရှိ ကိုယ်ရေးအချက်အလက်",
+            title: "အရာရှိ ကိုယ်ရေးအချက်အလက်",
             subtitle: "အကောင့်ဝင်ရောက်ခွင့် အချက်အလက်များနှင့် တာဝန်ပေးအပ်ထားသော ရာထူးတာဝန်ကို စစ်ဆေးပြင်ဆင်ပါ။",
             back: "← ပင်မကွပ်ကဲမှုစာမျက်နှာသို့",
             email: "အီးမေးလ် လိပ်စာ",
             phone: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",
-            secPass: "🔒 စကားဝှက် အသစ်ပြောင်းရန် (မပြောင်းလိုပါက ကွက်လပ်ထားပါ)",
+            secPass: "စကားဝှက် အသစ်ပြောင်းရန် (မပြောင်းလိုပါက ကွက်လပ်ထားပါ)",
             newPass: "စကားဝှက် အသစ်",
             confirmPass: "စကားဝှက် အသစ်ကို ထပ်မံရိုက်ထည့်ပါ",
             saveBtn: "ကိုယ်ရေးအချက်အလက် ပြင်ဆင်ချက်များ သိမ်းဆည်းမည်"

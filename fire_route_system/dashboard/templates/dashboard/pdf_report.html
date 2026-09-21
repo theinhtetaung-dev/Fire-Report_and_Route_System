@@ -119,16 +119,16 @@
             {% for report in reports %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ report.reporter_phone|default:"Anonymous" }}</td>
+                <td>{{ report.reporter_phone|default:"အမည်မသိ သတင်းပို့သူ" }}</td>
                 <td>
-                    <span class="badge badge-{{ report.fire_scale }}">{% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}</span>
+                    <span class="badge badge-{{ report.fire_scale }}">{{ report.scale_display }}</span>
                 </td>
-                <td>{{ report.status }}</td>
+                <td>{{ report.status_display }}</td>
                 <td>
                     {% if report.latitude and report.longitude %}
                         {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }}
                     {% else %}
-                        {{ report.address|default:"N/A" }}
+                        {{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}
                     {% endif %}
                 </td>
                 <td>{{ report.reported_at|date:"d-m-Y h:i A" }}</td>

@@ -194,8 +194,8 @@ class DashboardReportPortalTests(TestCase):
         
         # Decode and verify content
         content = response.content.decode('utf-8-sig')
-        self.assertIn("Level 2", content)
-        self.assertNotIn("Level 3", content)
+        self.assertTrue("အဆင့် ၂" in content or "Level 2" in content)
+        self.assertNotIn("အဆင့် ၃", content)
 
     def test_export_pdf_download(self):
         response = self.client.get(reverse('export_pdf'), {'level': '1'})

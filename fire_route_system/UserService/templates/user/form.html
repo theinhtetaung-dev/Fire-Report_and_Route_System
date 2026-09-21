@@ -6,8 +6,13 @@
 <div style="max-width: 640px; margin: 1rem auto;">
     <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
         <div>
-            <h1 id="user-form-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
-                {% if form.instance.pk %}✏️ Edit User Account{% else %}👤 Create User Account{% endif %}
+            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                {% if form.instance.pk %}
+                    <svg class="cad-icon cad-icon-gold"><use href="#cad-icon-edit"/></svg>
+                {% else %}
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-user"/></svg>
+                {% endif %}
+                <span id="user-form-title">{% if form.instance.pk %}Edit User Account{% else %}Create User Account{% endif %}</span>
             </h1>
             <p id="user-form-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Set credentials, assign roles, and configure system permissions.
@@ -34,8 +39,9 @@
                         </span>
                     {% endif %}
                     {% if field.errors %}
-                        <div style="color: var(--cad-red); font-size: 0.8rem; margin-top: 0.3rem; font-weight: 600;">
-                            {{ field.errors|striptags }}
+                        <div style="color: var(--cad-red); font-size: 0.8rem; margin-top: 0.3rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+                            <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                            <span>{{ field.errors|striptags }}</span>
                         </div>
                     {% endif %}
                 </div>
@@ -54,8 +60,8 @@
     const isEdit = {{ form.instance.pk|yesno:"true,false" }};
     const translations = {
         en: {
-            titleCreate: "👤 Create User Account",
-            titleEdit: "✏️ Edit User Account",
+            titleCreate: "Create User Account",
+            titleEdit: "Edit User Account",
             subtitle: "Set credentials, assign roles, and configure system permissions.",
             back: "← Back to List",
             save: "Save User",
@@ -70,8 +76,8 @@
             }
         },
         my: {
-            titleCreate: "👤 အသုံးပြုသူ အကောင့် အသစ်ဖွင့်ရန်",
-            titleEdit: "✏️ အသုံးပြုသူ အချက်အလက် ပြင်ဆင်ရန်",
+            titleCreate: "အသုံးပြုသူ အကောင့် အသစ်ဖွင့်ရန်",
+            titleEdit: "အသုံးပြုသူ အချက်အလက် ပြင်ဆင်ရန်",
             subtitle: "အကောင့်ဝင်ရောက်ခွင့် အချက်အလက်များ သတ်မှတ်ခြင်း၊ ရာထူးတာဝန် ပေးအပ်ခြင်းနှင့် စနစ်သုံးစွဲခွင့်များ စီမံပါ။",
             back: "← အသုံးပြုသူများစာရင်းသို့",
             save: "အသုံးပြုသူ အကောင့် သိမ်းဆည်းမည်",

@@ -101,8 +101,9 @@
     <aside class="landmark-sidebar">
         <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--cad-border);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-                <h2 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;" id="map-sidebar-title">
-                    🚒 Fire Stations
+                <h2 style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-station"/></svg>
+                    <span id="map-sidebar-title">Fire Stations</span>
                 </h2>
                 <span class="badge" id="map-sidebar-count" data-count="{{ stations|length }}" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); font-weight: 700; font-size: 0.75rem;">
                     {{ stations|length }} Stations
@@ -117,14 +118,16 @@
                 {% for station in stations %}
                 {% if station.latitude and station.longitude %}
                 <div class="location-item-card" onclick="flyToCoordinates({{ station.latitude }}, {{ station.longitude }})">
-                    <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem; font-weight: 700; color: var(--cad-text);">
-                        🚒 {{ station.name }}
+                    <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem; font-weight: 700; color: var(--cad-text); display: flex; align-items: center; gap: 0.35rem;">
+                        <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-station"/></svg>
+                        <span>{{ station.name }}</span>
                     </h4>
                     <p style="margin: 0 0 0.35rem 0; font-size: 0.825rem; color: var(--cad-text-muted); line-height: 1.4;">
                         {{ station.address }}
                     </p>
-                    <p style="margin: 0 0 0.35rem 0; font-size: 0.825rem; color: var(--cad-amber); font-weight: 600;">
-                        📞 {{ station.contact_number }}
+                    <p style="margin: 0 0 0.35rem 0; font-size: 0.825rem; color: var(--cad-amber); font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+                        <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                        <span>{{ station.contact_number }}</span>
                     </p>
                     <span style="font-family: monospace; font-size: 0.75rem; color: var(--cad-text-muted);">
                         Lat: {{ station.latitude|floatformat:4 }}, Lng: {{ station.longitude|floatformat:4 }}
@@ -199,9 +202,9 @@
             const statusColor = station.status === 'Active' ? '#2e7d32' : '#777';
             const popupHTML = `
                 <div class="popup-content" style="min-width: 200px;">
-                    <h3 style="color: #c30010; font-size: 1rem; margin: 0 0 0.4rem 0; font-weight: 700;">🚒 ${station.name}</h3>
-                    <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.25rem 0;">📍 ${station.address}</p>
-                    <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.35rem 0;">📞 ${station.contact_number}</p>
+                    <h3 style="color: #c30010; font-size: 1rem; margin: 0 0 0.4rem 0; font-weight: 700;">${station.name}</h3>
+                    <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.25rem 0;">${station.address}</p>
+                    <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.35rem 0;">${station.contact_number}</p>
                     <span style="display: inline-block; padding: 0.15rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; background-color: ${statusColor}20; color: ${statusColor}; text-transform: uppercase;">
                         ${station.status}
                     </span>
@@ -241,13 +244,13 @@
     (function() {
         const mapTranslations = {
             en: {
-                title: "🚒 Fire Stations",
+                title: "Fire Stations",
                 subtitle: "All fire stations in the Mandalay city area. Click any station to focus on map.",
                 count: "{n} Stations",
                 empty: "No fire stations found."
             },
             my: {
-                title: "🚒 မီးသတ်စခန်းများ",
+                title: "မီးသတ်စခန်းများ",
                 subtitle: "မန္တလေးမြို့နယ်အတွင်းရှိ မီးသတ်စခန်းများအားလုံး။ မြေပုံပေါ်တွင် အနီးကပ်ကြည့်ရှုရန် စခန်းတစ်ခုခုကို နှိပ်ပါ။",
                 count: "စခန်း {n} ခု",
                 empty: "မီးသတ်စခန်း အချက်အလက်များ မတွေ့ရှိပါ။"

@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fire Department CAD System{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'dashboard/img/logo.svg' %}">
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +32,9 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- CAD Vector Icon Sprite -->
+    {% include 'cad_icons.html' %}
+
     <div class="cad-app-shell">
         <!-- Sidebar Backdrop for Mobile -->
         <div class="cad-sidebar-overlay" id="cadSidebarOverlay" onclick="toggleCadSidebar()"></div>
@@ -39,20 +44,8 @@
             <!-- Brand & CAD Header -->
             <div class="cad-brand-container">
                 <a href="{% url 'dashboard' %}" class="cad-brand-link">
-                    <!-- High-Res Fire Service Shield / Maltese Cross SVG Emblem -->
-                    <svg class="cad-brand-emblem" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Outer Shield Contour -->
-                        <path d="M50 4L12 20V52C12 75.5 28.5 93.5 50 98C71.5 93.5 88 75.5 88 52V20L50 4Z" fill="#071119" stroke="#F59E0B" stroke-width="3" />
-                        <!-- Inner Red Shield -->
-                        <path d="M50 11L20 24V52C20 71 33 85.5 50 89.5C67 85.5 80 71 80 52V24L50 11Z" fill="#FD0001" />
-                        <!-- Maltese Cross Accent in Gold -->
-                        <path d="M50 20L44 38L26 44L44 50L50 68L56 50L74 44L56 38L50 20Z" fill="#F59E0B" opacity="0.9" />
-                        <!-- Center Core Flame -->
-                        <path d="M50 32C50 32 41 45 41 54C41 59 45 63 50 63C55 63 59 59 59 54C59 45 50 32 50 32Z" fill="#FFFFFF" />
-                        <path d="M50 42C50 42 45 49 45 54C45 57 47 59 50 59C53 59 55 57 55 54C55 49 50 42 50 42Z" fill="#F59E0B" />
-                        <!-- Golden Star/Ladder cross lines -->
-                        <circle cx="50" cy="53" r="2.5" fill="#FD0001" />
-                    </svg>
+                    <!-- Myanmar Fire Services Department Official SVG Logo -->
+                    <img src="{% static 'dashboard/img/logo.svg' %}" alt="Fire Department Logo" class="cad-brand-emblem">
                     <div class="cad-brand-text">
                         <span class="cad-brand-title">Fire<span>Route</span></span>
                         <span class="cad-brand-subtitle" id="cad-brand-subtitle">CAD Command Center</span>
@@ -75,7 +68,7 @@
                 <div class="cad-nav-section">
                     <a href="{% url 'report_fire' %}" class="cad-nav-item cad-nav-emergency nav-emergency-btn">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🚨</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-siren"/></svg></span>
                             <span>Emergency Report</span>
                         </div>
                         <span class="cad-badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 0.65rem;">911</span>
@@ -88,14 +81,14 @@
                     <span class="cad-nav-section-title" id="nav-sec-command">Command & Dispatch</span>
                     <a href="{% url 'dashboard' %}" class="cad-nav-item" id="nav-dashboard">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">📊</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-dashboard"/></svg></span>
                             <span>CAD Dashboard</span>
                         </div>
                     </a>
                     {% if request.user.is_dispatcher or request.user.is_admin %}
                     <a href="{% url 'triage_queue' %}" class="cad-nav-item" id="nav-triage">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">📥</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-triage"/></svg></span>
                             <span>Triage Queue</span>
                         </div>
                         {% if unread_notifications_count > 0 %}
@@ -107,13 +100,13 @@
                     {% endif %}
                     <a href="{% url 'fire_report_list' %}" class="cad-nav-item" id="nav-incidents">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🔥</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg></span>
                             <span>Incidents</span>
                         </div>
                     </a>
                     <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🗺️</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-map"/></svg></span>
                             <span>Interactive Map</span>
                         </div>
                     </a>
@@ -124,13 +117,13 @@
                     <span class="cad-nav-section-title" id="nav-sec-logistics">Logistics & Fleet</span>
                     <a href="{% url 'firestation_list' %}" class="cad-nav-item" id="nav-stations">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🚒</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-station"/></svg></span>
                             <span>Fire Stations</span>
                         </div>
                     </a>
                     <a href="{% url 'dispatch_list' %}" class="cad-nav-item" id="nav-dispatch">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">📋</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg></span>
                             <span>Dispatches</span>
                         </div>
                     </a>
@@ -140,14 +133,14 @@
                     <span class="cad-nav-section-title" id="nav-sec-public">Public Services</span>
                     <a href="{% url 'map_view' %}" class="cad-nav-item" id="nav-maps">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🗺️</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-map"/></svg></span>
                             <span>Interactive Map</span>
                         </div>
                     </a>
                     {% if not request.user.is_authenticated %}
                     <a href="{% url 'login' %}" class="cad-nav-item" id="nav-login">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🔑</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-key"/></svg></span>
                             <span>Officer Login</span>
                         </div>
                     </a>
@@ -161,20 +154,20 @@
                     <span class="cad-nav-section-title" id="nav-sec-admin">Intelligence & Admin</span>
                     <a href="{% url 'report_portal' %}" class="cad-nav-item" id="nav-portal">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">📑</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-file-text"/></svg></span>
                             <span>Report Portal</span>
                         </div>
                     </a>
                     {% if request.user.is_admin %}
                     <a href="{% url 'user_list' %}" class="cad-nav-item" id="nav-users">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">👥</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-users"/></svg></span>
                             <span>User Accounts</span>
                         </div>
                     </a>
                     <a href="{% url 'role_list' %}" class="cad-nav-item" id="nav-roles">
                         <div class="cad-nav-item-content">
-                            <span class="cad-nav-icon">🛡️</span>
+                            <span class="cad-nav-icon"><svg class="cad-icon"><use href="#cad-icon-shield"/></svg></span>
                             <span>Role Permissions</span>
                         </div>
                     </a>
@@ -187,12 +180,12 @@
             <div class="cad-sidebar-footer">
                 <!-- Theme Toggle Button -->
                 <button id="themeToggleBtn" class="cad-toggle-btn" aria-label="Toggle Theme">
-                    <span class="theme-icon" id="themeToggleIcon">☀️</span>
+                    <span class="theme-icon" id="themeToggleIcon"><svg class="cad-icon"><use href="#cad-icon-sun"/></svg></span>
                     <span class="theme-text" id="themeToggleText">Light Mode</span>
                 </button>
                 <!-- Language Toggle Button -->
                 <button id="globalLangToggleBtn" class="cad-toggle-btn" aria-label="Toggle Language" onclick="toggleGlobalLanguage()">
-                    <span id="globalLangToggleIcon" class="theme-icon">🇲🇲</span>
+                    <span id="globalLangToggleIcon" class="theme-icon" style="font-size: 0.9rem;">🇲🇲</span>
                     <span id="globalLangToggleText" class="theme-text">မြန်မာ</span>
                 </button>
             </div>
@@ -204,7 +197,7 @@
             <header class="cad-topbar">
                 <div class="cad-topbar-left">
                     <button class="cad-mobile-toggle" onclick="toggleCadSidebar()" aria-label="Open Navigation">
-                        ☰
+                        <svg class="cad-icon"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div class="cad-breadcrumb">
                         <span id="cad-region-title">Mandalay Region Command</span>
@@ -225,14 +218,16 @@
                                 </span>
                             </div>
                         </a>
-                        <a href="{% url 'logout' %}" class="btn btn-outline" id="cad-logout-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none;" title="Sign Out">
-                            🚪 Logout
+                        <a href="{% url 'logout' %}" class="btn btn-outline" id="cad-logout-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;" title="Sign Out">
+                            <svg class="cad-icon"><use href="#cad-icon-logout"/></svg>
+                            <span id="cad-logout-text">Logout</span>
                         </a>
                     </div>
                     {% else %}
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" id="cad-top-login-btn" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none;">
-                            🔑 Officer Login
+                        <a href="{% url 'login' %}" class="cad-btn cad-btn-emergency" id="cad-top-login-btn" style="padding: 0.4rem 1rem; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                            <svg class="cad-icon"><use href="#cad-icon-key"/></svg>
+                            <span id="cad-top-login-text">Officer Login</span>
                         </a>
                     </div>
                     {% endif %}
@@ -470,10 +465,10 @@
                     const text = themeToggleBtn.querySelector(".theme-text");
                     const currentLang = localStorage.getItem("lang") || "my";
                     if (theme === "dark") {
-                        if (icon) icon.innerText = "🌙";
+                        if (icon) icon.innerHTML = '<svg class="cad-icon"><use href="#cad-icon-moon"/></svg>';
                         if (text) text.innerText = currentLang === "my" ? "အမှောင်မုဒ်" : "Dark Mode";
                     } else {
-                        if (icon) icon.innerText = "☀️";
+                        if (icon) icon.innerHTML = '<svg class="cad-icon"><use href="#cad-icon-sun"/></svg>';
                         if (text) text.innerText = currentLang === "my" ? "အလင်းမုဒ်" : "Light Mode";
                     }
                 }
@@ -518,7 +513,7 @@
                 navRoles: "Role Permissions",
                 navPortal: "Report Portal",
                 navLogin: "Officer Login",
-                logoutBtn: "🚪 Logout",
+                logoutBtn: "Logout",
                 langBtnText: "မြန်မာ",
                 langBtnIcon: "🇲🇲",
                 themeLight: "Light Mode",
@@ -545,7 +540,7 @@
                 navRoles: "ရာထူးနှင့် လုပ်ပိုင်ခွင့်များ",
                 navPortal: "အစီရင်ခံစာ ထုတ်ယူရန်",
                 navLogin: "တာဝန်ကျအရာရှိ အကောင့်ဝင်ရန်",
-                logoutBtn: "🚪 အကောင့်ထွက်မည်",
+                logoutBtn: "အကောင့်ထွက်မည်",
                 langBtnText: "English",
                 langBtnIcon: "🇺🇸",
                 themeLight: "အလင်းမုဒ်",
@@ -568,7 +563,9 @@
             set("nav-sec-logistics", data.navSecLogistics);
             set("nav-sec-public", data.navSecPublic);
             set("nav-sec-admin", data.navSecAdmin);
-            set("cad-logout-btn", data.logoutBtn);
+
+            const logoutText = document.getElementById("cad-logout-text");
+            if (logoutText) logoutText.innerText = data.logoutBtn;
 
             const navEmergency = document.querySelector(".nav-emergency-btn span:last-child");
             if (navEmergency) navEmergency.innerText = data.navEmergency;
@@ -603,8 +600,8 @@
             const navLogin = document.querySelector("#nav-login .cad-nav-item-content span:last-child");
             if (navLogin) navLogin.innerText = data.navLogin;
 
-            const topLogin = document.getElementById("cad-top-login-btn");
-            if (topLogin) topLogin.innerText = "🔑 " + data.navLogin;
+            const topLoginText = document.getElementById("cad-top-login-text");
+            if (topLoginText) topLoginText.innerText = data.navLogin;
 
             const modalTitleEl = document.getElementById("modalTitle");
             if (modalTitleEl && modalTitleEl.innerText === "Operation" || (modalTitleEl && modalTitleEl.innerText === "ဆောင်ရွက်ချက်")) {

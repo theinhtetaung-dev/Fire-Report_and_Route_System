@@ -58,8 +58,9 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 id="portal-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
-            📋 Command Report Portal
+        <h1 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-file-text"/></svg>
+            <span id="portal-title">Command Report Portal</span>
         </h1>
         <p id="portal-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
             Filter, analyze, and download fire incident records.
@@ -105,19 +106,22 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-orange" id="btn-filter" style="height: 40px; font-weight: 700; padding: 0 1.5rem; display: inline-flex; align-items: center; gap: 0.4rem;">
-            🔍 Filter
+        <button type="submit" class="btn btn-orange" style="height: 40px; font-weight: 700; padding: 0 1.5rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-search"/></svg>
+            <span id="btn-filter">Filter</span>
         </button>
     </form>
 </div>
 
 <!-- Export Buttons -->
 <div class="export-btn-container">
-    <a href="{% url 'export_csv' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="btn btn-orange" id="btn-export-csv" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
-        📄 Export CSV
+    <a href="{% url 'export_csv' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="btn btn-orange" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
+        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-download"/></svg>
+        <span id="btn-export-csv">Export CSV</span>
     </a>
-    <a href="{% url 'export_pdf' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="cad-btn cad-btn-emergency" id="btn-export-pdf" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
-        📕 Export PDF
+    <a href="{% url 'export_pdf' %}?period={{ period }}&start_date={{ start_date }}&end_date={{ end_date }}&level={{ level }}" class="cad-btn cad-btn-emergency" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 700;">
+        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-download"/></svg>
+        <span id="btn-export-pdf">Export PDF</span>
     </a>
 </div>
 
@@ -141,21 +145,22 @@
                     <td><strong>{{ forloop.counter }}</strong></td>
                     <td style="font-weight: 600;">
                         {% if report.reporter_phone %}
-                        <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-amber); text-decoration: none;">
-                            📞 {{ report.reporter_phone }}
+                        <a href="tel:{{ report.reporter_phone }}" style="color: var(--cad-amber); text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                            <span>{{ report.reporter_phone }}</span>
                         </a>
                         {% else %}
-                        <span style="color: var(--cad-text-muted);">Anonymous</span>
+                        <span style="color: var(--cad-text-muted);">အမည်မသိ သတင်းပို့သူ</span>
                         {% endif %}
                     </td>
                     <td>
                         <span class="badge cad-badge-scale-{{ report.fire_scale }}">
-                            {% if report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ report.fire_scale }}{% endif %}
+                            {{ report.scale_display }}
                         </span>
                     </td>
                     <td>
                         <span class="badge badge-{% if report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'resolved' or report.status|lower == 'verified' %}active{% else %}pending{% endif %}">
-                            {{ report.status }}
+                            {{ report.status_display }}
                         </span>
                     </td>
                     <td>
@@ -164,7 +169,7 @@
                             {{ report.latitude|floatformat:4 }}, {{ report.longitude|floatformat:4 }} ↗
                         </a>
                         {% else %}
-                        <span style="color: var(--cad-text-muted);">{{ report.address|default:"N/A" }}</span>
+                        <span style="color: var(--cad-text-muted);">{{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
                         {% endif %}
                     </td>
                     <td style="color: var(--cad-text-muted); font-size: 0.85rem;">
@@ -188,15 +193,15 @@
     (function() {
         const portalLanguages = {
             en: {
-                title: "📋 Command Report Portal",
+                title: "Command Report Portal",
                 subtitle: "Filter, analyze, and download fire incident records.",
                 period: "Time Period:",
                 startDate: "Start Date:",
                 endDate: "End Date:",
                 level: "Fire Scale Level:",
-                filterBtn: "🔍 Filter",
-                exportCSV: "📄 Export CSV",
-                exportPDF: "📕 Export PDF",
+                filterBtn: "Filter",
+                exportCSV: "Export CSV",
+                exportPDF: "Export PDF",
                 thPhone: "Reporter Phone",
                 thScale: "Fire Scale",
                 thStatus: "Status",
@@ -216,15 +221,15 @@
                 level5: "Level 5"
             },
             my: {
-                title: "📋 မီးလောင်မှုမှတ်တမ်း အစီရင်ခံစာများ",
+                title: "မီးလောင်မှုမှတ်တမ်း အစီရင်ခံစာများ",
                 subtitle: "မီးလောင်မှုဖြစ်စဉ် မှတ်တမ်းများကို ရက်စွဲနှင့် မီးအဆင့်အလိုက် စစ်ထုတ်ခြင်း၊ ဆန်းစစ်ခြင်းနှင့် အစီရင်ခံစာ ထုတ်ယူခြင်း။",
                 period: "အချိန်ကာလ:",
                 startDate: "စတင်သည့် ရက်စွဲ:",
                 endDate: "ပြီးဆုံးသည့် ရက်စွဲ:",
                 level: "မီးပြင်းထန်မှု အဆင့်:",
-                filterBtn: "🔍 ရှာဖွေစစ်ထုတ်မည်",
-                exportCSV: "📄 CSV ထုတ်ယူရန်",
-                exportPDF: "📕 PDF ထုတ်ယူရန်",
+                filterBtn: "ရှာဖွေစစ်ထုတ်မည်",
+                exportCSV: "CSV ထုတ်ယူရန်",
+                exportPDF: "PDF ထုတ်ယူရန်",
                 thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်",
                 thScale: "မီးအဆင့်",
                 thStatus: "လက်ရှိ အခြေအနေ",

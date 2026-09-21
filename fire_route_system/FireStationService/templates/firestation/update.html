@@ -6,8 +6,9 @@
 <div style="max-width: 680px; margin: 1rem auto;">
     <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
         <div>
-            <h1 id="station-update-title" style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
-                ✏️ Edit Fire Station
+            <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-gold"><use href="#cad-icon-edit"/></svg>
+                <span id="station-update-title">Edit Fire Station</span>
             </h1>
             <p id="station-update-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--cad-text-muted);">
                 Update station parameters, contact details, or operational status.
@@ -52,9 +53,9 @@
             <div class="form-group">
                 <label for="status" id="lbl-upd-status">Status</label>
                 <select id="status" name="status" required class="cad-select">
-                    <option value="Active" {% if station.status == 'Active' %}selected{% endif %} id="opt-upd-active">Active</option>
-                    <option value="Inactive" {% if station.status == 'Inactive' %}selected{% endif %} id="opt-upd-inactive">Inactive</option>
-                    <option value="Maintenance" {% if station.status == 'Maintenance' %}selected{% endif %} id="opt-upd-maintenance">Maintenance</option>
+                    <option value="Active" {% if station.status == 'Active' %}selected{% endif %} id="opt-upd-active">အသင့်ရှိ</option>
+                    <option value="Inactive" {% if station.status == 'Inactive' %}selected{% endif %} id="opt-upd-inactive">ယာယီပိတ်ထား</option>
+                    <option value="Maintenance" {% if station.status == 'Maintenance' %}selected{% endif %} id="opt-upd-maintenance">ပြုပြင်ထိန်းသိမ်းဆဲ</option>
                 </select>
             </div>
 
@@ -70,7 +71,7 @@
 (function() {
     const translations = {
         en: {
-            title: "✏️ Edit Fire Station",
+            title: "Edit Fire Station",
             subtitle: "Update station parameters, contact details, or operational status.",
             back: "← Back to List",
             lblName: "Station Name", lblAddress: "Address", lblContact: "Contact Number",
@@ -79,7 +80,7 @@
             save: "Save Changes", cancel: "Cancel"
         },
         my: {
-            title: "✏️ မီးသတ်စခန်း အချက်အလက် ပြင်ဆင်ရန်",
+            title: "မီးသတ်စခန်း အချက်အလက် ပြင်ဆင်ရန်",
             subtitle: "မီးသတ်စခန်း အချက်အလက်များ၊ ဆက်သွယ်ရန် ဖုန်းနှင့် တာဝန်ထမ်းဆောင်မှု အခြေအနေကို ပြင်ဆင်ပါ။",
             back: "← စခန်းများစာရင်းသို့",
             lblName: "မီးသတ်စခန်း အမည်", lblAddress: "တည်နေရာ လိပ်စာအပြည့်အစုံ", lblContact: "ဆက်သွယ်ရန် ဖုန်းနံပါတ်",

@@ -5,15 +5,17 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 id="roles-title" style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
-            🛡️ User Roles
+        <h1 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--cad-text); display: flex; align-items: center; gap: 0.6rem;">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-shield"/></svg>
+            <span id="roles-title">User Roles</span>
         </h1>
         <p id="roles-subtitle" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--cad-text-muted);">
             Define system roles and authority levels across the emergency network.
         </p>
     </div>
-    <a href="{% url 'role_create' %}" class="cad-btn cad-btn-emergency" id="roles-create-btn">
-        ➕ Create Role
+    <a href="{% url 'role_create' %}" class="cad-btn cad-btn-emergency" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-plus"/></svg>
+        <span id="roles-create-btn">Create Role</span>
     </a>
 </div>
 
@@ -35,8 +37,9 @@
                         <tr>
                             <td><strong>{{ forloop.counter }}</strong></td>
                             <td style="font-weight: 700; color: var(--cad-text);">
-                                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700;">
-                                    🛡️ {{ role.role_name }}
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.12); color: var(--cad-amber); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-shield"/></svg>
+                                    <span>{{ role.role_name }}</span>
                                 </span>
                             </td>
                             <td style="color: var(--cad-text-muted);">{{ role.description|default:"-" }}</td>
@@ -64,18 +67,18 @@
 (function() {
     const roleTranslations = {
         en: {
-            title: "🛡️ User Roles",
+            title: "User Roles",
             subtitle: "Define system roles and authority levels across the emergency network.",
-            createBtn: "➕ Create Role",
+            createBtn: "Create Role",
             thId: "No.", thName: "Role Name", thDesc: "Description",
             thCreated: "Created At", thActions: "Actions",
             empty: "No user roles defined yet.",
             createFirst: "Create the First Role"
         },
         my: {
-            title: "🛡️ ရာထူးတာဝန်များ (User Roles)",
+            title: "ရာထူးတာဝန်များ (User Roles)",
             subtitle: "အရေးပေါ်ကွပ်ကဲမှုကွန်ရက်အတွင်း အသုံးပြုသူများ၏ ရာထူးတာဝန်များနှင့် လုပ်ပိုင်ခွင့်အဆင့်များကို သတ်မှတ်ပါ။",
-            createBtn: "➕ ရာထူးတာဝန် အသစ်သတ်မှတ်ရန်",
+            createBtn: "ရာထူးတာဝန် အသစ်သတ်မှတ်ရန်",
             thId: "စဉ်", thName: "ရာထူးအမည်", thDesc: "တာဝန်နှင့် လုပ်ပိုင်ခွင့် ဖော်ပြချက်",
             thCreated: "စတင်ဖန်တီးချိန်", thActions: "လုပ်ဆောင်ချက်",
             empty: "သတ်မှတ်ထားသော ရာထူးတာဝန် မရှိသေးပါ။",

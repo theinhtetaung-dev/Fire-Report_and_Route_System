@@ -6,20 +6,22 @@
 {% block content %}
 <div class="cad-dash-header">
     <div class="cad-dash-title-group">
-        <h1 class="cad-dash-title" id="triage-title">
-            <span>📥</span>
-            <span>Emergency Incident Triage Queue</span>
+        <h1 class="cad-dash-title">
+            <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-triage"/></svg>
+            <span id="triage-title">Emergency Incident Triage Queue</span>
         </h1>
         <p class="cad-dash-subtitle" id="triage-subtitle">Review, verify, and confirm incoming citizen reports before dispatching field units.</p>
     </div>
     <div>
         {% if notifications %}
-        <span class="cad-badge cad-badge-scale-5" id="triage-status-badge" data-count="{{ notifications|length }}" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
-            ⚠️ {{ notifications|length }} INCIDENTS AWAITING TRIAGE
+        <span class="cad-badge cad-badge-scale-5" id="triage-status-badge" data-count="{{ notifications|length }}" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+            <span id="triage-status-badge-text">{{ notifications|length }} INCIDENTS AWAITING TRIAGE</span>
         </span>
         {% else %}
-        <span class="cad-badge cad-badge-active" id="triage-status-badge" data-count="0" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
-            🛡️ ALL QUEUES CLEAR
+        <span class="cad-badge cad-badge-active" id="triage-status-badge" data-count="0" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <svg class="cad-icon cad-icon-sm cad-icon-green"><use href="#cad-icon-check"/></svg>
+            <span id="triage-status-badge-text">ALL QUEUES CLEAR</span>
         </span>
         {% endif %}
     </div>
@@ -28,7 +30,7 @@
 <div class="cad-panel">
     <div class="cad-panel-header">
         <div class="cad-panel-title">
-            <span>🚨</span>
+            <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-siren"/></svg>
             <span id="triage-stream-title">Pending Intake Stream</span>
         </div>
         <span style="font-size: 0.75rem; color: var(--cad-text-muted);" id="triage-stream-subtitle">Real-Time Ingestion</span>
@@ -54,24 +56,26 @@
                     <td>
                         {% if notif.report.reporter_phone %}
                         <a href="tel:{{ notif.report.reporter_phone }}" style="color: var(--cad-text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            📞 {{ notif.report.reporter_phone }}
+                            <svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-phone"/></svg>
+                            <span>{{ notif.report.reporter_phone }}</span>
                         </a>
                         {% else %}
-                        <span style="color: var(--cad-text-muted); font-style: italic;" class="triage-anon-text">Anonymous Caller</span>
+                        <span style="color: var(--cad-text-muted); font-style: italic;" class="triage-anon-text">အမည်မသိ သတင်းပို့သူ</span>
                         {% endif %}
                     </td>
                     <td>
                         <span class="cad-badge cad-badge-scale-{{ notif.report.fire_scale }}">
-                            {% if notif.report.fire_scale == 0 %}နယ်မြေခံ{% else %}Level {{ notif.report.fire_scale }}{% endif %}
+                            {{ notif.report.scale_display }}
                         </span>
                     </td>
                     <td>
                         {% if notif.report.latitude and notif.report.longitude %}
-                        <a href="https://www.google.com/maps?q={{ notif.report.latitude }},{{ notif.report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem; font-weight: 600;">
-                            📍 {{ notif.report.latitude|floatformat:4 }}, {{ notif.report.longitude|floatformat:4 }} ↗
+                        <a href="https://www.google.com/maps?q={{ notif.report.latitude }},{{ notif.report.longitude }}" target="_blank" rel="noopener noreferrer" style="color: var(--cad-blue-info); text-decoration: none; font-family: monospace; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <svg class="cad-icon cad-icon-sm cad-icon-blue"><use href="#cad-icon-pin"/></svg>
+                            <span>{{ notif.report.latitude|floatformat:4 }}, {{ notif.report.longitude|floatformat:4 }} ↗</span>
                         </a>
                         {% else %}
-                        <span>{{ notif.report.address|default:"Manual Address Not Stated" }}</span>
+                        <span>{{ notif.report.address|default:"တည်နေရာ မဖော်ပြထားပါ" }}</span>
                         {% endif %}
                     </td>
                     <td>
@@ -81,8 +85,9 @@
                     <td style="text-align: right;">
                         <form method="POST" action="{% url 'confirm_incident' notif.id %}" style="margin: 0; display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="cad-btn cad-btn-emergency cad-btn-sm triage-confirm-btn">
-                                ⚡ Confirm Incident
+                            <button type="submit" class="cad-btn cad-btn-emergency cad-btn-sm triage-confirm-btn" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-check"/></svg>
+                                <span class="triage-confirm-text">Confirm Incident</span>
                             </button>
                         </form>
                     </td>
@@ -93,7 +98,7 @@
     </div>
     {% else %}
     <div class="cad-empty-state">
-        <span class="cad-empty-icon">🛡️</span>
+        <span class="cad-empty-icon"><svg class="cad-icon cad-icon-green" style="width: 3.5rem; height: 3.5rem;"><use href="#cad-icon-check"/></svg></span>
         <h3 class="cad-empty-title" id="triage-empty-title">Triage queue is clear</h3>
         <p class="cad-empty-desc" id="triage-empty-desc">All incoming citizen fire reports have been triaged, verified, and confirmed for operational response.</p>
     </div>
@@ -110,12 +115,12 @@
             streamSubtitle: "Real-Time Ingestion",
             thNo: "No", thPhone: "Reporter Phone", thSeverity: "Severity Scale",
             thLocation: "Location / Coordinates", thLogged: "Logged Time", thAction: "Command Action",
-            confirmBtn: "⚡ Confirm Incident",
+            confirmBtn: "Confirm Incident",
             anonText: "Anonymous Caller",
             emptyTitle: "Triage queue is clear",
             emptyDesc: "All incoming citizen fire reports have been triaged, verified, and confirmed for operational response.",
-            badgeWaiting: "⚠️ {n} INCIDENTS AWAITING TRIAGE",
-            badgeClear: "🛡️ ALL QUEUES CLEAR"
+            badgeWaiting: "{n} INCIDENTS AWAITING TRIAGE",
+            badgeClear: "ALL QUEUES CLEAR"
         },
         my: {
             title: "အရေးပေါ် မီးသတင်း ဦးစားပေးစိစစ်ရေး (Triage)",
@@ -124,12 +129,12 @@
             streamSubtitle: "အချိန်နှင့်တစ်ပြေးညီ ဝင်ရောက်လာမှု",
             thNo: "စဉ်", thPhone: "သတင်းပို့သူ ဖုန်းနံပါတ်", thSeverity: "မီးပြင်းထန်မှုအဆင့်",
             thLocation: "တည်နေရာ / GPS ကိုဩဒိနိတ်", thLogged: "သတင်းရရှိချိန်", thAction: "စစ်ဆင်ရေး လုပ်ဆောင်ချက်",
-            confirmBtn: "⚡ မီးလောင်မှုဖြစ်စဉ် အတည်ပြုမည်",
+            confirmBtn: "မီးလောင်မှုဖြစ်စဉ် အတည်ပြုမည်",
             anonText: "အမည်မသိ သတင်းပို့သူ",
             emptyTitle: "စိစစ်ရန် မီးသတင်း မရှိပါ",
             emptyDesc: "ပြည်သူလူထုထံမှ ပေးပို့ထားသော အရေးပေါ် မီးသတင်းများအားလုံးကို စိစစ်အတည်ပြုပြီး ဖြစ်ပါသည်။",
-            badgeWaiting: "⚠️ စိစစ်ဆဲ မီးသတင်း {n} ခု ရှိပါသည်",
-            badgeClear: "🛡️ စိစစ်ရန် မီးသတင်း မရှိပါ"
+            badgeWaiting: "စိစစ်ဆဲ မီးသတင်း {n} ခု ရှိပါသည်",
+            badgeClear: "စိစစ်ရန် မီးသတင်း မရှိပါ"
         }
     };
 
@@ -151,12 +156,13 @@
         set("triage-empty-desc", d.emptyDesc);
 
         const badge = document.getElementById("triage-status-badge");
-        if (badge) {
+        const badgeText = document.getElementById("triage-status-badge-text");
+        if (badge && badgeText) {
             const count = parseInt(badge.getAttribute("data-count") || "0", 10);
             if (count > 0) {
-                badge.innerText = d.badgeWaiting.replace("{n}", count);
+                badgeText.innerText = d.badgeWaiting.replace("{n}", count);
             } else {
-                badge.innerText = d.badgeClear;
+                badgeText.innerText = d.badgeClear;
             }
         }
 
@@ -164,7 +170,7 @@
             el.innerText = d.anonText;
         });
 
-        document.querySelectorAll(".triage-confirm-btn").forEach(b => {
+        document.querySelectorAll(".triage-confirm-text").forEach(b => {
             b.innerText = d.confirmBtn;
         });
     }

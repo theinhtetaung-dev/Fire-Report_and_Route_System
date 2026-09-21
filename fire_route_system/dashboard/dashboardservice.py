@@ -176,12 +176,12 @@ def export_csv(request):
     writer.writerow(['No', 'Reporter Phone', 'Fire Scale', 'Status', 'Location', 'Logged At'])
     
     for idx, report in enumerate(reports, 1):
-        loc = f"{report.latitude}, {report.longitude}" if (report.latitude and report.longitude) else (report.address or 'N/A')
+        loc = f"{report.latitude}, {report.longitude}" if (report.latitude and report.longitude) else (report.address or 'တည်နေရာ မဖော်ပြထားပါ')
         writer.writerow([
             idx,
-            report.reporter_phone or 'Anonymous',
-            '\u1014\u101a\u103a\u1019\u103c\u1031\u1001\u1036' if report.fire_scale == 0 else f"Level {report.fire_scale}",
-            report.status,
+            report.reporter_phone or 'အမည်မသိ သတင်းပို့သူ',
+            report.scale_display,
+            report.status_display,
             loc,
             report.reported_at.strftime('%d-%m-%Y %I:%M %p')
         ])

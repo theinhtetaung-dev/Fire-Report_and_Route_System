@@ -6,8 +6,8 @@
 <div style="max-width: 580px; margin: 2rem auto;">
     <div class="cad-panel" style="border: 2px solid var(--cad-red); box-shadow: var(--cad-glow-red);">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
-            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--cad-red); flex-shrink: 0;">
-                ⚠️
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(253, 0, 1, 0.12); display: flex; align-items: center; justify-content: center; color: var(--cad-red); flex-shrink: 0;">
+                <svg class="cad-icon cad-icon-lg cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
             </div>
             <div>
                 <h1 id="role-del-title" style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--cad-red);">
@@ -18,8 +18,9 @@
         </div>
 
         <div style="background: var(--cad-surface-hover); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--cad-red); margin-bottom: 1.5rem;">
-            <h3 style="color: var(--cad-red); margin: 0 0 0.5rem 0; font-size: 1rem;" id="role-del-warning">
-                ⚠️ Warning: This action cannot be undone!
+            <h3 style="color: var(--cad-red); margin: 0 0 0.5rem 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                <span id="role-del-warning">Warning: This action cannot be undone!</span>
             </h3>
             <p style="margin: 0; font-size: 0.95rem; color: var(--cad-text); line-height: 1.5;" id="role-del-desc">
                 Are you sure you want to delete the user role <strong>"{{ role.role_name }}"</strong> (ID: #{{ role.id }})?
@@ -30,8 +31,9 @@
             {% csrf_token %}
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end;">
                 <a href="{% url 'role_list' %}" class="btn btn-outline" id="role-del-cancel">Cancel</a>
-                <button type="submit" class="btn btn-red" id="role-del-confirm" style="background: var(--cad-red); color: #ffffff; font-weight: 700;">
-                    Delete Permanently
+                <button type="submit" class="btn btn-red" id="role-del-confirm" style="background: var(--cad-red); color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                    <span id="role-del-confirm-text">Delete Permanently</span>
                 </button>
             </div>
         </form>
@@ -44,15 +46,15 @@
         en: {
             title: "Delete User Role",
             badge: "Irreversible Action",
-            warning: "⚠️ Warning: This action cannot be undone!",
+            warning: "Warning: This action cannot be undone!",
             desc: 'Are you sure you want to delete the user role <strong>"{{ role.role_name }}"</strong> (ID: #{{ role.id }})?',
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
             title: "ရာထူးတာဝန် ဖျက်ပယ်ရန်",
-            badge: "⚠️ အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
-            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            badge: "အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
+            warning: "သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
             desc: '<strong>"{{ role.role_name }}"</strong> (အမှတ်: #{{ role.id }}) ရာထူးတာဝန်ကို စနစ်ထဲမှ အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?',
             confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
@@ -68,7 +70,7 @@
         set("role-del-badge", d.badge);
         set("role-del-warning", d.warning);
         setHtml("role-del-desc", d.desc);
-        set("role-del-confirm", d.confirm);
+        set("role-del-confirm-text", d.confirm);
         set("role-del-cancel", d.cancel);
     }
 

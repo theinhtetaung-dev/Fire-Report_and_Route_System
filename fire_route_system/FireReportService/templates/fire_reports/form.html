@@ -7,8 +7,8 @@
 <div style="max-width: 680px; margin: 1rem auto;">
     <div class="cad-panel">
         <div class="cad-panel-header" style="background: linear-gradient(90deg, var(--cad-navy-deep) 0%, var(--cad-navy-surface) 100%); color: #fff;">
-            <div class="cad-panel-title" style="color: #fff;">
-                <span>🔥</span>
+            <div class="cad-panel-title" style="color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
                 <span id="report-form-title">{{ title }}</span>
             </div>
             <span class="cad-badge cad-badge-pending">OPERATIONAL RECORD</span>
@@ -26,8 +26,9 @@
                             <span class="cad-input-hint">{{ field.help_text }}</span>
                         {% endif %}
                         {% if field.errors %}
-                            <div class="cad-input-error">
-                                ⚠️ {{ field.errors|striptags }}
+                            <div class="cad-input-error" style="display: flex; align-items: center; gap: 0.35rem;">
+                                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                                <span>{{ field.errors|striptags }}</span>
                             </div>
                         {% endif %}
                     </div>

@@ -7,15 +7,18 @@
 <div style="max-width: 600px; margin: 2rem auto;">
     <div class="cad-panel" style="border: 2px solid var(--cad-red-primary);">
         <div class="cad-panel-header" style="background-color: var(--cad-red-subtle);">
-            <div class="cad-panel-title" style="color: var(--cad-red-primary);">
-                <span>⚠️</span>
+            <div class="cad-panel-title" style="color: var(--cad-red-primary); display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
                 <span id="disp-del-title">Delete Dispatch Operation</span>
             </div>
             <span class="cad-badge cad-badge-scale-5" id="disp-del-badge">DESTRUCTIVE ACTION</span>
         </div>
 
         <div class="cad-panel-body">
-            <h4 style="color: var(--cad-red-primary); margin-bottom: 0.75rem;" id="disp-del-warning">⚠️ Warning: This action cannot be undone!</h4>
+            <h4 style="color: var(--cad-red-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg class="cad-icon cad-icon-sm cad-icon-emergency"><use href="#cad-icon-alert"/></svg>
+                <span id="disp-del-warning">Warning: This action cannot be undone!</span>
+            </h4>
             <p style="margin-bottom: 1.5rem; font-size: 0.95rem; color: var(--cad-text-secondary);" id="disp-del-desc">
                 Are you sure you want to permanently delete <strong>Dispatch #{{ dispatch.id }}</strong> (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?
             </p>
@@ -24,7 +27,10 @@
                 {% csrf_token %}
                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end; border-top: 1px solid var(--cad-border); padding-top: 1.25rem;">
                     <a href="{% url 'dispatch_list' %}" class="cad-btn cad-btn-outline" id="disp-del-cancel">Cancel</a>
-                    <button type="submit" class="cad-btn cad-btn-emergency" id="disp-del-confirm">Delete Permanently</button>
+                    <button type="submit" class="cad-btn cad-btn-emergency" id="disp-del-confirm" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-trash"/></svg>
+                        <span id="disp-del-confirm-text">Delete Permanently</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -37,15 +43,15 @@
         en: {
             title: "Delete Dispatch Operation",
             badge: "DESTRUCTIVE ACTION",
-            warning: "⚠️ Warning: This action cannot be undone!",
+            warning: "Warning: This action cannot be undone!",
             desc: "Are you sure you want to permanently delete <strong>Dispatch #{{ dispatch.id }}</strong> (Report #{{ dispatch.report.id }}, Responding Station: {{ dispatch.station.name }})?",
             confirm: "Delete Permanently",
             cancel: "Cancel"
         },
         my: {
             title: "တပ်ဖွဲ့စေလွှတ်မှု မှတ်တမ်း ဖျက်ပယ်ရန်",
-            badge: "⚠️ အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
-            warning: "⚠️ သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
+            badge: "အပြီးတိုင် ဖျက်ပစ်မည့် လုပ်ဆောင်ချက်",
+            warning: "သတိပြုရန်: ဤလုပ်ဆောင်ချက်ကို ပြန်လည်ပြင်ဆင်၍ မရနိုင်ပါ!",
             desc: "<strong>တပ်ဖွဲ့စေလွှတ်မှု မှတ်တမ်း အမှတ် #{{ dispatch.id }}</strong> (ဖြစ်စဉ် အမှတ် #{{ dispatch.report.id }}၊ တာဝန်ကျစခန်း: {{ dispatch.station.name }}) ကို အပြီးတိုင် ဖျက်ပစ်ရန် သေချာပါသလား?",
             confirm: "အပြီးတိုင် ဖျက်ပစ်မည်",
             cancel: "မလုပ်တော့ပါ"
@@ -61,7 +67,7 @@
         set("disp-del-badge", d.badge);
         set("disp-del-warning", d.warning);
         setHtml("disp-del-desc", d.desc);
-        set("disp-del-confirm", d.confirm);
+        set("disp-del-confirm-text", d.confirm);
         set("disp-del-cancel", d.cancel);
     }
 

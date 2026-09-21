@@ -5,6 +5,20 @@ class Role(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def display_name(self):
+        role_burmese_map = {
+            'admin': 'စနစ်အုပ်ချုပ်သူ (Administrator)',
+            'administrator': 'စနစ်အုပ်ချုပ်သူ (Administrator)',
+            'dispatcher': 'အရေးပေါ်ကွပ်ကဲရေးမှူး (Dispatcher)',
+            'operator': 'အရေးပေါ်ကွပ်ကဲရေးမှူး (Dispatcher)',
+            'firefighter': 'မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)',
+            'responder': 'မီးသတ်တပ်ဖွဲ့ဝင် (Firefighter)',
+            'citizen': 'သတင်းပို့သူ ပြည်သူ (Citizen)',
+            'reporter': 'သတင်းပို့သူ ပြည်သူ (Citizen)',
+        }
+        return role_burmese_map.get(self.role_name.lower().strip(), self.role_name)
+
     def __str__(self):
         return self.role_name
 
@@ -17,9 +31,9 @@ from django.contrib.auth.hashers import make_password, check_password
 
 class User(models.Model):
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('Suspended', 'Suspended'),
-        ('Inactive', 'Inactive'),
+        ('Active', 'အသုံးပြုဆဲ'),
+        ('Suspended', 'ယာယီရပ်ဆိုင်း'),
+        ('Inactive', 'ပိတ်ထား'),
     ]
 
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
@@ -76,6 +90,10 @@ class User(models.Model):
     @property
     def role_name(self):
         return self.role.role_name if self.role else ""
+
+    @property
+    def role_display(self):
+        return self.role.display_name if self.role else ""
 
     def has_role(self, *role_names):
         """
@@ -144,10 +162,19 @@ class User(models.Model):
 
 class FireStation(models.Model):
     STATUS_CHOICES = [
-        ("Active", "Active"),
-        ("Inactive", "Inactive"),
-        ("Maintenance", "Maintenance"),
+        ("Active", "အသင့်ရှိ"),
+        ("Inactive", "ယာယီပိတ်ထား"),
+        ("Maintenance", "ပြုပြင်ထိန်းသိမ်းဆဲ"),
     ]
+
+    @property
+    def status_display(self):
+        status_map = {
+            'Active': 'အသင့်ရှိ',
+            'Inactive': 'ယာယီပိတ်ထား',
+            'Maintenance': 'ပြုပြင်ထိန်းသိမ်းဆဲ',
+        }
+        return status_map.get(self.status, self.get_status_display() or self.status)
 
     station_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -169,21 +196,46 @@ class FireStation(models.Model):
 
 class FireReport(models.Model):
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Dispatched', 'Dispatched'),
-        ('Under Control', 'Under Control'),
-        ('Resolved', 'Resolved'),
-        ('False Alarm', 'False Alarm'),
+        ('Pending', 'ဆိုင်းငံ့ / စိစစ်ဆဲ'),
+        ('Confirmed', 'အတည်ပြုပြီး'),
+        ('Dispatched', 'တပ်ဖွဲ့စေလွှတ်ပြီး'),
+        ('Under Control', 'မီးထိန်းချုပ်နိုင်ပြီ'),
+        ('Resolved', 'ငြှိမ်းသတ်ပြီးစီး'),
+        ('False Alarm', 'သတင်းမှား'),
     ]
 
     FIRE_SCALE_CHOICES = [
         (0, 'နယ်မြေခံ'),
-        (1, 'Level 1'),
-        (2, 'Level 2'),
-        (3, 'Level 3'),
-        (4, 'Level 4'),
-        (5, 'Level 5'),
+        (1, 'အဆင့် ၁'),
+        (2, 'အဆင့် ၂'),
+        (3, 'အဆင့် ၃'),
+        (4, 'အဆင့် ၄'),
+        (5, 'အဆင့် ၅'),
     ]
+
+    @property
+    def scale_display(self):
+        scale_map = {
+            0: 'နယ်မြေခံ',
+            1: 'အဆင့် ၁',
+            2: 'အဆင့် ၂',
+            3: 'အဆင့် ၃',
+            4: 'အဆင့် ၄',
+            5: 'အဆင့် ၅',
+        }
+        return scale_map.get(self.fire_scale, f"အဆင့် {self.fire_scale}")
+
+    @property
+    def status_display(self):
+        status_map = {
+            'Pending': 'ဆိုင်းငံ့ / စိစစ်ဆဲ',
+            'Confirmed': 'အတည်ပြုပြီး',
+            'Dispatched': 'တပ်ဖွဲ့စေလွှတ်ပြီး',
+            'Under Control': 'မီးထိန်းချုပ်နိုင်ပြီ',
+            'Resolved': 'ငြှိမ်းသတ်ပြီးစီး',
+            'False Alarm': 'သတင်းမှား',
+        }
+        return status_map.get(self.status, self.get_status_display() or self.status)
 
     user_id = models.IntegerField(
         null=True, 

@@ -163,10 +163,13 @@ html, body {
 }
 
 .cad-brand-emblem {
-    width: 44px;
-    height: 44px;
+    height: 42px;
+    width: auto;
+    max-width: 92px;
+    object-fit: contain;
     flex-shrink: 0;
     filter: drop-shadow(0 2px 8px var(--cad-red-glow));
+    border-radius: var(--radius-sm, 6px);
 }
 
 .cad-brand-text {
@@ -500,6 +503,47 @@ html, body {
 
 .cad-panel-body {
     padding: 1.25rem;
+}
+
+/* ==========================================================================
+   CAD VECTOR ICON SYSTEM (Consistent Vector Symbols)
+   ========================================================================== */
+.cad-icon {
+    width: 1.2em;
+    height: 1.2em;
+    display: inline-block;
+    vertical-align: -0.22em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+    transition: stroke 0.15s ease, transform 0.15s ease;
+}
+
+.cad-icon-sm { width: 0.95em; height: 0.95em; vertical-align: -0.15em; }
+.cad-icon-md { width: 1.25em; height: 1.25em; }
+.cad-icon-lg { width: 1.5em; height: 1.5em; }
+.cad-icon-xl { width: 2.25em; height: 2.25em; }
+
+.cad-icon-emergency { stroke: var(--cad-red-primary); }
+.cad-icon-gold { stroke: var(--cad-gold-primary); }
+.cad-icon-green { stroke: var(--cad-green-active); }
+.cad-icon-blue { stroke: var(--cad-blue-info); }
+.cad-icon-muted { stroke: var(--cad-text-muted); }
+
+.cad-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+}
+.cad-nav-icon .cad-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    vertical-align: middle;
 }
 
 /* Buttons */
