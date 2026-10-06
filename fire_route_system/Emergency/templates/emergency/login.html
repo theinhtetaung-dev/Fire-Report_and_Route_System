@@ -1,0 +1,10 @@
+{% extends 'emergency/base.html' %}
+{% block content %}
+<section class="card"><h1>အကောင့်ဝင်ရန်</h1><p>ဖုန်းနံပါတ်ဖြင့် ဝင်နိုင်ပါသည်။ ရှိပြီးသားအကောင့်များအတွက် username ကိုလည်း အသုံးပြုနိုင်ပါသည်။</p>
+{% if error_message %}<div class="message" role="alert">{{ error_message }}</div>{% endif %}
+<form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+<p><label for="login-identity">ဖုန်းနံပါတ် / username</label><input id="login-identity" name="username" value="{{ username }}" autocomplete="username" required></p>
+<p><label for="login-password">Password</label><input id="login-password" type="password" name="password" autocomplete="current-password" required></p>
+<button type="submit">ဝင်ရန်</button></form>
+<p>အကောင့်မရှိသေးပါက <a href="{% url 'emergency:register' %}">Citizen အကောင့်ဖွင့်ရန်</a></p></section>
+{% endblock %}
