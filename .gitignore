@@ -29,6 +29,9 @@ MANIFEST
 # Virtual environments
 venv/
 .venv/
+.env
+.env.*
+!.env.example
 env/
 ENV/
 env.bak/
@@ -45,6 +48,8 @@ fire_route_system/db.sqlite3-journal
 # IDE and editors
 .idea/
 .vscode/
+.vs/
+fire_route_system/runtime/
 *.swp
 *.swo
 *~

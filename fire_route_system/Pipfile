@@ -8,6 +8,9 @@ django = "*"
 xhtml2pdf = "*"
 pymysql = "*"
 python-dotenv = "*"
+reportlab = "*"
+uharfbuzz = "*"
+fonttools = "*"
 
 [dev-packages]
 
