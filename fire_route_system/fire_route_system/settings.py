@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'DispatchService',
     'maps',
     'dashboard',
+    'Emergency',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'Emergency.middleware.LegacyAccessMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -74,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'FireReportService.context_processors.unread_notifications_count',
+                'Emergency.context.console_context',
             ],
         },
     },

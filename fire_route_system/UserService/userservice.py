@@ -14,12 +14,7 @@ def login_view(request):
     Officer / User Login view handling both username and email authentication.
     """
     if request.user.is_authenticated:
-        # Redirect based on user authority
-        if getattr(request.user, 'is_dispatcher', False) or getattr(request.user, 'is_admin', False):
-            return redirect('dashboard')
-        elif getattr(request.user, 'is_firefighter', False):
-            return redirect('dashboard')
-        return redirect('report_fire')
+        return redirect('emergency:dashboard')
 
     error_message = None
     success_message = None
@@ -31,20 +26,20 @@ def login_view(request):
         next_url = request.POST.get('next', next_url)
 
         if not username or not password:
-            error_message = "Please provide both username/email and password."
+            error_message = "ဖုန်းနံပါတ် သို့မဟုတ် username နှင့် password ဖြည့်ပါ။"
         else:
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user, backend='DataAccess.backends.RoleAuthBackend')
                 if next_url and next_url != reverse('login') and next_url != reverse('logout'):
-                    return redirect(next_url)
-                if user.is_dispatcher or user.is_admin or user.is_firefighter:
-                    return redirect('dashboard')
-                return redirect('report_fire')
+                    from django.utils.http import url_has_allowed_host_and_scheme
+                    if url_has_allowed_host_and_scheme(next_url,allowed_hosts={request.get_host()},require_https=request.is_secure()):
+                        return redirect(next_url)
+                return redirect('emergency:dashboard')
             else:
-                error_message = "Invalid credentials or account is inactive."
+                error_message = "အကောင့်အချက်အလက်မမှန်ပါ သို့မဟုတ် အကောင့်ပိတ်ထားသည်။"
 
-    return render(request, 'auth/login.html', {
+    return render(request, 'emergency/login.html', {
         'error_message': error_message,
         'success_message': success_message,
         'next': next_url,

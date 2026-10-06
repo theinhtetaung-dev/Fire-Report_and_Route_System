@@ -14,7 +14,7 @@ class RoleAuthBackend(BaseBackend):
 
         # Allow authentication via username OR email
         user = User.objects.select_related('role').filter(
-            Q(username__iexact=username) | Q(email__iexact=username)
+            Q(username__iexact=username) | Q(email__iexact=username) | Q(phone_number=username)
         ).first()
 
         if user and user.is_active and user.check_password(password):
@@ -23,6 +23,6 @@ class RoleAuthBackend(BaseBackend):
 
     def get_user(self, user_id):
         try:
-            return User.objects.select_related('role').get(pk=user_id)
+            return User.objects.select_related('role').get(pk=user_id, status='Active')
         except User.DoesNotExist:
             return None
