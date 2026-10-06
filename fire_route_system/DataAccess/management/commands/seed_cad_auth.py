@@ -83,10 +83,7 @@ class Command(BaseCommand):
                 user.save()
                 self.stdout.write(self.style.SUCCESS(f"  User '{user.username}' created."))
             else:
-                user.role = u_info['role']
-                user.set_password(u_info['password'])
-                user.save()
-                self.stdout.write(f"  User '{user.username}' updated.")
+                self.stdout.write(f"  User '{user.username}' preserved (password and role unchanged).")
 
         # 3. Migrate SQLite Data if MySQL tables are empty
         sqlite_path = settings.BASE_DIR / 'db.sqlite3'
@@ -165,7 +162,7 @@ class Command(BaseCommand):
                     for r in disp_rows:
                         rep = FireReport.objects.filter(id=r[5]).first()
                         st = FireStation.objects.filter(station_id=r[6]).first()
-                        op = User.objects.filter(id=r[4]).first() or admin_role
+                        op = User.objects.filter(id=r[4]).first() or User.objects.filter(role=admin_role).first()
                         if rep and st and op:
                             res = r[3]
                             if res and ('Fire Engine' in res or 'Personnel' in res):
