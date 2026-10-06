@@ -1,1 +1,44 @@
-:root{font-family:"Myanmar Text","Noto Sans Myanmar",sans-serif;color:#182332;background:#f2f4f7;line-height:1.8}*{box-sizing:border-box}body{margin:0}header{background:#641921;color:white;padding:16px 28px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}header a{color:white;font-size:21px;font-weight:bold}nav{background:white;padding:12px 28px;display:flex;gap:16px;flex-wrap:wrap;border-bottom:1px solid #d8dee5}a{color:#17578a;text-decoration:none}a:hover{text-decoration:underline}main{max-width:1280px;margin:auto;padding:24px}h1{font-size:25px}h2{font-size:21px}section,.card{background:white;border:1px solid #d8dee5;border-radius:6px;padding:20px;margin:16px 0}table{width:100%;border-collapse:collapse;background:white}th,td{text-align:left;padding:12px;border-bottom:1px solid #d8dee5;vertical-align:top}form p{margin:14px 0}input:not([type=checkbox]),select,textarea{width:100%;padding:10px;border:1px solid #aab6c3;border-radius:4px;font:inherit}input[type=checkbox]{width:20px;height:20px}label{display:block}button,.button{display:inline-block;background:#8d202b;color:white;padding:10px 18px;border:0;border-radius:4px;font:inherit;cursor:pointer;margin:6px 4px 6px 0}.message,.errorlist{background:#fff0cf;color:#703d00;padding:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:end}.filters>*{flex:1;min-width:140px}.map{height:480px}small{color:#526271}pre{white-space:pre-wrap;overflow-wrap:anywhere}.table-wrap{overflow-x:auto}.badge{background:#edf0f4;padding:4px 10px;border-radius:4px}.inline label{display:inline}details{margin:12px 0}summary{cursor:pointer;font-weight:bold}.readonly{color:#526271}@media(max-width:600px){main{padding:12px}nav,header{padding:12px}th,td{padding:8px}}
+/* Adapt the emergency forms and lists to the existing FireRoute CAD theme. */
+.emergency-console{display:block;font-family:Inter,"Pyidaungsu","Myanmar Text","Padauk","Noto Sans Myanmar",sans-serif;line-height:1.8;min-width:0}
+.emergency-console h1{font-size:1.65rem;font-weight:800;margin:0 0 1rem}
+.emergency-console h2{font-size:1.15rem;font-weight:700;margin:0 0 1rem}
+.emergency-console h3{font-size:1rem;margin:1rem 0 .5rem}
+.emergency-console p{margin:.65rem 0}
+.emergency-console section,.emergency-console .card{background:var(--cad-card-bg);border:1px solid var(--cad-border);border-radius:var(--radius-md);box-shadow:var(--cad-shadow-sm);padding:1.25rem;margin:1rem 0}
+.emergency-console a{color:var(--cad-blue-info);text-decoration:none}
+.emergency-console a:hover{text-decoration:underline}
+[data-theme="dark"] .emergency-console a:not(.button){color:#93c5fd}
+.cad-topbar #cad-logout-btn{color:var(--cad-blue-info)}
+[data-theme="dark"] .cad-topbar #cad-logout-btn{color:#93c5fd}
+.emergency-console table{width:100%;border-collapse:collapse;background:var(--cad-card-bg);font-size:.875rem}
+.emergency-console th{background:var(--cad-table-header-bg);color:var(--cad-text-secondary);font-weight:700}
+.emergency-console th,.emergency-console td{text-align:left;padding:.9rem 1rem;border-bottom:1px solid var(--cad-border);vertical-align:top;overflow-wrap:anywhere}
+.emergency-console tr:hover td{background:var(--cad-table-hover-bg)}
+.emergency-console form p{margin:1rem 0}
+.emergency-console input:not([type=checkbox]),.emergency-console select,.emergency-console textarea{width:100%;padding:.7rem .85rem;border:1px solid var(--cad-input-border);border-radius:var(--radius-sm);background:var(--cad-input-bg);color:var(--cad-text-main);font:inherit}
+.emergency-console input:focus,.emergency-console select:focus,.emergency-console textarea:focus{outline:2px solid var(--cad-gold-primary);outline-offset:1px}
+.emergency-console input[type=checkbox]{width:18px;height:18px;accent-color:var(--cad-red-primary);vertical-align:middle;margin-right:.5rem}
+.emergency-console label{display:block;font-size:.9rem;font-weight:600;margin:.5rem 0}
+.emergency-console button,.emergency-console .button{display:inline-flex;align-items:center;justify-content:center;background:var(--cad-red-primary);color:#fff;border:1px solid var(--cad-red-primary);border-radius:var(--radius-sm);padding:.65rem 1rem;font:inherit;font-size:.875rem;font-weight:600;cursor:pointer;margin:.5rem .4rem .5rem 0;text-decoration:none;transition:var(--transition)}
+.emergency-console button:hover,.emergency-console .button:hover{background:var(--cad-red-hover);text-decoration:none}
+.emergency-console .message,.emergency-console .errorlist{background:var(--cad-gold-subtle);color:var(--cad-text-main);border:1px solid var(--cad-gold-primary);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem}
+.emergency-console .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.emergency-console .filters{display:flex;gap:1rem;flex-wrap:wrap;align-items:end;background:var(--cad-card-bg);border:1px solid var(--cad-border);border-radius:var(--radius-md);padding:1rem;margin-bottom:1rem}
+.emergency-console .filters>*{flex:1;min-width:140px}
+.emergency-console .map{height:480px;border:1px solid var(--cad-border);border-radius:var(--radius-sm)}
+.emergency-console small,.emergency-console .readonly{color:var(--cad-text-muted)}
+.emergency-console pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.emergency-console .table-wrap{overflow-x:auto;border:1px solid var(--cad-border);border-radius:var(--radius-md)}
+.emergency-console details{margin:1rem 0}
+.emergency-console summary{cursor:pointer;font-weight:700;color:var(--cad-text-secondary)}
+.emergency-console ol,.emergency-console ul{padding-left:1.5rem}
+.emergency-console .notice-form{display:inline}
+.emergency-console .cad-panel{margin:1rem 0}
+#notice-count{background:var(--cad-gold-subtle);color:var(--cad-text-secondary);white-space:nowrap}
+@media(max-width:600px){.emergency-console th,.emergency-console td{padding:.65rem}.emergency-console .map{height:360px}.emergency-console .grid{grid-template-columns:1fr}.cad-topbar-right{flex-wrap:wrap}}
+
+@media(max-width:1100px){.cad-topbar-right .cad-operator-badge>span:not(.cad-operator-avatar){display:none}.cad-topbar-right #notice-count{font-size:.75rem}}
+
+.cad-topbar-left{min-width:0}.cad-topbar-right{flex-shrink:0}#cad-logout-text{white-space:nowrap}
+@media(max-width:1100px){.cad-topbar .cad-breadcrumb>span:not(.cad-breadcrumb-active){display:none}}
+@media(max-width:600px){.cad-topbar .cad-breadcrumb{display:none}#cad-logout-text{display:none}}

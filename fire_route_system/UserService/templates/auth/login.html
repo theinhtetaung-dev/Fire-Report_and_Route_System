@@ -622,7 +622,7 @@
 
                 <div class="form-group">
                     <label for="username" class="form-label" id="lbl-username">
-                        အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်
+                        ဖုန်းနံပါတ် သို့မဟုတ် အသုံးပြုသူအမည်
                     </label>
                     <div class="input-wrapper">
                         <span class="input-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-user"/></svg></span>
@@ -657,6 +657,7 @@
                 </button>
             </form>
 
+            <div class="emergency-link-box"><a href="{% url 'emergency:register' %}" class="emergency-link">Citizen အကောင့်ဖွင့်ရန်</a></div>
             <!-- Quick Demo Roles Selector -->
             <section class="quick-roles-section" aria-label="Demo Accounts">
                 <div class="quick-roles-header">
@@ -668,7 +669,7 @@
                 </div>
                 
                 <div class="quick-roles-grid">
-                    <button type="button" class="quick-role-card" onclick="fillDemo('admin', 'adminpass')">
+                    <button type="button" class="quick-role-card" onclick="fillDemo('demo_admin', 'DemoFire2026!')">
                         <span class="role-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-shield"/></svg></span>
                         <div class="role-info">
                             <span class="role-name" data-my="စနစ်အုပ်ချုပ်သူ" data-en="Admin">စနစ်အုပ်ချုပ်သူ</span>
@@ -676,15 +677,15 @@
                         </div>
                     </button>
                     
-                    <button type="button" class="quick-role-card" onclick="fillDemo('operator_hnin', 'operatorpass')">
+                    <button type="button" class="quick-role-card" onclick="fillDemo('demo_station', 'DemoFire2026!')">
                         <span class="role-icon"><svg class="cad-icon cad-icon-blue"><use href="#cad-icon-dispatch"/></svg></span>
                         <div class="role-info">
-                            <span class="role-name" data-my="တာဝန်စေလွှတ်သူ" data-en="Dispatcher">တာဝန်စေလွှတ်သူ</span>
-                            <span class="role-tag">CAD Operator</span>
+                            <span class="role-name" data-my="စခန်းတာဝန်ခံ" data-en="Station Admin">စခန်းတာဝန်ခံ</span>
+                            <span class="role-tag">Station Admin</span>
                         </div>
                     </button>
                     
-                    <button type="button" class="quick-role-card" onclick="fillDemo('firefighter_zaw', 'firefighter123')">
+                    <button type="button" class="quick-role-card" onclick="fillDemo('demo_firefighter', 'DemoFire2026!')">
                         <span class="role-icon"><svg class="cad-icon cad-icon-gold"><use href="#cad-icon-station"/></svg></span>
                         <div class="role-info">
                             <span class="role-name" data-my="မီးသတ်တပ်ဖွဲ့ဝင်" data-en="Firefighter">မီးသတ်တပ်ဖွဲ့ဝင်</span>
@@ -692,7 +693,7 @@
                         </div>
                     </button>
                     
-                    <button type="button" class="quick-role-card" onclick="fillDemo('citizen_kyaw', 'citizen123')">
+                    <button type="button" class="quick-role-card" onclick="fillDemo('demo_citizen', 'DemoFire2026!')">
                         <span class="role-icon"><svg class="cad-icon cad-icon-muted"><use href="#cad-icon-user"/></svg></span>
                         <div class="role-info">
                             <span class="role-name" data-my="ပြည်သူ" data-en="Citizen">ပြည်သူ</span>
@@ -777,7 +778,7 @@
             badgeDept: "Myanmar Fire Services",
             title: "Login",
             subtitle: "Authorized Emergency Command & Dispatch Console",
-            lblUser: "Username or Email",
+            lblUser: "Phone number or username",
             placeholderUser: "e.g. admin or operator",
             lblPass: "Password",
             btnSubmit: "Sign In to Console",
@@ -794,7 +795,7 @@
             badgeDept: "မြန်မာနိုင်ငံ မီးသတ်တပ်ဖွဲ့",
             title: "အကောင့်ဝင်ရန်",
             subtitle: "အရေးပေါ် မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်",
-            lblUser: "အသုံးပြုသူအမည် သို့မဟုတ် အီးမေးလ်",
+            lblUser: "ဖုန်းနံပါတ် သို့မဟုတ် အသုံးပြုသူအမည်",
             placeholderUser: "ဥပမာ - admin သို့မဟုတ် operator",
             lblPass: "စကားဝှက် (Password)",
             btnSubmit: "စနစ်သို့ ဝင်ရောက်မည်",

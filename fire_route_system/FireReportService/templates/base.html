@@ -64,6 +64,7 @@
 
             <!-- Grouped Navigation Area -->
             <nav class="cad-nav-scroll">
+                {% block sidebar_navigation %}
                 <!-- EMERGENCY ACTION -->
                 <div class="cad-nav-section">
                     <a href="{% url 'report_fire' %}" class="cad-nav-item cad-nav-emergency nav-emergency-btn">
@@ -174,6 +175,7 @@
                     {% endif %}
                 </div>
                 {% endif %}
+                {% endblock %}
             </nav>
 
             <!-- Sidebar Controls Footer -->
@@ -207,6 +209,7 @@
                 </div>
 
                 <div class="cad-topbar-right">
+                    {% block topbar_notifications %}{% endblock %}
                     {% if request.user.is_authenticated %}
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <a href="{% url 'profile' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" title="Manage Profile">

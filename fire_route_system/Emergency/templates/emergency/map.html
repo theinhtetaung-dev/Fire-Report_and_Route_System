@@ -1,1 +1,113 @@
-{% extends 'emergency/base.html' %}{% block content %}<h1>စခန်းနှင့် အတည်ပြုထားသော လက်ရှိဖြစ်စဉ်များ</h1><p id="map-status" role="status"></p><div id="map" class="map"></div>{% endblock %}{% block scripts %}<script>const map=L.map('map').setView([21.975,96.083],12);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).on('tileerror',()=>{document.getElementById('map-status').textContent='မြေပုံနောက်ခံ မရပါ။ စခန်းနှင့်ဖြစ်စဉ် pin များ ဆက်ကြည့်နိုင်ပါသည်။';}).addTo(map);const group=L.layerGroup().addTo(map);async function updateMap(){try{const r=await fetch('{% url "emergency:map_data" %}');if(!r.ok)return;const d=await r.json();group.clearLayers();d.stations.forEach(s=>{const label=document.createElement('span');label.textContent=s.name;L.circleMarker([s.latitude,s.longitude],{color:'#17578a'}).bindPopup(label).addTo(group);});d.incidents.forEach(i=>{const label=document.createElement('span');label.textContent='#'+i.id+' '+(i.address||'မီးလောင်ရာ')+' · Level '+i.fire_scale;L.circleMarker([i.latitude,i.longitude],{color:'#b62231'}).bindPopup(label).addTo(group);});}catch(e){document.getElementById('map-status').textContent='ဆက်သွယ်မှု မရပါ။';}}updateMap();setInterval(updateMap,5000);</script>{% endblock %}
+{% extends 'emergency/base.html' %}
+{% block title %}Interactive Location Map - Fire Route System{% endblock %}
+{% block page_css %}<style>
+    .map-page-layout {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: var(--cad-bg-canvas);
+    }
+    .landmark-sidebar {
+        width: 380px;
+        min-width: 320px;
+        background-color: var(--cad-card-bg);
+        border-right: 1px solid var(--cad-border);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        box-sizing: border-box;
+        height: 100%;
+        overflow: hidden;
+        transition: var(--transition);
+        z-index: 10;
+    }
+    .landmark-list {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .location-item-card {
+        transition: all 0.2s ease;
+        padding: 1rem;
+        border: 1px solid var(--cad-border);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        background-color: var(--cad-card-bg);
+        box-shadow: var(--cad-shadow-sm);
+    }
+    .location-item-card:hover {
+        border-color: var(--cad-gold-primary) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
+        background-color: var(--cad-table-hover-bg);
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 0.2rem 0.65rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+    }
+    .status-active {
+        background-color: rgba(16, 185, 129, 0.12);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-inactive {
+        background-color: rgba(100, 116, 139, 0.12);
+        color: #64748B;
+        border: 1px solid rgba(100, 116, 139, 0.3);
+    }
+    .map-container {
+        flex: 1;
+        height: 100%;
+        position: relative;
+        background: #0f172a;
+    }
+
+    @media (max-width: 900px) {
+        .map-page-layout {
+            flex-direction: column-reverse;
+        }
+        .landmark-sidebar {
+            width: 100%;
+            height: 42%;
+            border-right: none;
+            border-top: 1px solid var(--cad-border);
+            padding: 1.25rem;
+        }
+        .map-container {
+            width: 100%;
+            height: 58%;
+        }
+    }
+.landmark-sidebar{font-family:Inter,"Myanmar Text",sans-serif;line-height:1.8}.map-sidebar-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem}.map-sidebar-heading h2{font-size:1.35rem;font-weight:800;display:flex;align-items:center;gap:.5rem}.map-sidebar-description{color:var(--cad-text-muted);font-size:.85rem;margin:.5rem 0}.map-search{width:100%;padding:.65rem;margin:.5rem 0 1rem;background:var(--cad-input-bg);color:var(--cad-text-main);border:1px solid var(--cad-input-border);border-radius:var(--radius-sm);font:inherit}.location-item-card{text-align:left;font:inherit;color:var(--cad-text-main);width:100%;flex-shrink:0}.location-item-card h4{font-size:.95rem;margin-bottom:.4rem}.location-item-card p{font-size:.825rem;color:var(--cad-text-muted)}.map-page-layout{min-height:0;flex:1}.landmark-sidebar .badge{white-space:nowrap}#map-status{font-size:.8rem;color:var(--cad-text-muted)}
+</style>{% endblock %}
+{% block main_layout %}<div class="map-page-layout"><aside class="landmark-sidebar">
+<div class="map-sidebar-heading"><h2><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-station"/></svg>မီးသတ်စခန်းများ</h2><span class="badge" id="map-sidebar-count"></span></div>
+<p class="map-sidebar-description">မန္တလေးနှင့် အနီးဝန်းကျင်ရှိ စခန်းများနှင့် အတည်ပြုထားသော လက်ရှိဖြစ်စဉ်များ။ စာရင်းနှိပ်၍ မြေပုံပေါ်ကြည့်နိုင်ပါသည်။</p>
+<label for="map-search">စခန်း / ဖြစ်စဉ် ရှာရန်</label><input class="map-search" id="map-search" type="search"><p id="map-status" role="status"></p>
+<div id="map-locations" class="landmark-list"></div></aside><div id="map" class="map-container"></div></div>{% endblock %}
+{% block scripts %}<script>
+const map=L.map('map').setView([21.975,96.083],12);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).on('tileerror',()=>{document.getElementById('map-status').textContent='မြေပုံနောက်ခံ မရပါ။ စခန်းနှင့်ဖြစ်စဉ် pin များ ဆက်ကြည့်နိုင်ပါသည်။';}).addTo(map);
+const group=L.layerGroup().addTo(map),list=document.getElementById('map-locations'),search=document.getElementById('map-search');
+function filterLocations(){const term=search.value.trim().toLowerCase();list.querySelectorAll('.location-item-card').forEach(card=>{card.hidden=!card.textContent.toLowerCase().includes(term);});}
+search.addEventListener('input',filterLocations);
+function addLocation(point,title,description,isIncident){const label=document.createElement('span');label.textContent=title;
+ const marker=L.circleMarker(point,{color:isIncident?'#fd0001':'#c30010',fillOpacity:.8,radius:isIncident?9:7}).bindPopup(label).addTo(group);
+ const card=document.createElement('button');card.type='button';card.className='location-item-card';const heading=document.createElement('h4'),detail=document.createElement('p');heading.textContent=title;detail.textContent=description;card.append(heading,detail);card.addEventListener('click',()=>{map.flyTo(point,15);marker.openPopup();});list.append(card);}
+async function updateMap(){try{const r=await fetch('{% url "emergency:map_data" %}');if(!r.ok)return;const d=await r.json();group.clearLayers();list.replaceChildren();document.getElementById('map-sidebar-count').textContent='စခန်း '+d.stations.length;
+ d.incidents.forEach(i=>addLocation([i.latitude,i.longitude],'#'+i.id+' · '+(i.address||'မီးလောင်ရာ'),i.scale_display+' · '+i.status_display,true));
+ d.stations.forEach(s=>addLocation([s.latitude,s.longitude],s.name,[s.address,s.contact_number].filter(Boolean).join(' · '),false));filterLocations();
+ }catch(e){document.getElementById('map-status').textContent='ဆက်သွယ်မှု မရပါ။';}}
+updateMap();setInterval(updateMap,5000);window.addEventListener('resize',()=>map.invalidateSize());
+</script>{% endblock %}
