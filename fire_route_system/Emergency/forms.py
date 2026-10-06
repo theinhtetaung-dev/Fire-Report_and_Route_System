@@ -90,13 +90,16 @@ class ConfirmForm(forms.ModelForm):
 
 
 def model_form(model,fields):
-    return forms.modelform_factory(model,fields=fields,widgets={
-        name:forms.DateTimeInput(attrs={'type':'datetime-local'},format='%Y-%m-%dT%H:%M')
+    form=forms.modelform_factory(model,fields=fields,widgets={
+        name:forms.DateTimeInput(attrs={'placeholder':'DD/MM/YYYY HH:MM AM/PM'},format='%d/%m/%Y %I:%M %p')
         for name in ['starts_at','ends_at'] if name in fields})
+    for name in ['starts_at','ends_at']:
+        if name in form.base_fields:form.base_fields[name].input_formats=['%d/%m/%Y %I:%M %p','%d/%m/%Y %H:%M','%Y-%m-%dT%H:%M']
+    return form
 
 
 FORM_TYPES={
-    'stations':(FireStation,model_form(FireStation,['name','address','contact_number','latitude','longitude','status'])),
+    'stations':(FireStation,model_form(FireStation,['name','township','address','contact_number','latitude','longitude','status'])),
     'staff':(User,StaffForm),
     'vehicle-types':(VehicleType,model_form(VehicleType,['name'])),
     'vehicles':(Vehicle,model_form(Vehicle,['station','kind','registration','status'])),

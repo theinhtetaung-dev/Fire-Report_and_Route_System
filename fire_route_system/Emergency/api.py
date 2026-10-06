@@ -51,7 +51,7 @@ def incident_detail(request,pk):
 def map_data(request):
     if not request.user.is_authenticated:return JsonResponse({'error':'Login required'},status=401)
     incidents=FireReport.objects.exclude(status__in=['Pending','False Alarm','Resolved']).filter(latitude__isnull=False,longitude__isnull=False,coordinates_confirmed=True,closed_at__isnull=True)
-    return JsonResponse({'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude'))})
+    return JsonResponse({'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude','address','contact_number'))})
 
 
 @csrf_protect

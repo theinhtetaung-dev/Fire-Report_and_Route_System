@@ -5,6 +5,7 @@ app_name='emergency'
 urlpatterns=[
     path('',views.dashboard,name='dashboard'),path('register/',views.register,name='register'),
     path('posts/',views.posts,name='posts'),path('report/',views.report,name='report'),
+    path('queue/',views.incident_queue,name='queue'),
     path('incidents/',views.incidents,name='incidents'),path('incidents/<int:pk>/',views.incident,name='incident'),
     path('incidents/<int:pk>/pdf/',views.incident_pdf,name='incident_pdf'),
     path('incidents/<int:pk>/<str:action>/',views.action,name='action'),

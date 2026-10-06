@@ -49,6 +49,14 @@ PDF copy/search support can differ across readers; the logical Unicode is includ
 in standard ActualText metadata. No Chat, SMS, OTP, or live vehicle tracking is
 included, as agreed.
 
+## Original FireRoute UI restoration
+
+The emergency pages now reuse the original CAD sidebar, branding, topbar, theme
+controls, and login page. Dashboard cards and the station map layout use the
+original styling while retaining the emergency workflows. Twenty focused page,
+login, dashboard, map, and privacy tests passed. Browser checks covered the
+requirements page, light/dark appearance, and station search/map selection.
+
 ## Local artifacts
 
 Ignored `runtime/` contains the road export, route-validation JSON, test logs,

@@ -132,6 +132,85 @@ class EmergencyTests(TestCase):
         self.auth(self.station_admin);self.client.post(f'/emergency/incidents/{self.incident.pk}/final/',{'narrative':'ပြန်ပြင်ပြီး'})
         self.auth(self.admin);self.client.post(f'/emergency/incidents/{self.incident.pk}/review-final/',{'decision':'Approved'})
         self.incident.refresh_from_db();self.assertIsNotNone(self.incident.closed_at)
+    def test_final_review_without_submission_redirects_and_hides_controls(self):
+        self.auth(self.admin)
+        url=f'/emergency/incidents/{self.incident.pk}/'
+        response=self.client.get(url)
+        self.assertNotContains(response,'name="decision"')
+        response=self.client.post(url+'review-final/',{'decision':'Approved'},follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'နောက်ဆုံးအစီရင်ခံစာ တင်သွင်းပြီးမှ')
+        self.incident.refresh_from_db()
+        self.assertIsNone(self.incident.closed_at)
+        self.assertFalse(FinalReport.objects.filter(incident=self.incident).exists())
+
+    def test_final_review_requires_resubmission_after_revision(self):
+        self.auth(self.admin)
+        final=FinalReport.objects.create(incident=self.incident,narrative='Report',snapshot={},submitted_by=self.station_admin,state='Revision')
+        url=f'/emergency/incidents/{self.incident.pk}/'
+        self.assertNotContains(self.client.get(url),'name="decision"')
+        response=self.client.post(url+'review-final/',{'decision':'Approved'},follow=True)
+        self.assertEqual(response.status_code,200)
+        final.refresh_from_db()
+        self.assertEqual(final.state,'Revision')
+        self.incident.refresh_from_db()
+        self.assertIsNone(self.incident.closed_at)
+
+    def test_plans_filter_by_township_and_level(self):
+        self.station.township='ချမ်းမြသာစည်မြို့နယ်';self.station.save()
+        self.other.township='အမရပူရမြို့နယ်';self.other.save()
+        ResponsePlan.objects.create(home_station=self.other,lead_station=self.other,level=1)
+        ResponsePlan.objects.create(home_station=self.station,lead_station=self.station,level=2)
+        self.auth(self.admin)
+        response=self.client.get('/emergency/manage/plans/',{'township':self.station.township,'level':'1'})
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(list(response.context['page_obj']),[self.plan])
+        self.assertContains(response,'မြို့နယ်')
+        self.assertNotContains(response,'တိုင်းဒေသကြီး / ပြည်နယ်')
+
+    def test_incident_list_actions_and_day_first_date(self):
+        self.auth(self.admin)
+        response=self.client.get('/emergency/incidents/')
+        self.assertContains(response,'စီမံရန်')
+        self.assertContains(response,timezone.localtime(self.incident.reported_at).strftime('%d/%m/%Y %I:%M %p'))
+        self.auth(self.citizen)
+        response=self.client.get('/emergency/incidents/')
+        self.assertContains(response,'အသေးစိတ်ကြည့်ရန်')
+        self.assertNotContains(response,'စီမံရန်</a>')
+
+    def test_pending_queue_fifo_and_admin_permission(self):
+        self.incident.status='Pending';self.incident.save()
+        newer=FireReport.objects.create(user_id=self.citizen.pk,address='New pending',status='Pending',fire_scale=0)
+        FireReport.objects.create(user_id=self.citizen.pk,address='Already confirmed',status='Confirmed',fire_scale=0)
+        self.auth(self.admin)
+        response=self.client.get('/emergency/queue/')
+        self.assertEqual(response.status_code,200)
+        self.assertEqual([i.pk for i in response.context['page_obj']],[self.incident.pk,newer.pk])
+        self.assertContains(response,'စိစစ် / အတည်ပြုရန်')
+        self.incident.status='Confirmed';self.incident.save()
+        response=self.client.get('/emergency/queue/')
+        self.assertEqual([i.pk for i in response.context['page_obj']],[newer.pk])
+        for user in [self.citizen,self.firefighter,self.station_admin]:
+            self.auth(user)
+            self.assertEqual(self.client.get('/emergency/queue/').status_code,403)
+
+    def test_duty_form_accepts_am_pm(self):
+        from .forms import FORM_TYPES
+        form=FORM_TYPES['duties'][1]({'employee':self.firefighter.pk,'starts_at':'20/10/2026 09:00 PM','ends_at':'21/10/2026 06:00 AM','task':'Night duty'})
+        self.assertTrue(form.is_valid(),form.errors)
+        self.assertEqual(form.cleaned_data['starts_at'].hour,21)
+        self.assertEqual(form.cleaned_data['ends_at'].hour,6)
+
+    def test_route_preview_without_dispatch_and_missing_coordinates(self):
+        self.auth(self.admin)
+        with patch('Emergency.services.route_between',return_value={'coordinates':[[21.97,96.08],[21.98,96.09]],'metres':1000}):
+            response=self.client.get(f'/emergency/incidents/{self.incident.pk}/')
+        self.assertContains(response,'route-data')
+        self.assertFalse(Deployment.objects.exists())
+        self.incident.coordinates_confirmed=False;self.incident.save()
+        response=self.client.get(f'/emergency/incidents/{self.incident.pk}/')
+        self.assertContains(response,'Admin အတည်ပြုရန်လိုသည်')
+
     def test_map_privacy_and_pending_excluded(self):
         self.auth(self.citizen);data=self.client.get('/emergency/api/map/').json()
         self.assertEqual(len(data['incidents']),1);self.assertNotIn('reporter_phone',data['incidents'][0]);self.assertNotIn('user_id',data['incidents'][0])

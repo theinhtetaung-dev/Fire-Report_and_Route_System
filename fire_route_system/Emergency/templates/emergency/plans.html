@@ -1,0 +1,29 @@
+{% extends 'emergency/base.html' %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form class="filters">
+  <label>Level<select name="level">
+    <option value="">အားလုံး</option>
+    <option value="0" {% if request.GET.level == '0' %}selected{% endif %}>Normal</option>
+    <option value="1" {% if request.GET.level == '1' %}selected{% endif %}>Level 1</option>
+    <option value="2" {% if request.GET.level == '2' %}selected{% endif %}>Level 2</option>
+    <option value="3" {% if request.GET.level == '3' %}selected{% endif %}>Level 3</option>
+    <option value="4" {% if request.GET.level == '4' %}selected{% endif %}>Level 4</option>
+    <option value="5" {% if request.GET.level == '5' %}selected{% endif %}>Level 5</option>
+  </select></label>
+  <label>မြို့နယ်<select name="township"><option value="">အားလုံး</option>{% for township in townships %}<option value="{{ township }}" {% if request.GET.township == township %}selected{% endif %}>{{ township }}</option>{% endfor %}</select></label>
+  <label>နယ်မြေ ရှာရန်<input name="q" value="{{ query }}"></label>
+  <button>ရှာရန်</button>
+</form>
+{% if can_create %}<a class="button" href="{% url 'emergency:create' kind %}">အသစ်ထည့်ရန်</a>{% endif %}
+<div class="table-wrap"><table>
+  <thead><tr><th>မြို့နယ်</th><th>Level</th><th>စခန်းအသေးစိတ်</th><th>လုပ်ဆောင်ရန်</th></tr></thead>
+  <tbody>{% for obj in page_obj %}<tr>
+    <td>{{ obj.home_station.township|default:'မြို့နယ် မသတ်မှတ်ရသေး' }}</td>
+    <td>{% if obj.level == 0 %}Normal{% else %}Level {{ obj.level }}{% endif %}</td>
+    <td><details><summary>စခန်းများ ကြည့်ရန်</summary><p>နယ်မြေခံစခန်း: {{ obj.home_station.name }}</p><p>ဦးဆောင်စခန်း: {{ obj.lead_station.name }}</p></details></td>
+    <td><a href="{% url 'emergency:edit' kind obj.pk %}">ပြင်ရန်</a></td>
+  </tr>{% empty %}<tr><td colspan="4">စာရင်းမရှိသေးပါ။</td></tr>{% endfor %}</tbody>
+</table></div>
+{% include 'emergency/pagination.html' %}
+{% endblock %}

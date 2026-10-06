@@ -78,5 +78,5 @@ def incident_pdf_response(request,incident):
 def report_pdf(request,query):
     sty=style();story=[paragraph('မီးလောင်ဖြစ်စဉ် အစီရင်ခံစာ',sty)]
     for incident in query:
-        story.extend([paragraph(f'#{incident.pk} / {timezone.localtime(incident.reported_at):%Y-%m-%d %H:%M} / {incident.scale_display} / {incident.status_display}',sty),paragraph(incident.address or 'GPS နေရာ',sty),Spacer(1,10)])
+        story.extend([paragraph(f'#{incident.pk} / {timezone.localtime(incident.reported_at):%d/%m/%Y %I:%M %p} / {incident.scale_display} / {incident.status_display}',sty),paragraph(incident.address or 'GPS နေရာ',sty),Spacer(1,10)])
     return response(story,'incidents.pdf')

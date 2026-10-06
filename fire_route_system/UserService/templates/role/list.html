@@ -43,7 +43,7 @@
                                 </span>
                             </td>
                             <td style="color: var(--cad-text-muted);">{{ role.description|default:"-" }}</td>
-                            <td style="font-size: 0.85rem; color: var(--cad-text-muted);">{{ role.created_at|date:"Y-m-d H:i" }}</td>
+                            <td style="font-size: 0.85rem; color: var(--cad-text-muted);">{{ role.created_at|date:"d/m/Y H:i" }}</td>
                             <td style="text-align: right;">
                                 <div style="display: inline-flex; gap: 0.4rem; align-items: center; white-space: nowrap;">
                                     <a href="{% url 'role_update' role.id %}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" data-en="Edit" data-my="တည်းဖြတ်မည်">Edit</a>
