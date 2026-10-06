@@ -38,9 +38,13 @@ class User(models.Model):
 
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(max_length=100, unique=True)
+    email = models.EmailField(max_length=100, unique=True, null=True, blank=True)
     password_hash = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    full_name = models.CharField(max_length=150, blank=True)
+    nrc = models.CharField(max_length=50, blank=True)
+    rank = models.CharField(max_length=100, blank=True)
+    station = models.ForeignKey('FireStation', null=True, blank=True, on_delete=models.PROTECT, related_name='staff')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
     last_login = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -141,6 +145,13 @@ class User(models.Model):
     def is_citizen(self):
         return self.has_role('Citizen', 'Reporter')
 
+    @property
+    def is_station_admin(self):
+        if self.has_role('Station Admin') and self.station_id:
+            return True
+        from django.utils import timezone
+        return self.acting_assignments.filter(starts_at__lte=timezone.now(), ends_at__gt=timezone.now(), leave__status='Approved').exists()
+
     # ── Django Permissions Compatibility ─────────────────────────────────
     @property
     def is_staff(self):
@@ -195,6 +206,12 @@ class FireStation(models.Model):
 
 
 class FireReport(models.Model):
+    home_station = models.ForeignKey(FireStation, null=True, blank=True, on_delete=models.PROTECT, related_name='local_incidents')
+    lead_station = models.ForeignKey(FireStation, null=True, blank=True, on_delete=models.PROTECT, related_name='led_incidents')
+    reporter_latitude = models.FloatField(null=True, blank=True)
+    reporter_longitude = models.FloatField(null=True, blank=True)
+    coordinates_confirmed = models.BooleanField(default=False)
+    closed_at = models.DateTimeField(null=True, blank=True)
     STATUS_CHOICES = [
         ('Pending', 'ဆိုင်းငံ့ / စိစစ်ဆဲ'),
         ('Confirmed', 'အတည်ပြုပြီး'),
