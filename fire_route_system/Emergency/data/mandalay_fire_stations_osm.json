@@ -1,0 +1,126 @@
+{
+  "version": "0.6",
+  "generator": "openstreetmap-cgimap 2.1.0 (1313 spike-08.openstreetmap.org)",
+  "copyright": "OpenStreetMap and contributors",
+  "attribution": "http://www.openstreetmap.org/copyright",
+  "license": "http://opendatacommons.org/licenses/odbl/1-0/",
+  "elements": [
+    {
+      "type": "node",
+      "id": 2702239050,
+      "lat": 21.9507731,
+      "lon": 96.1161602,
+      "timestamp": "2014-03-05T07:53:35Z",
+      "version": 1,
+      "changeset": 20924868,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "Htan Koe Pin Fire Service Station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4323722048,
+      "lat": 21.9926552,
+      "lon": 96.1108456,
+      "timestamp": "2016-07-29T12:48:51Z",
+      "version": 3,
+      "changeset": 41108679,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "Nan Shae Fire Station နန်းေရှ့ မီးသတ်",
+        "name:my": "နန်းရှေ့ မီးသတ်ဌာန"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4903110921,
+      "lat": 21.9911429,
+      "lon": 96.0749037,
+      "timestamp": "2020-11-01T08:28:49Z",
+      "version": 2,
+      "changeset": 93361711,
+      "tags": {
+        "addr:street": "21 Street and 22 Street, 86th Street and 87th Street",
+        "amenity": "fire_station",
+        "name": "အောင်မြေသာစံရပ်ကွက် အရံမီးသတ်စခန်း",
+        "name:en": "Aung Myay Thar Zan District Fire Station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8070903288,
+      "lat": 21.9967036,
+      "lon": 96.08057,
+      "timestamp": "2020-11-01T08:28:51Z",
+      "version": 1,
+      "changeset": 93361711,
+      "tags": {
+        "addr:street": "17 Street and 86th Street",
+        "amenity": "fire_station",
+        "name": "မေဃ မီးသတ်",
+        "name:en": "May Ga Fire Station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8070921886,
+      "lat": 22.0054458,
+      "lon": 96.0860278,
+      "timestamp": "2020-11-01T08:28:52Z",
+      "version": 1,
+      "changeset": 93361711,
+      "tags": {
+        "addr:street": "11 Street , 80th Street and 80th Street",
+        "amenity": "fire_station",
+        "name": "ဌာနီအနောက် မီးသတ်တပ်ဖွဲ့",
+        "name:en": "West Htar Ni Fire Stastion",
+        "opening_hours": "24/7"
+      }
+    },
+    {
+      "type": "node",
+      "id": 12063096247,
+      "lat": 21.9627429,
+      "lon": 96.1114626,
+      "timestamp": "2024-07-19T12:29:23Z",
+      "version": 1,
+      "changeset": 154141400,
+      "tags": {
+        "addr:city": "မဟာအောင်မြေ",
+        "amenity": "fire_station",
+        "name": "မဟာအောင်မြေမြို့နယ်မီးသတ်"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8070921785,
+      "lat": 21.9942001,
+      "lon": 96.0690122,
+      "timestamp": "2020-11-01T08:28:50Z",
+      "version": 1,
+      "changeset": 93361711,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "မင်းတဲ မီးသတ်",
+        "name:en": "Min Del Fire Station"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8070921885,
+      "lat": 21.9943605,
+      "lon": 96.06484,
+      "timestamp": "2020-11-01T08:28:50Z",
+      "version": 1,
+      "changeset": 93361711,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "အောင်မြေသာစံ မီးသတ်စခန်း",
+        "name:en": "Aung Myay Thar Zan Fire Station"
+      }
+    }
+  ],
+  "retrieved_at": "2026-10-06T21:13:25.168581+00:00",
+  "source_endpoint": "https://api.openstreetmap.org/api/0.6/nodes.json?nodes=2702239050,8070921886,4903110921,12063096247,8070903288,4323722048"
+}

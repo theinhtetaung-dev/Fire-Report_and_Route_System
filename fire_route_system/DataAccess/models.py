@@ -174,6 +174,7 @@ class User(models.Model):
 class FireStation(models.Model):
     STATUS_CHOICES = [
         ("Active", "အသင့်ရှိ"),
+        ("Unknown", "အသင့်ရှိမှု မစစ်ဆေးရသေး"),
         ("Inactive", "ယာယီပိတ်ထား"),
         ("Maintenance", "ပြုပြင်ထိန်းသိမ်းဆဲ"),
     ]
@@ -189,6 +190,9 @@ class FireStation(models.Model):
 
     station_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    township = models.CharField('မြို့နယ်', max_length=100, blank=True)
+    source_key = models.CharField(max_length=80, unique=True, null=True, blank=True)
+    source_data = models.JSONField(default=dict, blank=True)
     address = models.TextField()
     contact_number = models.CharField(max_length=20)
     latitude = models.FloatField(help_text="For Leaflet/Google Maps routing")

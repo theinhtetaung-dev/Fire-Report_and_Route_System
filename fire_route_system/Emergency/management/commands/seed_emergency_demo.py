@@ -11,7 +11,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self,*args,**options):
         roles={name:Role.objects.get_or_create(role_name=name)[0] for name in ['Administrator','Station Admin','Firefighter','Citizen']}
-        stations=list(FireStation.objects.filter(status='Active').order_by('pk'))
+        stations=list(FireStation.objects.filter(status='Active',source_key__isnull=True).order_by('pk'))
         if not stations:
             stations=[FireStation.objects.create(name='Demo မန္တလေးစခန်း',address='Demo နေရာ',contact_number='020000000',latitude=21.975,longitude=96.083)]
         kinds=[VehicleType.objects.get_or_create(name=n)[0] for n in ['မီးငြှိမ်းသတ်ယာဉ်','ရေသယ်ယာဉ်','ကယ်ဆယ်ရေးယာဉ်']]
