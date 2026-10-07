@@ -36,6 +36,19 @@ class EmergencyTests(TestCase):
         user=User.objects.create(username=name,role=self.roles[role],station=station,email=None,phone_number=None)
         user.set_password('StrongDemo2026!');user.save();return user
     def auth(self,user):self.client.force_login(user,backend='DataAccess.backends.RoleAuthBackend')
+    def test_dashboard_poll_includes_public_map_on_request(self):
+        self.auth(self.citizen)
+        ordinary=self.client.get('/emergency/api/poll/').json()
+        self.assertNotIn('map',ordinary)
+        combined=self.client.get('/emergency/api/poll/?map=1').json()
+        self.assertEqual(combined['map'],self.client.get('/emergency/api/map/').json())
+        self.assertNotIn('reporter_phone',combined['map']['incidents'][0])
+        self.incident.status='Pending';self.incident.save()
+        self.assertEqual(self.client.get('/emergency/api/poll/?map=1').json()['map']['incidents'],[])
+        self.client.logout()
+        self.assertEqual(self.client.get('/emergency/api/poll/?map=1').status_code,401)
+
+
     def send(self,vehicles=None,reason=''):
         with patch('Emergency.services.route_between',return_value={'coordinates':[[21.97,96.08],[21.975,96.083]],'metres':700,'instructions':[]}):
             dispatch(self.admin,self.incident.pk,[v.pk for v in vehicles or self.vehicles[:2]],reason)

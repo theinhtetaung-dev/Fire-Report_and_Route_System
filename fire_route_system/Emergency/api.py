@@ -48,10 +48,14 @@ def incident_detail(request,pk):
     return JsonResponse(serialize(incident,request.user.is_admin))
 
 
+def map_payload():
+    incidents=FireReport.objects.exclude(status__in=['Pending','False Alarm','Resolved']).filter(latitude__isnull=False,longitude__isnull=False,coordinates_confirmed=True,closed_at__isnull=True)
+    return {'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude','address','contact_number'))}
+
+
 def map_data(request):
     if not request.user.is_authenticated:return JsonResponse({'error':'Login required'},status=401)
-    incidents=FireReport.objects.exclude(status__in=['Pending','False Alarm','Resolved']).filter(latitude__isnull=False,longitude__isnull=False,coordinates_confirmed=True,closed_at__isnull=True)
-    return JsonResponse({'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude','address','contact_number'))})
+    return JsonResponse(map_payload())
 
 
 @csrf_protect
@@ -75,6 +79,8 @@ def poll(request):
                 updates=updates.filter(station_id__in=ids)
             result['deployments']=list(deployments.values('id','state','station__name'))
             result['updates']=list(updates.order_by('-pk').values('id','created_at','message','station__name')[:50])
+    if request.GET.get("map") == "1":
+        result["map"] = map_payload()
     return JsonResponse(result)
 
 
