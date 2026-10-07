@@ -1,0 +1,26 @@
+/* Shared status badges: the label remains readable without relying on color. */
+body [data-status][data-status] {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .2rem .65rem; border-radius: 999px; border: 1px solid var(--status-border);
+    background: var(--status-bg); color: var(--status-fg);
+    font-size: .75rem; font-weight: 700; line-height: 1.8;
+    vertical-align: middle; white-space: normal; text-transform: none;
+}
+body [data-status][data-status]::before { content: ''; width: .45rem; height: .45rem; flex: 0 0 .45rem; border-radius: 50%; background: currentColor; }
+[data-status] { --status-bg: #f1f5f9; --status-fg: #334155; --status-border: #94a3b8; }
+[data-theme="dark"] [data-status] { --status-bg: #293342; --status-fg: #e2e8f0; --status-border: #64748b; }
+body [data-status="Pending" i], body [data-status="Ordered" i], body [data-status="Reserved" i], body [data-status="Submitted" i] { --status-bg: #fffbeb; --status-fg: #92400e; --status-border: #d97706; }
+[data-theme="dark"] [data-status="Pending" i], [data-theme="dark"] [data-status="Ordered" i], [data-theme="dark"] [data-status="Reserved" i], [data-theme="dark"] [data-status="Submitted" i] { --status-bg: #422d0a; --status-fg: #fde68a; --status-border: #a16207; }
+body [data-status="Confirmed" i], body [data-status="Accepted" i] { --status-bg: #eff6ff; --status-fg: #1e40af; --status-border: #3b82f6; }
+[data-theme="dark"] [data-status="Confirmed" i], [data-theme="dark"] [data-status="Accepted" i] { --status-bg: #172c50; --status-fg: #bfdbfe; --status-border: #60a5fa; }
+body [data-status="Dispatched" i], body [data-status="Deployed" i], body [data-status="Departed" i], body [data-status="Participating" i] { --status-bg: #fef2f2; --status-fg: #991b1b; --status-border: #ef4444; }
+[data-theme="dark"] [data-status="Dispatched" i], [data-theme="dark"] [data-status="Deployed" i], [data-theme="dark"] [data-status="Departed" i], [data-theme="dark"] [data-status="Participating" i] { --status-bg: #451b24; --status-fg: #fecaca; --status-border: #f87171; }
+body [data-status="Under Control" i], body [data-status="Arrived" i] { --status-bg: #f0fdfa; --status-fg: #115e59; --status-border: #0d9488; }
+[data-theme="dark"] [data-status="Under Control" i], [data-theme="dark"] [data-status="Arrived" i] { --status-bg: #123b38; --status-fg: #99f6e4; --status-border: #2dd4bf; }
+body [data-status="Active" i], body [data-status="Available" i], body [data-status="Approved" i], body [data-status="Resolved" i], body [data-status="Returned" i], body [data-status="Verified" i], body [data-status="Published" i] { --status-bg: #f0fdf4; --status-fg: #166534; --status-border: #22c55e; }
+[data-theme="dark"] [data-status="Active" i], [data-theme="dark"] [data-status="Available" i], [data-theme="dark"] [data-status="Approved" i], [data-theme="dark"] [data-status="Resolved" i], [data-theme="dark"] [data-status="Returned" i], [data-theme="dark"] [data-status="Verified" i], [data-theme="dark"] [data-status="Published" i] { --status-bg: #153b2a; --status-fg: #bbf7d0; --status-border: #4ade80; }
+body [data-status="Rejected" i], body [data-status="Suspended" i] { --status-bg: #fff1f2; --status-fg: #9f1239; --status-border: #fb7185; }
+[data-theme="dark"] [data-status="Rejected" i], [data-theme="dark"] [data-status="Suspended" i] { --status-bg: #451b2c; --status-fg: #fecdd3; --status-border: #fb7185; }
+body [data-status="Maintenance" i], body [data-status="Revision" i] { --status-bg: #fff7ed; --status-fg: #9a3412; --status-border: #f97316; }
+[data-theme="dark"] [data-status="Maintenance" i], [data-theme="dark"] [data-status="Revision" i] { --status-bg: #422813; --status-fg: #fed7aa; --status-border: #fb923c; }
+@media print { body [data-status] { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }

@@ -133,7 +133,7 @@
                         Lat: {{ station.latitude|floatformat:4 }}, Lng: {{ station.longitude|floatformat:4 }}
                     </span>
                     <br>
-                    <span class="status-badge {% if station.status == 'Active' %}status-active{% else %}status-inactive{% endif %}">
+                    <span data-status="{{ station.status }}" class="status-badge {% if station.status == 'Active' %}status-active{% else %}status-inactive{% endif %}">
                         {{ station.status }}
                     </span>
                 </div>
@@ -195,9 +195,7 @@
                     <h3 style="color: #c30010; font-size: 1rem; margin: 0 0 0.4rem 0; font-weight: 700;">${station.name}</h3>
                     <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.25rem 0;">${station.address}</p>
                     <p style="font-size: 0.85rem; color: #333; margin: 0 0 0.35rem 0;">${station.contact_number}</p>
-                    <span style="display: inline-block; padding: 0.15rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; background-color: ${statusColor}20; color: ${statusColor}; text-transform: uppercase;">
-                        ${station.status}
-                    </span>
+                    ${FireRouteStatus.html(station.status)}
                 </div>
             `;
             const marker = L.marker([station.latitude, station.longitude], { icon: icon }).bindPopup(popupHTML);

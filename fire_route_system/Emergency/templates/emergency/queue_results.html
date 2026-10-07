@@ -1,6 +1,6 @@
 <p>စိစစ်ရန် စုစုပေါင်း {{ page_obj.paginator.count }} ခု · ၁၀ စက္ကန့်ခြား အလိုအလျောက်ပြန်စစ်သည်</p>
 <div class="table-wrap"><table>
 <thead><tr><th>ဖြစ်စဉ်</th><th>လိပ်စာ</th><th>သတင်းပို့ချိန်</th><th>လုပ်ဆောင်ရန်</th></tr></thead>
-<tbody>{% for incident in page_obj %}<tr><td>#{{ incident.pk }}</td><td>{{ incident.address|default:'GPS နေရာ' }}</td><td>{{ incident.reported_at|date:'d-m-Y h:i A' }}</td><td><a class="button" href="{% url 'emergency:incident' incident.pk %}" data-ui-copy>စိစစ် / အတည်ပြုရန်</a></td></tr>{% empty %}<tr><td colspan="4">စိစစ်ရန် ဖြစ်စဉ် မရှိပါ။</td></tr>{% endfor %}</tbody>
+<tbody>{% for incident in page_obj %}<tr><td>#{{ incident.pk }} <span data-status="{{ incident.status }}">{{ incident.status_display }}</span></td><td>{{ incident.address|default:'GPS နေရာ' }}</td><td>{{ incident.reported_at|date:'d-m-Y h:i A' }}</td><td><a class="button" href="{% url 'emergency:incident' incident.pk %}" data-ui-copy>စိစစ် / အတည်ပြုရန်</a></td></tr>{% empty %}<tr><td colspan="4">စိစစ်ရန် ဖြစ်စဉ် မရှိပါ။</td></tr>{% endfor %}</tbody>
 </table></div>
 {% include 'emergency/pagination.html' %}

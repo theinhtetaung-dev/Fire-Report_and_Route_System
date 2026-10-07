@@ -53,7 +53,7 @@ def incident_detail(request,pk):
 
 def map_payload():
     incidents=FireReport.objects.exclude(status__in=['Pending','False Alarm','Resolved']).filter(latitude__isnull=False,longitude__isnull=False,coordinates_confirmed=True,closed_at__isnull=True)
-    return {'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude','address','contact_number'))}
+    return {'incidents':[serialize(i) for i in incidents],'stations':list(FireStation.objects.filter(status='Active').values('station_id','name','latitude','longitude','address','contact_number','status'))}
 
 
 def map_data(request):

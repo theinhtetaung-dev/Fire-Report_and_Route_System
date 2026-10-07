@@ -264,7 +264,7 @@
                 <div class="map-popup-card">
                     <h4 style="margin:0 0 0.5rem 0; color: #10B981;">${st.name}</h4>
                     <p style="margin:2px 0;"><strong>Contact:</strong> ${st.contact_number}</p>
-                    <span class="cad-badge cad-badge-active" style="margin-top:0.25rem;">${st.status}</span>
+                    ${FireRouteStatus.html(st.status)}
                 </div>
             `;
             const marker = L.marker([st.latitude, st.longitude], { icon: stationIcon }).bindPopup(popupHTML);
@@ -283,7 +283,7 @@
                     <p style="margin:2px 0;"><strong>Severity:</strong> Scale ${f.fire_scale}</p>
                     <p style="margin:2px 0;"><strong>Reported:</strong> ${f.reported_at}</p>
                     <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
-                        <span class="cad-badge cad-badge-pending">${f.status}</span>
+                        ${FireRouteStatus.html(f.status)}
                         <a href="/dispatch/create/?report_id=${f.id}" class="cad-btn cad-btn-emergency cad-btn-sm" style="text-decoration: none;">Dispatch</a>
                     </div>
                 </div>

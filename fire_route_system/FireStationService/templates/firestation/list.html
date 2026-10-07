@@ -299,7 +299,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <span class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}">
+                                            <span data-status="{{ station.status }}" class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}">
                                                 {{ station.status_display }}
                                             </span>
                                         </td>
@@ -341,7 +341,7 @@
                                     <svg class="cad-icon cad-icon-sm cad-icon-gold"><use href="#cad-icon-station"/></svg>
                                     <span>{{ station.name }}</span>
                                 </h3>
-                                <span class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}" style="font-size: 0.75rem;">
+                                <span data-status="{{ station.status }}" class="badge badge-{% if station.status|lower == 'maintenance' %}maintenance{% elif station.status|lower == 'inactive' %}inactive{% else %}active{% endif %}" style="font-size: 0.75rem;">
                                     {{ station.status_display }}
                                 </span>
                             </div>
@@ -535,6 +535,7 @@
         
         // Setup Status Badge
         const badge = document.getElementById("panel-station-status-badge");
+        badge.dataset.status = station.status;
         const statusMap = {
             'active': 'အသင့်ရှိ',
             'inactive': 'ယာယီပိတ်ထား',

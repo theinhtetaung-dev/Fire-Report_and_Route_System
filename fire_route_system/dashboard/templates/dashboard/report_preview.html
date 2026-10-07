@@ -160,7 +160,7 @@
                         </span>
                     </td>
                     <td>
-                        <span class="badge badge-{% if report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'resolved' or report.status|lower == 'verified' %}active{% else %}pending{% endif %}">
+                        <span data-status="{{ report.status }}" class="badge badge-{% if report.status|lower == 'dispatched' %}dispatched{% elif report.status|lower == 'resolved' or report.status|lower == 'verified' %}active{% else %}pending{% endif %}">
                             {{ report.status_display }}
                         </span>
                     </td>

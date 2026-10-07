@@ -78,7 +78,7 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge badge-{% if user.status|lower == 'active' %}active{% elif user.status|lower == 'inactive' %}inactive{% else %}dispatched{% endif %}">
+                                <span data-status="{{ user.status }}" class="badge badge-{% if user.status|lower == 'active' %}active{% elif user.status|lower == 'inactive' %}inactive{% else %}dispatched{% endif %}">
                                     {{ user.status }}
                                 </span>
                             </td>

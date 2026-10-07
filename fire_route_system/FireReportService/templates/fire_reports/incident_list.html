@@ -219,7 +219,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
+                            <span data-status="{{ report.status }}" class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
                                 {{ report.status_display }}
                             </span>
                         </td>
@@ -293,7 +293,7 @@
                     </div>
                     <div>
                         <strong style="color: var(--cad-text-muted);">အခြေအနေ:</strong>
-                        <span class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
+                        <span data-status="{{ report.status }}" class="cad-badge {% if report.status == 'Resolved' %}cad-badge-resolved{% elif report.status == 'Dispatched' %}cad-badge-dispatched{% elif report.status == 'Under Control' %}cad-badge-under-control{% else %}cad-badge-confirmed{% endif %}">
                             {{ report.status_display }}
                         </span>
                     </div>
@@ -407,7 +407,7 @@ const viewKey = 'incident_list_view';
                     <h4>Incident #${r.id}</h4>
                     <p><strong>Caller:</strong> ${r.phone}</p>
                     <p><strong>Severity:</strong> Level ${r.scale}</p>
-                    <p><strong>Status:</strong> ${r.status}</p>
+                    <p><strong>Status:</strong> ${FireRouteStatus.html(r.status)}</p>
                     <p><strong>Time:</strong> ${r.time}</p>
                 </div>
             `;
