@@ -1,0 +1,22 @@
+{% load static %}
+{% if user.is_admin %}
+<section class="cad-admin-analytics" aria-label="Station operations analytics">
+    <div class="cad-panel">
+        <div class="cad-panel-header"><h2 class="cad-panel-title" data-chart-copy="trend">Incidents reported · last 14 days</h2></div>
+        <div class="cad-admin-chart" id="admin-incident-trend"><p data-chart-copy="loading">Loading chart…</p></div>
+    </div>
+    <div class="cad-panel">
+        <div class="cad-panel-header"><h2 class="cad-panel-title" data-chart-copy="workload">Open deployments by station</h2></div>
+        <p class="cad-chart-note" data-chart-copy="workloadNote">Ordered, accepted, departed or arrived deployments. Returned and cancelled orders excluded.</p>
+        <div class="cad-station-chart-scroll"><div class="cad-admin-chart" id="admin-station-workload"><p data-chart-copy="loading">Loading chart…</p></div></div>
+    </div>
+    <div class="cad-panel">
+        <div class="cad-panel-header"><h2 class="cad-panel-title" data-chart-copy="readiness">Vehicle availability by station</h2></div>
+        <p class="cad-chart-note" data-chart-copy="readinessNote">Available vehicles, reserved or deployed vehicles, and maintenance or inactive vehicles.</p>
+        <div class="cad-station-chart-scroll"><div class="cad-admin-chart" id="admin-station-readiness"><p data-chart-copy="loading">Loading chart…</p></div></div>
+    </div>
+    <p class="cad-chart-note" data-chart-copy="snapshot">Snapshot at page load. Refresh the dashboard for updated chart counts.</p>
+    <noscript><p>Enable JavaScript to view station charts.</p></noscript>
+</section>
+{{ admin_charts|json_script:"admin-chart-data" }}
+{% endif %}

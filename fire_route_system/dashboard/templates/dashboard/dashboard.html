@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="cad-dashboard-compact">
 <!-- Dashboard Header -->
 <div class="cad-dash-header">
     <div class="cad-dash-title-group">
@@ -224,6 +225,7 @@
         </div>
     </div>
 </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -254,12 +256,7 @@
         const markerGroup = L.featureGroup();
 
         // Load active station markers (Gold Station Pin)
-        const stationIcon = L.divIcon({
-            className: 'custom-marker-station',
-            html: `<div class="marker-pin-station"><svg style="width:17px;height:17px;stroke:var(--cad-gold-primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></div>`,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14]
-        });
+        const stationIcon = window.fireRouteMapIcon;
 
         const stations = {{ station_pins_json|safe }};
         stations.forEach(st => {
@@ -277,12 +274,7 @@
         // Load active fire markers (Red/Orange Pulsing Pins)
         const fires = {{ fire_pins_json|safe }};
         fires.forEach(f => {
-            const fireIcon = L.divIcon({
-                className: 'custom-marker-fire',
-                html: `<div class="marker-pin-fire scale-${f.fire_scale}"><span class="inner-dot"></span><span class="pulse-ring"></span></div>`,
-                iconSize: [32, 32],
-                iconAnchor: [16, 16]
-            });
+            const fireIcon = window.fireRouteMapIcon;
 
             const popupHTML = `
                 <div class="map-popup-card">

@@ -2,6 +2,94 @@
    CAD CONTROL DASHBOARD — SPECIALIZED STYLES
    ========================================================================== */
 
+/* Compact command view: retain the CAD palette and typography, keep the map
+   prominent, and reduce whitespace rather than shrinking control targets.
+   Visual direction: ENERGY 1 / RHYTHM 1 / MOTION 1. */
+.cad-dashboard-compact {
+    display: grid;
+    gap: 0.875rem;
+    min-width: 0;
+}
+.cad-dashboard-compact > * { min-width: 0; }
+.emergency-console .cad-dashboard-compact .cad-admin-analytics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+}
+.cad-admin-analytics > :first-child { grid-column: 1 / -1; }
+.cad-admin-chart { min-width: 0; min-height: 240px; padding: 0.5rem; }
+.cad-station-chart-scroll { max-height: 300px; overflow-y: auto; }
+.cad-chart-note { font-size: 0.75rem; line-height: 1.8; margin: 0; padding: 0.5rem 0.875rem; color: var(--cad-text-muted); }
+.cad-admin-analytics > .cad-chart-note { grid-column: 1 / -1; padding: 0; }
+.cad-dashboard-compact .cad-dash-header {
+    margin: 0;
+    padding-bottom: 0.625rem;
+    gap: 0.625rem;
+}
+.cad-dashboard-compact .cad-dash-title { font-size: 1.25rem; line-height: 1.6; margin: 0; }
+.cad-dashboard-compact .cad-dash-subtitle { margin: 0; line-height: 1.7; }
+.cad-dashboard-compact .cad-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.625rem;
+    margin: 0;
+}
+.cad-dashboard-compact .cad-kpi-card {
+    padding: 0.75rem;
+    gap: 0.625rem;
+    box-shadow: none;
+}
+.cad-dashboard-compact .cad-kpi-card:hover { transform: none; box-shadow: none; }
+.cad-dashboard-compact .cad-kpi-icon-wrap { width: 36px; height: 36px; }
+.cad-dashboard-compact .cad-kpi-icon-wrap svg { width: 22px; height: 22px; }
+.cad-dashboard-compact .cad-kpi-data { min-width: 0; overflow-wrap: anywhere; }
+.cad-dashboard-compact .cad-kpi-label { letter-spacing: 0; text-transform: none; line-height: 1.7; }
+.cad-dashboard-compact .cad-kpi-value { font-size: 1.5rem; margin: 0.125rem 0; }
+.cad-dashboard-compact .cad-kpi-trend { line-height: 1.7; }
+.cad-dashboard-compact .cad-middle-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 0.875rem;
+    margin: 0;
+}
+.cad-dashboard-compact .cad-tables-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem;
+}
+.cad-dashboard-compact .cad-panel { margin: 0; min-width: 0; }
+.cad-dashboard-compact .cad-panel-header { padding: 0.625rem 0.875rem; gap: 0.5rem; }
+.cad-dashboard-compact .cad-panel-title { font-size: 0.875rem; line-height: 1.7; }
+.cad-dashboard-compact .cad-panel-body { padding: 0.875rem; }
+.cad-dashboard-compact .cad-panel-body h2 { margin: 0 0 0.5rem; }
+.cad-dashboard-compact .cad-panel-body p { margin: 0.375rem 0; overflow-wrap: anywhere; }
+.cad-dashboard-compact .cad-map-panel { min-height: 0; }
+.cad-dashboard-compact .cad-map-wrapper { flex: auto; min-height: 0; height: clamp(260px, 34vh, 340px); }
+.cad-dashboard-compact #dashboard-map { height: 100%; min-height: 0; }
+.cad-dashboard-compact #dashboard-map.map { height: clamp(260px, 34vh, 340px); }
+.cad-dashboard-compact .cad-chart-wrapper { flex: auto; height: clamp(260px, 34vh, 340px); min-height: 0; padding: 0.875rem; }
+.cad-dashboard-compact .cad-table-container { max-height: 22rem; overflow: auto; }
+.cad-dashboard-compact .cad-table th,
+.cad-dashboard-compact .cad-table td { padding: 0.5rem 0.625rem; }
+.cad-dashboard-compact .cad-empty-state { padding: 1rem; }
+.cad-dashboard-compact .cad-empty-icon { margin-bottom: 0.5rem; }
+.cad-dashboard-compact .cad-empty-icon svg { width: 1.75rem !important; height: 1.75rem !important; }
+.cad-dashboard-compact .cad-empty-title { font-size: 0.875rem; margin-bottom: 0.375rem; }
+.cad-dashboard-compact .grid { margin: 0; gap: 0.875rem; }
+@media (max-width: 1100px) {
+    .cad-dashboard-compact .cad-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cad-dashboard-compact .cad-tables-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+    .emergency-console .cad-dashboard-compact .cad-admin-analytics { grid-template-columns: minmax(0, 1fr); }
+    .cad-dashboard-compact .cad-middle-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+    .cad-dashboard-compact .cad-kpi-grid { grid-template-columns: minmax(0, 1fr); }
+    .cad-dashboard-compact .cad-dash-title { font-size: 1.125rem; }
+}
+
 /* Dashboard Header & Live Telemetry */
 .cad-dash-header {
     display: flex;

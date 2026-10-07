@@ -16,8 +16,9 @@ from .models import *
 from .forms import FORM_TYPES,RegisterForm,IncidentForm,ConfirmForm
 from .permissions import managed_station_ids,incidents_for,posts_for
 from . import services
+from .dashboard_analytics import admin_chart_data
 
-TITLES={'stations':'မီးသတ်စခန်းများ','staff':'ဝန်ထမ်းနှင့် အကောင့်များ','vehicle-types':'ယာဉ်အမျိုးအစားများ','vehicles':'မီးသတ်ယာဉ်များ','plans':'Level အလိုက် အစီအစဉ်များ','requirements':'စခန်း/ယာဉ် လိုအပ်အရေအတွက်','duties':'တာဝန်ချိန်နှင့် တာဝန်များ','leaves':'ခွင့်စာများ','posts':'သတင်းနှင့် အသိပညာပေး Post များ'}
+TITLES={'stations':'မီးသတ်စခန်းများ','staff':'ဝန်ထမ်းနှင့် အကောင့်များ','vehicle-types':'ယာဉ်အမျိုးအစားများ','vehicles':'မီးသတ်ယာဉ်များ','plans':'မီးလောင်မှုအဆင့်အလိုက် အစီအစဉ်များ','requirements':'စခန်းနှင့်ယာဉ် လိုအပ်အရေအတွက်','duties':'တာဝန်ချိန်နှင့် တာဝန်များ','leaves':'ခွင့်စာများ','posts':'သတင်းနှင့် အသိပညာပေးစာများ'}
 
 
 def register(request):
@@ -27,7 +28,7 @@ def register(request):
         except IntegrityError:form.add_error(None,'အကောင့်ရှိပြီးဖြစ်သည်။')
         else:
             login(request,user,backend='DataAccess.backends.RoleAuthBackend');return redirect('emergency:dashboard')
-    return render(request,'emergency/form.html',{'form':form,'title':'Citizen အကောင့်ဖွင့်ရန်'})
+    return render(request,'emergency/form.html',{'form':form,'title':'ပြည်သူ့အကောင့်ဖွင့်ရန်'})
 
 
 @login_required
@@ -38,6 +39,7 @@ def dashboard(request):
     for row in counts:row['status_display']=dict(FireReport.STATUS_CHOICES).get(row['status'],row['status'])
     return render(request,'emergency/dashboard.html',{'incidents':incidents.order_by('-reported_at')[:10],
         'counts':counts,'active_count':incidents.exclude(status__in=['Resolved','False Alarm']).count(),
+        'admin_charts':admin_chart_data(incidents) if user.is_admin else None,
         'duties':Duty.objects.filter(employee=user,ends_at__gt=timezone.now()).order_by('starts_at')[:10],
         'notices':Notice.objects.filter(recipient=user).order_by('-pk')[:20],
         'managed_stations':managed_station_ids(user),'titles':TITLES,

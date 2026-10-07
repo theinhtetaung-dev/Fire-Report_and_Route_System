@@ -49,6 +49,39 @@ class EmergencyTests(TestCase):
         self.assertEqual(self.client.get('/emergency/api/poll/?map=1').status_code,401)
 
 
+    def test_admin_dashboard_charts_exclude_finished_deployments(self):
+        from .dashboard_analytics import admin_chart_data
+        for state in ['Ordered', 'Accepted', 'Departed', 'Arrived', 'Returned', 'Cancelled']:
+            Deployment.objects.create(incident=self.incident,station=self.station,state=state)
+        self.vehicles[0].status='Deployed';self.vehicles[0].save()
+        self.vehicles[1].status='Maintenance';self.vehicles[1].save()
+        data=admin_chart_data(FireReport.objects.all())
+        stations={station['name']:station for station in data['stations']}
+        self.assertEqual(stations['A'],{'name':'A','open':4,'available':1,'committed':1,'unavailable':1})
+        self.assertEqual(stations['B'],{'name':'B','open':0,'available':0,'committed':0,'unavailable':0})
+
+    def test_admin_dashboard_chart_dates_fill_zero_days(self):
+        from .dashboard_analytics import admin_chart_data
+        old=self.now-timedelta(days=14)
+        FireReport.objects.filter(pk=self.incident.pk).update(reported_at=old)
+        data=admin_chart_data(FireReport.objects.all())
+        self.assertEqual(len(data['dates']),14)
+        self.assertEqual(data['dates'][-1],timezone.localdate().isoformat())
+        self.assertEqual(data['reported'],[0]*14)
+        FireReport.objects.filter(pk=self.incident.pk).update(reported_at=self.now)
+        self.assertEqual(admin_chart_data(FireReport.objects.all())['reported'][-1],1)
+
+    def test_dashboard_charts_are_admin_only(self):
+        self.auth(self.admin)
+        self.assertContains(self.client.get('/emergency/'),'id="admin-chart-data"')
+        for user in [self.station_admin,self.firefighter,self.citizen]:
+            self.auth(user)
+            with patch('Emergency.views.admin_chart_data') as analytics:
+                response=self.client.get('/emergency/')
+                self.assertNotContains(response,'id="admin-chart-data"')
+                self.assertNotContains(response,'code.highcharts.com')
+                analytics.assert_not_called()
+
     def send(self,vehicles=None,reason=''):
         with patch('Emergency.services.route_between',return_value={'coordinates':[[21.97,96.08],[21.975,96.083]],'metres':700,'instructions':[]}):
             dispatch(self.admin,self.incident.pk,[v.pk for v in vehicles or self.vehicles[:2]],reason)
