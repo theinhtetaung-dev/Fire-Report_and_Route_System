@@ -48,7 +48,6 @@ class EmergencyTests(TestCase):
         self.client.logout()
         self.assertEqual(self.client.get('/emergency/api/poll/?map=1').status_code,401)
 
-
     def test_admin_dashboard_charts_exclude_finished_deployments(self):
         from .dashboard_analytics import admin_chart_data
         for state in ['Ordered', 'Accepted', 'Departed', 'Arrived', 'Returned', 'Cancelled']:
@@ -218,7 +217,9 @@ class EmergencyTests(TestCase):
         self.auth(self.admin)
         response=self.client.get('/emergency/incidents/')
         self.assertContains(response,'စီမံရန်')
-        self.assertContains(response,timezone.localtime(self.incident.reported_at).strftime('%d/%m/%Y %I:%M %p'))
+        self.assertContains(response,'flatpickr.min.js')
+        self.assertContains(response,'data-datepicker="date"')
+        self.assertContains(response,timezone.localtime(self.incident.reported_at).strftime('%d-%m-%Y %I:%M %p'))
         self.auth(self.citizen)
         response=self.client.get('/emergency/incidents/')
         self.assertContains(response,'အသေးစိတ်ကြည့်ရန်')
@@ -242,10 +243,20 @@ class EmergencyTests(TestCase):
 
     def test_duty_form_accepts_am_pm(self):
         from .forms import FORM_TYPES
-        form=FORM_TYPES['duties'][1]({'employee':self.firefighter.pk,'starts_at':'20/10/2026 09:00 PM','ends_at':'21/10/2026 06:00 AM','task':'Night duty'})
+        form=FORM_TYPES['duties'][1]({'employee':self.firefighter.pk,'starts_at':'20-10-2026 09:00 PM','ends_at':'21-10-2026 06:00 AM','task':'Night duty'})
         self.assertTrue(form.is_valid(),form.errors)
         self.assertEqual(form.cleaned_data['starts_at'].hour,21)
         self.assertEqual(form.cleaned_data['ends_at'].hour,6)
+        self.assertIn('data-datepicker="datetime"', str(form['starts_at']))
+
+    def test_incident_date_filter_uses_hyphens(self):
+        self.auth(self.admin)
+        today=timezone.localtime(self.incident.reported_at).strftime('%d-%m-%Y')
+        response=self.client.get('/emergency/incidents/', {'start':today,'end':today})
+        self.assertIn(self.incident, response.context['page_obj'])
+        tomorrow=(timezone.localdate(self.incident.reported_at)+timedelta(days=1)).strftime('%d-%m-%Y')
+        response=self.client.get('/emergency/incidents/', {'start':tomorrow})
+        self.assertNotIn(self.incident, response.context['page_obj'])
 
     def test_route_preview_without_dispatch_and_missing_coordinates(self):
         self.auth(self.admin)

@@ -169,7 +169,7 @@ def filter_incidents(request):
     for key,lookup in [('start','reported_at__date__gte'),('end','reported_at__date__lte')]:
         value=request.GET.get(key)
         if value:
-            try:value=timezone.datetime.strptime(value,'%d/%m/%Y').date()
+            try:value=timezone.datetime.strptime(value,'%d-%m-%Y').date()
             except ValueError:
                 try:value=timezone.datetime.strptime(value,'%Y-%m-%d').date()
                 except ValueError:continue
@@ -372,7 +372,7 @@ def reports(request):
     if request.GET.get('export')=='csv':
         response=HttpResponse(content_type='text/csv; charset=utf-8-sig');response['Content-Disposition']='attachment; filename="incidents.csv"';response.write('\ufeff')
         writer=csv.writer(response);writer.writerow(['ID','Reported','Address','Level','Status'])
-        for i in query:writer.writerow([i.pk,timezone.localtime(i.reported_at).strftime('%d/%m/%Y %I:%M %p'),i.address,i.fire_scale,i.status])
+        for i in query:writer.writerow([i.pk,timezone.localtime(i.reported_at).strftime('%d-%m-%Y %I:%M %p'),i.address,i.fire_scale,i.status])
         return response
     if request.GET.get('export')=='pdf':
         from .pdf import report_pdf

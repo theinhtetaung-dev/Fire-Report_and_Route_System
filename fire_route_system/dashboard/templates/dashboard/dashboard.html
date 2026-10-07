@@ -150,7 +150,7 @@
                                 {{ report.address|default:"တည်နေရာ မဖော်ပြထားပါ"|truncatechars:25 }}
                             {% endif %}
                         </td>
-                        <td>{{ report.reported_at|date:"h:i A" }}</td>
+                        <td>{{ report.reported_at|date:"d-m-Y h:i A" }}</td>
                         <td style="text-align: right;">
                             <a href="{% url 'dispatch_create' %}?report_id={{ report.id }}" class="cad-btn cad-btn-emergency cad-btn-sm" data-en="Dispatch" data-my="စေလွှတ်မည်">
                                 <svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg>
@@ -204,7 +204,7 @@
                         </td>
                         <td>{{ dispatch.station.name }}</td>
                         <td>{{ dispatch.operator.username }}</td>
-                        <td>{{ dispatch.dispatched_at|date:"h:i A" }}</td>
+                        <td>{{ dispatch.dispatched_at|date:"d-m-Y h:i A" }}</td>
                         <td style="text-align: right;">
                             <a href="{% url 'dispatch_update' dispatch.id %}" class="cad-btn cad-btn-outline cad-btn-sm" data-en="Manage" data-my="စီမံမည်">
                                 <svg class="cad-icon"><use href="#cad-icon-edit"/></svg>
