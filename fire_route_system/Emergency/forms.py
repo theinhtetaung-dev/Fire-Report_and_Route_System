@@ -75,26 +75,20 @@ class IncidentForm(forms.ModelForm):
 
 class ConfirmForm(forms.ModelForm):
     class Meta:
-        model=FireReport
-        fields=['address','latitude','longitude','home_station','lead_station','fire_scale','coordinates_confirmed']
-        labels={'address':'မီးလောင်ရာလိပ်စာ','latitude':'Latitude','longitude':'Longitude','home_station':'နယ်မြေခံစခန်း','lead_station':'ဦးဆောင်စခန်း','fire_scale':'မီးလောင်မှုအဆင့်','coordinates_confirmed':'မီးလောင်ရာ Coordinate အတည်ပြုပြီး'}
-        help_texts={'address':'','latitude':'','longitude':'','fire_scale':''}
-    def clean(self):
-        data=super().clean()
-        if not data.get('home_station') or not data.get('lead_station'):raise ValidationError('နယ်မြေခံနှင့် ဦးဆောင်စခန်းရွေးပါ။')
-        lat,lng=data.get('latitude'),data.get('longitude')
-        if (lat is None)!=(lng is None):raise ValidationError('Coordinate နှစ်ခုလုံးဖြည့်ပါ။')
-        if lat is not None and (not -90<=lat<=90 or not -180<=lng<=180):raise ValidationError('Coordinate မမှန်ပါ။')
-        if data.get('coordinates_confirmed') and lat is None:raise ValidationError('အတည်ပြုရန် coordinate လိုသည်။')
-        return data
+        model = FireReport
+        fields = ['fire_scale']
+        labels = {'fire_scale': 'မီးလောင်မှုအဆင့် (Fire Level)'}
+        widgets = {
+            'fire_scale': forms.Select(attrs={'class': 'cad-select', 'id': 'id_fire_scale', 'style': 'font-size: 1rem; padding: 0.5rem 1rem; font-weight: 600; min-width: 200px;'})
+        }
 
 
 def model_form(model,fields):
     form=forms.modelform_factory(model,fields=fields,widgets={
-        name:forms.DateTimeInput(attrs={'placeholder':'DD/MM/YYYY HH:MM AM/PM'},format='%d/%m/%Y %I:%M %p')
+        name:forms.DateTimeInput(attrs={'placeholder':'DD-MM-YYYY HH:MM AM/PM','class':'cad-datetimepicker','autocomplete':'off'},format='%d-%m-%Y %I:%M %p')
         for name in ['starts_at','ends_at'] if name in fields})
     for name in ['starts_at','ends_at']:
-        if name in form.base_fields:form.base_fields[name].input_formats=['%d/%m/%Y %I:%M %p','%d/%m/%Y %H:%M','%Y-%m-%dT%H:%M']
+        if name in form.base_fields:form.base_fields[name].input_formats=['%d-%m-%Y %I:%M %p','%d-%m-%Y %H:%M','%d/%m/%Y %I:%M %p','%d/%m/%Y %H:%M','%Y-%m-%dT%H:%M']
     return form
 
 

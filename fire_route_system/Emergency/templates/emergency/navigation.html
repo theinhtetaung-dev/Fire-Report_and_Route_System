@@ -1,6 +1,6 @@
 <div data-emergency-navigation>
 {% if user.is_authenticated %}<div class="cad-nav-section">
-<a href="{% url 'emergency:report' %}" class="cad-nav-item cad-nav-emergency nav-emergency-btn no-modal"><div class="cad-nav-item-content"><span class="cad-nav-icon"><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-siren"/></svg></span><span>အရေးပေါ် မီးသတင်းပို့ရန်</span></div><span class="cad-badge">191</span></a></div>
+<a href="{% url 'emergency:report' %}" class="cad-nav-item cad-nav-emergency nav-emergency-btn no-modal" aria-label="အရေးပေါ် မီးသတင်းပို့ - Hotline 191"><div class="cad-nav-item-content"><span class="cad-nav-icon emergency-siren-box"><span class="emergency-beacon-live"></span><svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-siren"/></svg></span><div class="emergency-text-group"><span class="emergency-title" id="cad-nav-emergency-text">အရေးပေါ် မီးသတင်းပို့</span><span class="emergency-subtitle">Hotline 191 · ချက်ချင်းတုံ့ပြန်</span></div></div><span class="cad-badge emergency-badge-pill"><span class="emergency-live-dot"></span>191</span></a></div>
 <div class="cad-nav-section"><span class="cad-nav-section-title" id="nav-sec-command">ကွပ်ကဲရေးနှင့် တာဝန်စေလွှတ်ခြင်း</span>
 {% url 'emergency:dashboard' as item_url %}{% include "emergency/nav_item.html" with href=item_url label="CAD ကွပ်ကဲမှုဗဟို" icon="dashboard" identifier="nav-dashboard" %}
 {% url 'emergency:incidents' as item_url %}{% include "emergency/nav_item.html" with href=item_url label="မီးလောင်မှုဖြစ်စဉ်များ" icon="flame" identifier="nav-incidents" %}

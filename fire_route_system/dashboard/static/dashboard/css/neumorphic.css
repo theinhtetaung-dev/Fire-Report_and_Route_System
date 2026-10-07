@@ -56,18 +56,344 @@
 html, body { background: var(--nm-bg); }
 .cad-main-wrapper { background: var(--nm-bg); }
 
-/* ---------- Top bar ---------- */
+/* ---------- Top bar (High-Tech Modern Command Deck) ---------- */
 .cad-topbar {
-    background: var(--nm-bg);
-    border-bottom: 0;
-    box-shadow: 0 8px 16px -10px var(--nm-lo);
+    height: 62px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.75rem;
+    flex-shrink: 0;
+    z-index: 100;
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
+
+[data-theme="dark"] .cad-topbar {
+    background: rgba(10, 20, 32, 0.88);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cad-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.cad-live-beacon-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.22rem 0.65rem;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #10b981;
+    user-select: none;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+[data-theme="dark"] .cad-live-beacon-pill {
+    background: rgba(16, 185, 129, 0.14);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+
+.cad-beacon-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: cadLivePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes cadLivePulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.cad-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cad-text-muted);
+}
+
+.cad-breadcrumb-dept {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.07);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--cad-text-secondary);
+}
+
+[data-theme="dark"] .cad-breadcrumb-dept {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+}
+
+.cad-breadcrumb-sep {
+    color: var(--cad-text-muted);
+    font-size: 0.85rem;
+    opacity: 0.45;
+}
+
+.cad-breadcrumb-active {
+    color: var(--cad-text-main);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: -0.01em;
+}
+
+.cad-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-shrink: 0;
+}
+
+.cad-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Modern Notification Chip */
+.cad-notice-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.85rem;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 9999px;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    text-decoration: none !important;
+}
+
+[data-theme="dark"] .cad-notice-chip {
+    background: rgba(18, 32, 48, 0.85);
+    border-color: rgba(255, 255, 255, 0.09);
+    color: #cbd5e1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.cad-notice-chip:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    transform: translateY(-1px);
+}
+
+.cad-notice-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: var(--cad-text-secondary);
+}
+
+.cad-notice-icon-wrap .cad-icon {
+    width: 15px;
+    height: 15px;
+}
+
+.cad-notice-dot {
+    display: none;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+[data-theme="dark"] .cad-notice-dot {
+    box-shadow: 0 0 0 2px #0a1420;
+}
+
+.cad-notice-chip.has-unread {
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.06);
+    color: #dc2626;
+}
+
+.cad-notice-count-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Operator Badge */
+.cad-operator-link {
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+}
+
 .cad-operator-badge {
-    background: var(--nm-bg);
-    border: 0;
-    box-shadow: var(--nm-raise-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 2px 6px rgba(15, 23, 42, 0.02);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 }
-.cad-operator-avatar { box-shadow: var(--nm-raise-xs); }
+
+[data-theme="dark"] .cad-operator-badge {
+    background: rgba(18, 32, 48, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.cad-operator-badge:hover {
+    transform: translateY(-1px);
+    border-color: rgba(56, 189, 248, 0.5);
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.16);
+}
+
+.cad-operator-avatar-box {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.cad-operator-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35);
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .cad-operator-avatar {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cad-operator-online-indicator {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    border: 2px solid #ffffff;
+}
+
+[data-theme="dark"] .cad-operator-online-indicator {
+    border-color: #0c1824;
+}
+
+.cad-operator-username {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--cad-text-main);
+    letter-spacing: -0.01em;
+}
+
+.cad-role-tag {
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .cad-role-tag {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.35);
+}
+
+/* Logout Button */
+.cad-logout-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.36rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.24);
+    color: #dc2626;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .cad-logout-action {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.32);
+    color: #f87171;
+}
+
+.cad-logout-icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.cad-logout-action:hover {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-color: #ef4444;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
+}
+
+.cad-logout-action:hover .cad-logout-icon {
+    transform: translateX(2px);
+    stroke: #ffffff;
+}
 
 /* ---------- Raised surfaces ---------- */
 .cad-panel,
@@ -206,21 +532,58 @@ html, body { background: var(--nm-bg); }
 .cad-badge-under-control { color: #0284C7; }
 .cad-badge-resolved, .cad-badge-active { color: #10B981; }
 .cad-badge-inactive { color: var(--cad-text-muted); }
-.badge, #notice-count { border-radius: 999px; box-shadow: var(--nm-raise-xs); }
+.badge { border-radius: 999px; }
 
-/* ---------- Tables ---------- */
+/* ---------- Tables & Responsive Containers ---------- */
+.cad-table-container,
+.table-responsive,
+.table-wrap,
+.emergency-console .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--nm-radius);
+}
+
+.cad-table,
+.emergency-console table {
+    width: 100%;
+    min-width: 620px;
+    background: transparent;
+    border-collapse: collapse;
+}
+
 .cad-table th,
 .emergency-console th {
     background: transparent;
     border-bottom: 2px solid var(--nm-dash);
+    padding: 0.85rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
 }
+
 .cad-table td,
-.emergency-console td { border-bottom: 1px dashed var(--nm-dash); }
+.emergency-console td {
+    border-bottom: 1px dashed var(--nm-dash);
+    padding: 0.95rem 1rem;
+    vertical-align: middle;
+}
+
 .cad-table tbody tr:hover,
-.emergency-console tr:hover td { background: var(--cad-table-hover-bg); }
-.cad-table-container,
-.emergency-console .table-wrap { border-radius: var(--nm-radius); }
-.emergency-console table { background: transparent; }
+.emergency-console tr:hover td {
+    background: var(--cad-table-hover-bg);
+}
+
+.cad-table-card {
+    background: var(--nm-bg);
+    border: 0;
+    border-radius: var(--nm-radius);
+    box-shadow: var(--nm-raise);
+    overflow: hidden;
+    margin: 1.25rem 0;
+}
 
 /* ---------- Emergency console controls ---------- */
 .emergency-console button,
@@ -343,38 +706,199 @@ html, body { background: var(--nm-bg); }
 .cad-nav-item .cad-icon-emergency { stroke: #ff5c5d; }
 .cad-nav-item.active .cad-icon-emergency { stroke: #1a1000; }
 
-/* Emergency call-to-action card */
+/* Hero Emergency Action Callout Card */
 .cad-nav-emergency {
-    padding: .8rem .85rem;
-    margin-bottom: .45rem;
-    border-radius: 18px;
-    color: #fff !important;
-    background: linear-gradient(145deg, #ff2a2b 0%, #b80000 100%);
-    box-shadow: 0 10px 22px -6px var(--cad-red-glow), inset 1px 1px 0 rgba(255, 255, 255, 0.28), inset -2px -2px 6px rgba(0, 0, 0, 0.25);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem;
+    margin-bottom: 0.65rem;
+    border-radius: 14px;
+    color: #ffffff !important;
+    text-decoration: none;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 45%, #991b1b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    box-shadow: 0 8px 20px -3px rgba(220, 38, 38, 0.45), 0 2px 6px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
 }
+
+/* Diagonal glass light reflection effect */
+.cad-nav-emergency::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.15) 55%, transparent 65%);
+    transform: translateX(-100%);
+    transition: transform 0.65s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cad-nav-emergency:hover::before {
+    transform: translateX(100%);
+}
+
+.cad-nav-emergency:hover {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 45%, #be123c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px -3px rgba(225, 29, 72, 0.6), 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.38);
+    text-decoration: none !important;
+}
+
+.cad-nav-emergency:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px -2px rgba(220, 38, 38, 0.45), inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
 .cad-nav-emergency::after {
-    content: ""; position: absolute; right: -28px; top: -28px; width: 90px; height: 90px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.22), transparent 70%); pointer-events: none;
+    content: none !important;
 }
-.cad-nav-emergency .cad-nav-icon {
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    animation: navSirenPulse 2.2s infinite;
+
+/* Left Group */
+.cad-nav-emergency .cad-nav-item-content,
+.cad-nav-emergency .emergency-btn-body {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    flex: 1;
+    position: relative;
+    z-index: 2;
 }
-.cad-nav-emergency .cad-icon-emergency { stroke: #d00001; }
-.cad-nav-emergency:hover { background: linear-gradient(145deg, #ff3d3e 0%, #c40000 100%); transform: translateY(-2px); box-shadow: 0 14px 26px -6px var(--cad-red-glow), inset 1px 1px 0 rgba(255, 255, 255, 0.3); }
-.cad-nav-emergency:hover .cad-nav-icon { color: inherit; }
-.cad-nav-emergency .cad-badge {
-    background: rgba(0, 0, 0, 0.28) !important;
-    color: #fff !important;
-    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.35);
-    padding: .15rem .55rem;
-    font-size: .68rem !important;
-    letter-spacing: .5px;
+
+/* Siren Icon Badge */
+.cad-nav-emergency .cad-nav-icon,
+.cad-nav-emergency .emergency-siren-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    animation: emergencySirenPulse 2.4s infinite ease-in-out;
 }
-@keyframes navSirenPulse { 0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,.3), 0 0 0 0 rgba(255,255,255,.45); } 50% { box-shadow: 0 4px 10px rgba(0,0,0,.3), 0 0 0 7px rgba(255,255,255,0); } }
+
+@keyframes emergencySirenPulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 5px rgba(255, 255, 255, 0);
+    }
+}
+
+.cad-nav-emergency .cad-icon,
+.cad-nav-emergency .cad-icon-emergency,
+.cad-nav-emergency .emergency-siren-svg {
+    width: 20px;
+    height: 20px;
+    stroke: #ffffff !important;
+    fill: none;
+    stroke-width: 2.2;
+}
+
+/* Live beacon dot on siren */
+.cad-nav-emergency .emergency-beacon-live {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 1.5px solid #dc2626;
+    box-shadow: 0 0 6px #22c55e;
+    animation: liveBeaconBlink 1.5s infinite;
+}
+
+@keyframes liveBeaconBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Typography Container */
+.cad-nav-emergency .emergency-text-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    flex: 1;
+}
+
+.cad-nav-emergency .emergency-title,
+.cad-nav-emergency .cad-nav-item-content > span:not(.cad-nav-icon) {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.2px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.cad-nav-emergency .emergency-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+/* Hotline Pill Badge (191) */
+.cad-nav-emergency .cad-badge,
+.cad-nav-emergency .emergency-badge-pill {
+    background: rgba(0, 0, 0, 0.35) !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+    padding: 0.22rem 0.6rem !important;
+    border-radius: 999px !important;
+    font-size: 0.74rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.8px !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    line-height: 1 !important;
+    position: relative;
+    z-index: 2;
+    text-transform: uppercase;
+}
+
+.cad-nav-emergency .emergency-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+    animation: liveDotPulse 1.4s infinite;
+}
+
+@keyframes liveDotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; }
+}
 
 .cad-notification-pill { border-radius: 999px; box-shadow: 0 0 10px var(--cad-red-glow); }
 

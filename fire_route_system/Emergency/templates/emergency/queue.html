@@ -5,10 +5,40 @@
 <form class="filters"><label>ရှာရန်<input name="q" value="{{ request.GET.q }}"></label><button>ရှာရန်</button></form>
 <div id="queue-results">
 <p>စိစစ်ရန် စုစုပေါင်း {{ page_obj.paginator.count }} ခု · ၅ စက္ကန့်ခြား update</p>
-<div class="table-wrap"><table>
-<thead><tr><th>ဖြစ်စဉ်</th><th>လိပ်စာ</th><th>သတင်းပို့ချိန်</th><th>လုပ်ဆောင်ရန်</th></tr></thead>
-<tbody>{% for incident in page_obj %}<tr><td>#{{ incident.pk }}</td><td>{{ incident.address|default:'GPS နေရာ' }}</td><td>{{ incident.reported_at|date:'d/m/Y h:i A' }}</td><td><a class="button" href="{% url 'emergency:incident' incident.pk %}">စိစစ် / အတည်ပြုရန်</a></td></tr>{% empty %}<tr><td colspan="4">စိစစ်ရန် ဖြစ်စဉ် မရှိပါ။</td></tr>{% endfor %}</tbody>
-</table></div>
+<div class="cad-panel cad-table-card" style="margin: 1rem 0;">
+  <div class="cad-table-container">
+    <table class="cad-table">
+      <thead>
+        <tr>
+          <th style="width: 100px;">ဖြစ်စဉ် ID</th>
+          <th style="min-width: 250px;">လိပ်စာ</th>
+          <th style="width: 180px;">သတင်းပို့ချိန်</th>
+          <th style="width: 160px; text-align: right;">လုပ်ဆောင်ရန်</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incident in page_obj %}
+        <tr>
+          <td><span class="cad-id-badge">{{ incident.pk }}</span></td>
+          <td>{{ incident.address|default:'GPS နေရာ' }}</td>
+          <td><span style="font-size: 0.85rem; color: var(--cad-text-secondary); white-space: nowrap;">{{ incident.reported_at|date:'d-m-Y h:i A' }}</span></td>
+          <td style="text-align: right; white-space: nowrap;">
+            <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
+              <a class="cad-btn cad-btn-sm cad-btn-emergency" href="{% url 'emergency:incident' incident.pk %}" style="text-decoration: none;">စိစစ် / Level သတ်မှတ်ရန်</a>
+              <form method="post" action="{% url 'emergency:action' incident.pk 'reject' %}" style="margin: 0; display: inline;" onsubmit="return confirm('သတင်းမှားအဖြစ် ပယ်ဖျက်ရန် သေချာပါသလား။ (Reject as Fake Report?)');">
+                {% csrf_token %}
+                <button type="submit" class="cad-btn cad-btn-sm cad-btn-danger" style="background-color: #dc2626; color: #fff; border: none;">ပယ်ဖျက် / Fake</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: var(--cad-text-muted);">စိစစ်ရန် ဖြစ်စဉ် မရှိပါ။</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% include 'emergency/pagination.html' %}
 </div>
 <p><a href="{% url 'emergency:incidents' %}">ဖြစ်စဉ်အားလုံး ကြည့်ရန်</a></p>

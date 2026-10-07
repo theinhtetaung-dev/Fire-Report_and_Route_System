@@ -1,302 +1,614 @@
 /* ==========================================================================
-   CAD CONTROL DASHBOARD — SPECIALIZED STYLES
+   TABLER / TAILADMIN INSPIRED MODERN DASHBOARD STYLES
+   Maintains core CAD theme palette & dark/light mode compatibility.
    ========================================================================== */
 
-/* Dashboard Header & Live Telemetry */
-.cad-dash-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--cad-border);
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
+/* Container & Typography Setup */
+.tabler-dash-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    padding: 0.25rem 0.5rem 2.5rem 0.5rem !important;
+    line-height: 1.5 !important;
+    font-family: var(--font-sans) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.cad-dash-title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
+/* 1. Page Header (Tabler Style) */
+.tabler-dash-wrapper .tabler-page-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    padding: 0.5rem 0 1rem 0 !important;
+    border-bottom: 1px solid var(--cad-border) !important;
+    margin-bottom: 0.25rem !important;
 }
 
-.cad-dash-title {
-    font-size: 1.65rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--cad-text-main);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+.tabler-dash-wrapper .tabler-page-pretitle {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: var(--cad-text-muted) !important;
+    margin-bottom: 0.2rem !important;
+    display: block !important;
 }
 
-.cad-dash-subtitle {
-    font-size: 0.85rem;
-    color: var(--cad-text-muted);
+.tabler-dash-wrapper .tabler-page-title {
+    font-size: 1.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--cad-text-main) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
 }
 
-.cad-dash-live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    padding: 0.4rem 0.85rem;
-    border-radius: var(--radius-full);
+.tabler-dash-wrapper .tabler-page-subtitle {
+    font-size: 0.85rem !important;
+    color: var(--cad-text-muted) !important;
+    margin: 0.2rem 0 0 0 !important;
 }
 
-.cad-dash-live-badge .cad-live-text {
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: var(--cad-green-active);
-    letter-spacing: 0.5px;
+.tabler-dash-wrapper .tabler-page-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    flex-wrap: wrap !important;
 }
 
-/* KPI Strip */
-.cad-kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
-    margin-bottom: 1.75rem;
+/* Tabler Buttons */
+.tabler-dash-wrapper .tabler-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.45rem !important;
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 0.95rem !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease-in-out !important;
+    line-height: 1.4 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
 }
 
-.cad-kpi-card {
-    background-color: var(--cad-card-bg);
-    border: 1px solid var(--cad-border);
-    border-radius: var(--radius-md);
-    padding: 1.25rem 1.35rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: var(--cad-shadow-sm);
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition);
+.tabler-dash-wrapper .tabler-btn-primary {
+    background-color: var(--cad-blue-info, #206bc4) !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+.tabler-dash-wrapper .tabler-btn-primary:hover {
+    filter: brightness(0.92) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
 }
 
-.cad-kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 4px;
+.tabler-dash-wrapper .tabler-btn-emergency {
+    background-color: var(--cad-red-primary, #fd0001) !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(253, 0, 1, 0.2) !important;
+}
+.tabler-dash-wrapper .tabler-btn-emergency:hover {
+    background-color: var(--cad-red-hover, #d50000) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
 }
 
-.cad-kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--cad-shadow-md);
+.tabler-dash-wrapper .tabler-btn-outline {
+    background-color: var(--cad-card-bg, #ffffff) !important;
+    border-color: var(--cad-border, #e2e8f0) !important;
+    color: var(--cad-text-main) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+.tabler-dash-wrapper .tabler-btn-outline:hover {
+    background-color: var(--cad-table-hover-bg, #f8fafc) !important;
+    color: var(--cad-text-main) !important;
+    text-decoration: none !important;
 }
 
-/* Card Specific Themes */
-.cad-kpi-danger::before {
-    background-color: var(--cad-red-primary);
-}
-.cad-kpi-danger .cad-kpi-icon-wrap {
-    background-color: var(--cad-red-subtle);
-    color: var(--cad-red-primary);
-    border: 1px solid rgba(253, 0, 1, 0.2);
-}
-
-.cad-kpi-warning::before {
-    background-color: var(--cad-gold-primary);
-}
-.cad-kpi-warning .cad-kpi-icon-wrap {
-    background-color: var(--cad-gold-subtle);
-    color: var(--cad-gold-primary);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+/* CAD System Live Telemetry Badge */
+.tabler-dash-wrapper .tabler-live-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    padding: 0.35rem 0.75rem !important;
+    border-radius: 9999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    color: var(--cad-green-active, #10b981) !important;
+    letter-spacing: 0.04em !important;
 }
 
-.cad-kpi-success::before {
-    background-color: var(--cad-green-active);
-}
-.cad-kpi-success .cad-kpi-icon-wrap {
-    background-color: var(--cad-green-subtle);
-    color: var(--cad-green-active);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.cad-kpi-info::before {
-    background-color: var(--cad-blue-info);
-}
-.cad-kpi-info .cad-kpi-icon-wrap {
-    background-color: var(--cad-blue-subtle);
-    color: var(--cad-blue-info);
-    border: 1px solid rgba(37, 99, 235, 0.2);
+.tabler-dash-wrapper .tabler-pulse-dot {
+    width: 7px !important;
+    height: 7px !important;
+    border-radius: 50% !important;
+    background-color: var(--cad-green-active, #10b981) !important;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7) !important;
+    animation: tablerPulse 1.8s infinite !important;
 }
 
-.cad-kpi-icon-wrap {
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    flex-shrink: 0;
+@keyframes tablerPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-.cad-kpi-data {
-    display: flex;
-    flex-direction: column;
+/* 2. Generic Tabler Card Style (Crisp pure white surface in light mode, sleek dark slate in dark mode) */
+.tabler-dash-wrapper .tabler-card {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+    margin: 0 !important;
 }
 
-.cad-kpi-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--cad-text-muted);
+[data-theme="dark"] .tabler-dash-wrapper .tabler-card {
+    background-color: #0E1A27 !important;
+    border: 1px solid #1E3650 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }
 
-.cad-kpi-value {
-    font-size: 1.85rem;
-    font-weight: 800;
-    color: var(--cad-text-main);
-    line-height: 1.1;
-    margin: 0.2rem 0;
-    font-feature-settings: 'tnum' 1;
+.tabler-dash-wrapper .tabler-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
 }
 
-.cad-kpi-trend {
-    font-size: 0.75rem;
-    color: var(--cad-text-muted);
+.tabler-dash-wrapper .tabler-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.95rem 1.25rem !important;
+    border-bottom: 1px solid var(--cad-border, #e2e8f0) !important;
+    background-color: transparent !important;
 }
 
-/* Middle Row: Tactical Map & Analytics Chart */
-.cad-middle-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.25rem;
-    margin-bottom: 1.75rem;
+.tabler-dash-wrapper .tabler-card-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--cad-text-main) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
 }
 
-.cad-map-panel {
-    display: flex;
-    flex-direction: column;
-    min-height: 480px;
+.tabler-dash-wrapper .tabler-card-subtitle {
+    font-size: 0.75rem !important;
+    color: var(--cad-text-muted) !important;
+    display: block !important;
+    margin-top: 0.15rem !important;
 }
 
-.cad-map-wrapper {
-    flex: 1;
-    min-height: 420px;
-    position: relative;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    overflow: hidden;
+.tabler-dash-wrapper .tabler-card-body {
+    padding: 1.25rem !important;
+}
+
+/* 3. Top Row: 4 Metric Cards (Tabler Style) */
+.tabler-dash-wrapper .tabler-kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.25rem !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-card {
+    padding: 1.15rem 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 0.4rem !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-label {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--cad-text-muted) !important;
+}
+
+.tabler-dash-wrapper .tabler-dropdown-tag {
+    font-size: 0.75rem !important;
+    color: var(--cad-text-muted) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+    font-weight: 500 !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-value-row {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 0.6rem !important;
+    margin: 0.25rem 0 0.45rem 0 !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-value {
+    font-size: 1.95rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: var(--cad-text-main) !important;
+    font-feature-settings: 'tnum' 1 !important;
+}
+
+.tabler-dash-wrapper .tabler-trend-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.2rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    padding: 0.15rem 0.45rem !important;
+    border-radius: 4px !important;
+}
+
+.tabler-dash-wrapper .tabler-trend-positive {
+    color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+.tabler-dash-wrapper .tabler-trend-warning {
+    color: #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.12) !important;
+}
+
+.tabler-dash-wrapper .tabler-trend-danger {
+    color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.12) !important;
+}
+
+.tabler-dash-wrapper .tabler-trend-info {
+    color: #2563eb !important;
+    background-color: rgba(37, 99, 235, 0.12) !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+}
+
+.tabler-dash-wrapper .tabler-kpi-subtext-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 0.78rem !important;
+    color: var(--cad-text-muted) !important;
+}
+
+.tabler-dash-wrapper .tabler-progress-track {
+    height: 4px !important;
+    background-color: var(--cad-border, #e2e8f0) !important;
+    border-radius: 2px !important;
+    overflow: hidden !important;
+    margin-top: 0.25rem !important;
+}
+
+.tabler-dash-wrapper .tabler-progress-fill {
+    height: 100% !important;
+    border-radius: 2px !important;
+}
+
+.tabler-dash-wrapper .tabler-mini-sparkline {
+    display: block !important;
+    width: 100% !important;
+    height: 28px !important;
+    margin-top: 0.25rem !important;
+}
+
+/* 4. Row 2: 4 Quick Stat Cards (Tabler Social / Quick Metrics) */
+.tabler-dash-wrapper .tabler-quick-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.25rem !important;
+}
+
+.tabler-dash-wrapper .tabler-quick-card {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    padding: 0.95rem 1.15rem !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    font-size: 1.25rem !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square-blue {
+    background-color: #206bc4 !important;
+    color: #ffffff !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square-green {
+    background-color: #2fb344 !important;
+    color: #ffffff !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square-cyan {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square-indigo {
+    background-color: #4263eb !important;
+    color: #ffffff !important;
+}
+
+.tabler-dash-wrapper .tabler-icon-square-red {
+    background-color: #d63939 !important;
+    color: #ffffff !important;
+}
+
+.tabler-dash-wrapper .tabler-quick-info {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.tabler-dash-wrapper .tabler-quick-title {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: var(--cad-text-main) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.tabler-dash-wrapper .tabler-quick-sub {
+    font-size: 0.78rem !important;
+    color: var(--cad-text-muted) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* 5. Middle Grid: Traffic / Chart Summary + Tactical Map */
+.tabler-dash-wrapper .tabler-main-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.25rem !important;
+}
+
+.tabler-dash-wrapper .tabler-panel-map {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 460px !important;
+}
+
+.tabler-dash-wrapper .tabler-map-container {
+    flex: 1 !important;
+    min-height: 400px !important;
+    width: 100% !important;
+    position: relative !important;
+    border-radius: 0 0 8px 8px !important;
+    overflow: hidden !important;
 }
 
 #dashboard-map {
-    width: 100%;
-    height: 100%;
-    min-height: 420px;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 400px !important;
 }
 
-.cad-chart-panel {
-    display: flex;
-    flex-direction: column;
+.tabler-dash-wrapper .tabler-panel-chart {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 460px !important;
 }
 
-.cad-chart-wrapper {
-    flex: 1;
-    padding: 1.25rem;
-    position: relative;
-    min-height: 380px;
+.tabler-dash-wrapper .tabler-chart-container {
+    flex: 1 !important;
+    position: relative !important;
+    padding: 1.25rem !important;
+    min-height: 340px !important;
 }
 
-/* Custom Tactical Leaflet Map Markers */
-.marker-pin-station {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: var(--cad-navy-deep);
-    border: 2px solid var(--cad-gold-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    color: #fff;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-.marker-pin-station:hover {
-    transform: scale(1.15);
+/* Tabler CSS Bar Charts / Activity representation */
+.tabler-dash-wrapper .tabler-bars-row {
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 0.65rem !important;
+    height: 220px !important;
+    padding-top: 1rem !important;
+    border-bottom: 1px solid var(--cad-border) !important;
 }
 
-.marker-pin-fire {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.tabler-dash-wrapper .tabler-bar-col {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    height: 100% !important;
+    justify-content: flex-end !important;
+    gap: 0.35rem !important;
 }
 
-.marker-pin-fire .inner-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: var(--cad-red-primary);
-    box-shadow: 0 0 10px var(--cad-red-primary);
-    z-index: 2;
+.tabler-dash-wrapper .tabler-bar-fill {
+    width: 100% !important;
+    max-width: 38px !important;
+    border-radius: 4px 4px 0 0 !important;
+    background: linear-gradient(180deg, var(--cad-blue-info) 0%, rgba(37, 99, 235, 0.6) 100%) !important;
+    transition: height 0.6s ease !important;
 }
 
-.marker-pin-fire .pulse-ring {
-    position: absolute;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background-color: rgba(253, 0, 1, 0.35);
-    animation: mapPulse 1.8s infinite ease-out;
-    z-index: 1;
+.tabler-dash-wrapper .tabler-bar-label {
+    font-size: 0.72rem !important;
+    color: var(--cad-text-muted) !important;
+    margin-top: 0.35rem !important;
+    text-align: center !important;
 }
 
-@keyframes mapPulse {
-    0% { transform: scale(0.5); opacity: 1; }
-    100% { transform: scale(1.6); opacity: 0; }
+.tabler-dash-wrapper .tabler-bar-val {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: var(--cad-text-main) !important;
 }
 
-.map-popup-card {
-    font-family: var(--font-sans);
-    padding: 0.35rem;
-    min-width: 180px;
+/* 6. Operational Tables & Lists (Tabler Table Layout) */
+.tabler-dash-wrapper .tabler-tables-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.25rem !important;
 }
 
-.map-popup-card h4 {
-    font-size: 0.95rem;
-    font-weight: 700;
+.tabler-dash-wrapper .tabler-table-wrap {
+    overflow-x: auto !important;
 }
 
-.map-popup-card p {
-    font-size: 0.8rem;
-    color: #333333;
+.tabler-dash-wrapper .tabler-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 0.85rem !important;
+    text-align: left !important;
 }
 
-/* Actionable Tables Grid */
-.cad-tables-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+.tabler-dash-wrapper .tabler-table th {
+    background-color: var(--cad-table-header-bg, #f8fafc) !important;
+    color: var(--cad-text-muted) !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid var(--cad-border) !important;
+    white-space: nowrap !important;
 }
 
-/* Responsive Rules */
+.tabler-dash-wrapper .tabler-table td {
+    padding: 0.85rem 1rem !important;
+    border-bottom: 1px solid var(--cad-border) !important;
+    color: var(--cad-text-main) !important;
+    vertical-align: middle !important;
+}
+
+.tabler-dash-wrapper .tabler-table tbody tr {
+    transition: background-color 0.15s ease !important;
+}
+
+.tabler-dash-wrapper .tabler-table tbody tr:hover {
+    background-color: var(--cad-table-hover-bg, #f8fafc) !important;
+}
+
+.tabler-dash-wrapper .tabler-badge-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0.2rem 0.55rem !important;
+    border-radius: 4px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.03em !important;
+}
+
+/* Tabler Lists */
+.tabler-dash-wrapper .tabler-list-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.75rem 0 !important;
+    border-bottom: 1px solid var(--cad-border) !important;
+    gap: 0.75rem !important;
+}
+
+.tabler-dash-wrapper .tabler-list-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+.tabler-dash-wrapper .tabler-list-title {
+    font-weight: 600 !important;
+    color: var(--cad-text-main) !important;
+    font-size: 0.85rem !important;
+}
+
+.tabler-dash-wrapper .tabler-list-sub {
+    font-size: 0.78rem !important;
+    color: var(--cad-text-muted) !important;
+}
+
+/* Empty State in Tabler Card */
+.tabler-dash-wrapper .tabler-empty-state {
+    text-align: center !important;
+    padding: 2.5rem 1.5rem !important;
+}
+
+.tabler-dash-wrapper .tabler-empty-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--cad-text-main) !important;
+    margin: 0.75rem 0 0.25rem 0 !important;
+}
+
+.tabler-dash-wrapper .tabler-empty-desc {
+    font-size: 0.82rem !important;
+    color: var(--cad-text-muted) !important;
+    margin: 0 !important;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 1200px) {
-    .cad-kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .tabler-dash-wrapper .tabler-kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
     }
-    .cad-middle-grid {
-        grid-template-columns: 1fr;
+    .tabler-dash-wrapper .tabler-quick-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
     }
-    .cad-tables-grid {
-        grid-template-columns: 1fr;
+    .tabler-dash-wrapper .tabler-main-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .tabler-dash-wrapper .tabler-tables-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 
-@media (max-width: 640px) {
-    .cad-kpi-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 680px) {
+    .tabler-dash-wrapper .tabler-kpi-grid {
+        grid-template-columns: 1fr !important;
     }
-    .cad-map-wrapper, #dashboard-map {
-        min-height: 320px;
+    .tabler-dash-wrapper .tabler-quick-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .tabler-dash-wrapper .tabler-page-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    .tabler-dash-wrapper .tabler-page-actions {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    .tabler-dash-wrapper .tabler-map-container, #dashboard-map {
+        min-height: 300px !important;
     }
 }

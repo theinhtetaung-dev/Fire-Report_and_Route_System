@@ -62,8 +62,43 @@ def dashboard(request):
         key=timezone.localtime(reported).date()
         if key in per_day:per_day[key]+=1
     scale_counts=dict(incidents.order_by().values_list('fire_scale').annotate(total=Count('pk')))
+
+    user_station_ids = managed_station_ids(user) + ([user.station_id] if user.station_id else [])
+    assigned_deployments_qs = Deployment.objects.filter(
+        incident__closed_at__isnull=True
+    ).exclude(state__in=['Returned', 'Cancelled']).select_related('incident', 'station').prefetch_related('vehicles__vehicle__kind').order_by('-ordered_at')
+
+    if not user.is_admin:
+        assigned_deployments_qs = assigned_deployments_qs.filter(station_id__in=user_station_ids)
+
+    assigned_emergencies = []
+    for d in assigned_deployments_qs[:5]:
+        v_active = d.vehicles.filter(active=True).first()
+        route_data = d.route if isinstance(d.route, dict) else {}
+        t_m = route_data.get('total_metres') or route_data.get('metres')
+        assigned_emergencies.append({
+            'deployment_id': d.pk,
+            'incident_id': d.incident_id,
+            'station_name': d.station.name,
+            'address': d.incident.address or 'GPS တည်နေရာ',
+            'latitude': d.incident.latitude,
+            'longitude': d.incident.longitude,
+            'fire_scale': d.incident.fire_scale,
+            'scale_display': d.incident.scale_display,
+            'status_display': d.incident.status_display,
+            'reporter_phone': d.incident.reporter_phone,
+            'reported_at': d.incident.reported_at,
+            'state': d.state,
+            'engine_name': f"{v_active.vehicle.registration} ({v_active.vehicle.kind.name})" if v_active else 'ယာဉ် သတ်မှတ်ဆဲ',
+            'route_distance_km': round(t_m / 1000.0, 2) if t_m else None,
+            'route_metres': t_m,
+            'coordinates': route_data.get('coordinates', []),
+            'instructions': route_data.get('instructions', []),
+        })
+
     return render(request,'emergency/dashboard.html',{'incidents':incidents.order_by('-reported_at')[:10],
         'counts':counts,'active_count':active_count,
+        'assigned_emergencies': assigned_emergencies,
         'duties':Duty.objects.filter(employee=user,ends_at__gt=timezone.now()).order_by('starts_at')[:10],
         'notices':Notice.objects.filter(recipient=user).order_by('-pk')[:20],
         'managed_stations':managed_station_ids(user),'titles':TITLES,
@@ -76,7 +111,7 @@ def dashboard(request):
         'station_donut':_donut(available_stations,total_stations),
         'status_bars':_bars([(row['status_display'],row['total']) for row in counts]),
         'scale_bars':_bars([('L%d'%n,scale_counts.get(n,0)) for n in range(6)]),
-        'trend_bars':_bars([(d.strftime('%d/%m'),per_day[d]) for d in days])})
+        'trend_bars':_bars([(d.strftime('%d-%m'),per_day[d]) for d in days])})
 
 
 def scope(request,kind):
@@ -179,7 +214,7 @@ def report(request):
     if request.method=='POST' and form.is_valid():
         incident=form.save(commit=False);incident.user_id=request.user.pk;incident.reporter_phone=request.user.phone_number;incident.fire_scale=0;incident.status='Pending';incident.save()
         for admin in User.objects.filter(role__role_name__in=['Administrator','Admin'],status='Active'):
-            Notice.objects.create(recipient=admin,incident=incident,message=f'မီးသတင်းအသစ် #{incident.pk}')
+            Notice.objects.create(recipient=admin,incident=incident,message=f'မီးသတင်းအသစ် {incident.pk}')
         services.audit(request.user,'report_fire',incident)
         messages.success(request,'မီးသတင်းပေးပို့ပြီးပါပြီ။');return redirect('emergency:incident',pk=incident.pk)
     return render(request,'emergency/form.html',{'form':form,'title':'မီးသတင်းပေးပို့ရန်','location_picker':True})
@@ -193,11 +228,14 @@ def filter_incidents(request):
     for key,lookup in [('start','reported_at__date__gte'),('end','reported_at__date__lte')]:
         value=request.GET.get(key)
         if value:
-            try:value=timezone.datetime.strptime(value,'%d/%m/%Y').date()
-            except ValueError:
-                try:value=timezone.datetime.strptime(value,'%Y-%m-%d').date()
-                except ValueError:continue
-            query=query.filter(**{lookup:value})
+            parsed=None
+            for fmt in ('%d-%m-%Y','%d/%m/%Y','%Y-%m-%d'):
+                try:
+                    parsed=timezone.datetime.strptime(value.strip(),fmt).date()
+                    break
+                except ValueError:pass
+            if parsed:
+                query=query.filter(**{lookup:parsed})
     return query.order_by('-reported_at')
 
 
@@ -216,70 +254,142 @@ def incidents(request):
 
 
 @login_required
-def incident(request,pk):
-    obj=get_object_or_404(incidents_for(request.user),pk=pk)
-    can_manage=request.user.is_admin
-    form=ConfirmForm(instance=obj) if can_manage and not obj.closed_at else None
-    nearest=None
-    if obj.latitude is not None and obj.longitude is not None:
-        stations=list(FireStation.objects.filter(status='Active'))
-        if stations:nearest=min(stations,key=lambda s:services.distance((s.latitude,s.longitude),(obj.latitude,obj.longitude)))
-    plan,rows=services.preview(obj)
-    deployments=obj.deployments.select_related('station')
+def incident(request, pk):
+    obj = get_object_or_404(incidents_for(request.user), pk=pk)
+    can_manage = request.user.is_admin
+    form = ConfirmForm(instance=obj) if can_manage and not obj.closed_at else None
+
+    deployments = obj.deployments.select_related('station')
     if not request.user.is_admin:
-        deployments=deployments.filter(station_id__in=managed_station_ids(request.user)+([request.user.station_id] if request.user.is_firefighter else []))
+        deployments = deployments.filter(station_id__in=managed_station_ids(request.user) + ([request.user.station_id] if request.user.is_firefighter else []))
     for d in deployments:
-        d.can_manage=request.user.is_admin or d.station_id in managed_station_ids(request.user)
-        d.eligible=services.eligible_staff(d) if d.can_manage else User.objects.none()
-    routes=[dict(d.route,station_name=d.station.name) for d in deployments if d.route.get('coordinates')]
-    route_error=''
-    route_stations=FireStation.objects.none()
-    can_view_routes=request.user.is_admin or request.user.is_station_admin or request.user.is_firefighter
-    if can_view_routes:
-        route_stations=FireStation.objects.all() if request.user.is_admin else FireStation.objects.filter(pk__in=managed_station_ids(request.user)+([request.user.station_id] if request.user.station_id else []))
-        selected=request.GET.get('route_station','')
-        route_station=route_stations.filter(pk=int(selected)).first() if selected.isdigit() else None
-        if selected and route_station is None:raise PermissionDenied
-        if not routes or route_station:
-            route_station=route_station or route_stations.filter(pk=obj.home_station_id).first()
-            if route_station is None and obj.latitude is not None and obj.longitude is not None:
-                route_station=min(route_stations,key=lambda s:services.distance((s.latitude,s.longitude),(obj.latitude,obj.longitude)),default=None)
-            if route_station is None:route_error='လမ်းကြောင်းတွက်ရန် စခန်းနှင့် မီးလောင်ရာ coordinate လိုအပ်ပါသည်။'
-            else:
-                route=services.route_between(route_station,obj)
-                if route.get('coordinates'):routes=[dict(route,station_name=route_station.name)]
-                else:route_error=route.get('error','လမ်းကြောင်း မရပါ။')
-    road_background=[]
-    points=[point for route in routes for point in route['coordinates']]
+        d.can_manage = request.user.is_admin or d.station_id in managed_station_ids(request.user)
+        d.eligible = services.eligible_staff(d) if d.can_manage else User.objects.none()
+
+    primary_deployment = deployments.first()
+    all_station_routes = []
+    if primary_deployment and isinstance(primary_deployment.route, dict):
+        all_station_routes = primary_deployment.route.get('all_routes', [])
+
+    if not all_station_routes and obj.latitude is not None and obj.longitude is not None and can_manage:
+        active_stations = list(FireStation.objects.filter(status='Active').order_by('pk'))
+        for st in active_stations:
+            avail_engine = Vehicle.objects.filter(station=st, status='Available').select_related('kind').first()
+            avail_count = Vehicle.objects.filter(station=st, status='Available').count()
+            r_res = services.route_between(st, obj)
+            is_valid = not r_res.get('error') and bool(r_res.get('coordinates'))
+            t_metres = r_res.get('total_metres') or r_res.get('metres') if is_valid else 0
+            all_station_routes.append({
+                'station_id': st.pk,
+                'station_name': st.name,
+                'station_address': st.address,
+                'station_lat': st.latitude,
+                'station_lng': st.longitude,
+                'metres': r_res.get('metres', 0) if is_valid else 0,
+                'total_metres': t_metres,
+                'distance_km': round(t_metres / 1000.0, 2) if is_valid and t_metres else None,
+                'coordinates': r_res.get('coordinates', []),
+                'instructions': r_res.get('instructions', []),
+                'start_connector_metres': r_res.get('start_connector_metres', 0),
+                'end_connector_metres': r_res.get('end_connector_metres', 0),
+                'has_engine': avail_count > 0,
+                'engine_name': f"{avail_engine.registration} ({avail_engine.kind.name})" if avail_engine else None,
+                'engine_available_count': avail_count,
+                'error': r_res.get('error', '') if not is_valid else '',
+                'is_valid': is_valid,
+                'is_selected': (st.pk == obj.home_station_id),
+            })
+
+    map_routes = []
+    for r in all_station_routes:
+        if r.get('coordinates'):
+            map_routes.append({
+                'station_id': r['station_id'],
+                'station_name': r['station_name'],
+                'coordinates': r['coordinates'],
+                'metres': r.get('metres', 0),
+                'total_metres': r.get('total_metres', 0),
+                'distance_km': r.get('distance_km'),
+                'is_selected': bool(r.get('is_selected')),
+                'has_engine': r.get('has_engine', False),
+            })
+
+    assigned_engine = None
+    if primary_deployment:
+        active_vp = primary_deployment.vehicles.filter(active=True).select_related('vehicle__kind').first()
+        if active_vp:
+            assigned_engine = active_vp.vehicle
+
+    road_background = []
+    points = [point for r in map_routes for point in r.get('coordinates', [])]
     if points:
-        south,north=min(p[0] for p in points)-.015,max(p[0] for p in points)+.015
-        west,east=min(p[1] for p in points)-.015,max(p[1] for p in points)+.015
-        edges=RoadEdge.objects.filter(source__latitude__range=(south,north),source__longitude__range=(west,east),target__latitude__range=(south,north),target__longitude__range=(west,east)).values_list('source__latitude','source__longitude','target__latitude','target__longitude','name')[:5000]
-        road_background=[{'coordinates':[[a,b],[c,d]],'name':name} for a,b,c,d,name in edges]
-    return render(request,'emergency/incident.html',{'incident':obj,'form':form,'nearest':nearest,'plan':plan,'requirements':rows,
-        'available':Vehicle.objects.filter(status='Available',station__status='Active').select_related('station','kind') if can_manage else [],
-        'deployments':deployments,'updates':obj.updates.select_related('author','station').order_by('-pk')[:50] if request.user.is_admin or request.user.is_station_admin or request.user.is_firefighter else [],
-        'routes':routes,'road_background':road_background,'route_error':route_error,'route_stations':route_stations,'can_view_routes':can_view_routes,'can_final':request.user.is_admin or obj.lead_station_id in managed_station_ids(request.user)})
+        south, north = min(p[0] for p in points) - .015, max(p[0] for p in points) + .015
+        west, east = min(p[1] for p in points) - .015, max(p[1] for p in points) + .015
+        edges = RoadEdge.objects.filter(
+            source__latitude__range=(south, north), source__longitude__range=(west, east),
+            target__latitude__range=(south, north), target__longitude__range=(west, east)
+        ).values_list('source__latitude', 'source__longitude', 'target__latitude', 'target__longitude', 'name')[:5000]
+        road_background = [{'coordinates': [[a, b], [c, d]], 'name': name} for a, b, c, d, name in edges]
+
+    return render(request, 'emergency/incident.html', {
+        'incident': obj,
+        'form': form,
+        'deployments': deployments,
+        'primary_deployment': primary_deployment,
+        'assigned_engine': assigned_engine,
+        'all_station_routes': all_station_routes,
+        'map_routes': map_routes,
+        'road_background': road_background,
+        'updates': obj.updates.select_related('author', 'station').order_by('-pk')[:50] if request.user.is_admin or request.user.is_station_admin or request.user.is_firefighter else [],
+        'can_manage': can_manage,
+        'can_final': request.user.is_admin or obj.lead_station_id in managed_station_ids(request.user)
+    })
 
 
 @login_required
 @require_POST
 @transaction.atomic
-def action(request,pk,action):
-    incident=get_object_or_404(incidents_for(request.user).select_for_update(),pk=pk)
-    user=request.user;data=request.POST
+def action(request, pk, action):
+    incident = get_object_or_404(incidents_for(request.user).select_for_update(), pk=pk)
+    user = request.user
+    data = request.POST
     try:
-        if incident.closed_at:raise ValidationError('ဖြစ်စဉ်ပိတ်ပြီးဖြစ်သည်။')
-        if action=='confirm':
-            if not user.is_admin:raise PermissionDenied
-            if incident.closed_at:raise ValidationError('ပိတ်ပြီးဖြစ်စဉ် ပြင်မရပါ။')
-            form=ConfirmForm(data,instance=incident)
-            if not form.is_valid():raise ValidationError(str(form.errors.as_text()))
-            incident=form.save(commit=False)
-            if incident.status=='Pending':incident.status='Confirmed'
-            incident.save();services.audit(user,'confirm_level',incident,level=incident.fire_scale)
-        elif action=='dispatch':services.dispatch(user,pk,[int(v) for v in data.getlist('vehicles')],data.get('reason',''),data.get('manual_reason',''))
-        elif action=='state':
+        if incident.closed_at: raise ValidationError('ဖြစ်စဉ်ပိတ်ပြီးဖြစ်သည်။')
+        if action == 'confirm':
+            if not user.is_admin: raise PermissionDenied
+            if incident.closed_at: raise ValidationError('ပိတ်ပြီးဖြစ်စဉ် ပြင်မရပါ။')
+            form = ConfirmForm(data, instance=incident)
+            if not form.is_valid(): raise ValidationError(str(form.errors.as_text()))
+            saved_incident = form.save(commit=False)
+            if saved_incident.status == 'Pending':
+                saved_incident.status = 'Confirmed'
+            saved_incident.save(update_fields=['fire_scale', 'status'])
+            services.audit(user, 'confirm_level', saved_incident, level=saved_incident.fire_scale)
+
+            # Trigger automatic Dijkstra route calculation & dispatch for all stations
+            calc_result = services.calculate_all_routes_and_dispatch(
+                saved_incident, actor=user, fire_scale=saved_incident.fire_scale
+            )
+            if calc_result['success']:
+                st_name = calc_result['selected_station'].name
+                eng_name = calc_result['selected_engine'].registration
+                dist = calc_result['selected_route'].get('distance_km', '')
+                messages.success(request, f"မီးလောင်မှုအဆင့် (Level {saved_incident.fire_scale}) သတ်မှတ်ပြီး {st_name} မှ ယာဉ် ({eng_name}) အား လမ်းကြောင်း ({dist} km) ဖြင့် အလိုအလျောက် စေလွှတ်ပြီးပါပြီ။")
+            else:
+                messages.warning(request, f"မီးလောင်မှုအဆင့် (Level {saved_incident.fire_scale}) သတ်မှတ်ပြီးပါပြီ။ သို့သော် အလိုအလျောက် စေလွှတ်မှု မအောင်မြင်ပါ: {calc_result['error']}")
+            return redirect('emergency:incident', pk=pk)
+        elif action == 'reject':
+            if not user.is_admin: raise PermissionDenied
+            incident.status = 'False Alarm'
+            incident.closed_at = timezone.now()
+            incident.save(update_fields=['status', 'closed_at'])
+            IncidentUpdate.objects.create(incident=incident, author=user, message='သတင်းမှားအဖြစ် ပယ်ဖျက် (Fake / Rejected)')
+            services.audit(user, 'reject_fake', incident)
+            messages.warning(request, f"ဖြစ်စဉ် {incident.pk} အား သတင်းမှား (Fake / Rejected) အဖြစ် ပယ်ဖျက်လိုက်ပါသည်။ စေလွှတ်မှု မပြုလုပ်ပါ။")
+            return redirect('emergency:queue')
+        elif action == 'dispatch':
+            services.dispatch(user, pk, [int(v) for v in data.getlist('vehicles')], data.get('reason', ''), data.get('manual_reason', ''))
+        elif action == 'state':
             if not user.is_admin:raise PermissionDenied
             if data.get('status') not in ['Confirmed','Under Control','Resolved','False Alarm']:raise ValidationError('အခြေအနေ မမှန်ပါ။')
             if incident.closed_at:raise ValidationError('ဖြစ်စဉ်ပိတ်ပြီးဖြစ်သည်။')
@@ -388,7 +498,7 @@ def reports(request):
     if request.GET.get('export')=='csv':
         response=HttpResponse(content_type='text/csv; charset=utf-8-sig');response['Content-Disposition']='attachment; filename="incidents.csv"';response.write('\ufeff')
         writer=csv.writer(response);writer.writerow(['ID','Reported','Address','Level','Status'])
-        for i in query:writer.writerow([i.pk,timezone.localtime(i.reported_at).strftime('%d/%m/%Y %I:%M %p'),i.address,i.fire_scale,i.status])
+        for i in query:writer.writerow([i.pk,timezone.localtime(i.reported_at).strftime('%d-%m-%Y %I:%M %p'),i.address,i.fire_scale,i.status])
         return response
     if request.GET.get('export')=='pdf':
         from .pdf import report_pdf
