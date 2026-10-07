@@ -23,23 +23,23 @@
     
     <style>
         :root {
-            --cad-red: #FD0001;
-            --cad-red-hover: #D50000;
+            --cad-red: #b91c32;
+            --cad-red-hover: #991b2c;
             --cad-red-glow: rgba(253, 0, 1, 0.4);
-            --cad-gold: #F59E0B;
+            --cad-gold: #c28b27;
             --cad-gold-hover: #D97706;
             --cad-gold-glow: rgba(245, 158, 11, 0.35);
             --cad-green: #10B981;
             
             /* Dark Command Theme (Default for CAD) */
-            --bg-canvas: #060B11;
-            --card-bg: rgba(13, 23, 36, 0.95);
+            --bg-canvas: #1c1718;
+            --card-bg: #282122;
             --card-border: rgba(255, 255, 255, 0.09);
             --card-header-bg: rgba(9, 16, 26, 0.6);
             --text-primary: #F8FAFC;
             --text-secondary: #94A3B8;
             --text-muted: #64748B;
-            --input-bg: #08121C;
+            --input-bg: #221b1d;
             --input-border: #1E2E42;
             --input-focus-border: #F59E0B;
             --quick-btn-bg: rgba(15, 27, 43, 0.7);
@@ -50,7 +50,7 @@
         }
 
         [data-theme="light"] {
-            --bg-canvas: #EDF2F7;
+            --bg-canvas: #f7f5f1;
             --card-bg: #FFFFFF;
             --card-border: #E2E8F0;
             --card-header-bg: #F8FAFC;
@@ -548,7 +548,18 @@
         .cad-icon-green { stroke: var(--cad-green); }
         .cad-icon-blue { stroke: #38BDF8; }
         .cad-icon-muted { stroke: var(--text-muted); }
+
+        .auth-card { border-radius:20px; border-top-color:var(--cad-gold); box-shadow:0 16px 48px #30151b20; }
+        .auth-submit-btn { min-height:48px; box-shadow:none; border-radius:10px; }
+        .auth-submit-btn:hover { box-shadow:none; transform:none; }
+        .auth-icon-btn { min-height:44px; }
+        .brand-subtitle,.auth-alert,.form-group label { line-height:1.8; }
+        input { font-size:16px; }
+        button:focus-visible,a:focus-visible { outline:3px solid var(--cad-gold); outline-offset:3px; }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; } }
     </style>
+    <link rel="stylesheet" href="{% static 'dashboard/css/compact.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'dashboard/css/spacing.css' %}?v=1">
 </head>
 <body>
     {% include 'cad_icons.html' %}
@@ -557,7 +568,7 @@
     <header class="auth-top-bar">
         <div class="auth-telemetry">
             <span class="telemetry-dot"></span>
-            <span id="telemetry-status">စနစ်အသင့်ရှိ • CAD OPERATIONAL</span>
+            <span id="telemetry-status">စနစ်အသင့်ရှိ</span>
         </div>
         
         <div class="auth-controls">
@@ -637,7 +648,7 @@
 
                 <div class="form-group">
                     <label for="password" class="form-label" id="lbl-password">
-                        စကားဝှက် (Password)
+                        စကားဝှက်
                     </label>
                     <div class="input-wrapper">
                         <span class="input-icon"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-lock"/></svg></span>
@@ -791,16 +802,16 @@
             langIcon: "🇲🇲"
         },
         my: {
-            telemetry: "စနစ်အသင့်ရှိ • CAD OPERATIONAL",
+            telemetry: "စနစ်အသင့်ရှိ",
             badgeDept: "မြန်မာနိုင်ငံ မီးသတ်တပ်ဖွဲ့",
             title: "အကောင့်ဝင်ရန်",
             subtitle: "အရေးပေါ် မီးသတ်ကွပ်ကဲမှုနှင့် စစ်ဆင်ရေးစနစ်သို့ ဝင်ရောက်ရန်",
             lblUser: "ဖုန်းနံပါတ် သို့မဟုတ် အသုံးပြုသူအမည်",
             placeholderUser: "ဥပမာ - admin သို့မဟုတ် operator",
-            lblPass: "စကားဝှက် (Password)",
+            lblPass: "စကားဝှက်",
             btnSubmit: "စနစ်သို့ ဝင်ရောက်မည်",
             demoTitle: "စမ်းသပ်အသုံးပြုရန် အကောင့်များ",
-            demoHint: "Click to fill",
+            demoHint: "အကောင့်ဖြည့်ရန် နှိပ်ပါ",
             reportText: "အရေးပေါ် မီးလောင်မှု ချက်ချင်းသတင်းပို့ရန် ဤနေရာကို နှိပ်ပါ",
             themeLight: "အလင်းမုဒ်",
             themeDark: "အမှောင်မုဒ်",
@@ -810,6 +821,7 @@
     };
 
     function applyLanguage(lang) {
+        document.documentElement.lang = lang;
         const d = i18n[lang] || i18n.my;
         const set = (id, txt) => { const el = document.getElementById(id); if (el) el.innerText = txt; };
         

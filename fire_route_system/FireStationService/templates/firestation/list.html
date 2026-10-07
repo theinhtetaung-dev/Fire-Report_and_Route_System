@@ -223,7 +223,7 @@
         
         <!-- Search bar -->
         <div class="search-bar-container" style="max-width: 500px; width: 100%;">
-            <form method="GET" action="" style="display: flex; gap: 0.5rem; width: 100%;">
+            <form method="GET" action="" class="cad-list-search" style="display: flex; width: 100%;">
                 <div class="search-input-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
                     <span style="position: absolute; left: 0.85rem; color: var(--cad-text-muted); pointer-events: none; display: flex; align-items: center; justify-content: center;"><svg class="cad-icon cad-icon-sm cad-icon-muted"><use href="#cad-icon-search"/></svg></span>
                     <input type="text" name="q" value="{{ query|default:'' }}" id="stations-search-input" placeholder="Search by name, contact, status..." 
@@ -463,12 +463,7 @@
         const markerGroup = L.featureGroup();
 
         // Custom Gold/Red Pin for Stations
-        const stationIcon = L.divIcon({
-            className: 'custom-marker-station',
-            html: `<div style="background-color: #FD0001; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 10px rgba(253, 0, 1, 0.7); transform: scale(1.1);"></div>`,
-            iconSize: [22, 22],
-            iconAnchor: [11, 11]
-        });
+        const stationIcon = window.fireRouteMapIcon;
 
         // Load active Fire Stations via API
         async function loadMapStations() {

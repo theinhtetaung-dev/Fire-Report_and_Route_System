@@ -1,0 +1,78 @@
+/* Shared spacing fixes. Loaded after density and page styles. */
+:root {
+    --ui-page-space: clamp(1rem, 2vw, 1.5rem);
+    --ui-panel-space: clamp(1rem, 1.5vw, 1.25rem);
+    --ui-control-gap: .75rem;
+}
+.cad-content-area { padding: var(--ui-page-space); scroll-padding-block: 1rem; }
+.cad-content-area > * { flex-shrink: 0; }
+.cad-content-area > *, .cad-panel, .cad-panel-body,
+.cad-dash-title-group, .cad-middle-grid > *, .cad-tables-grid > * { min-width: 0; }
+.cad-panel-header { gap: var(--ui-control-gap); }
+.cad-panel-body, .cad-modal-body { padding: var(--ui-panel-space); }
+/* These legacy forms have no panel-body wrapper. */
+.cad-panel:not(.cad-confirm-panel) > form { padding: var(--ui-panel-space); }
+.cad-form-group, .cad-content-area .form-group { margin-bottom: 1.25rem; }
+.cad-content-area :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]), select, textarea) {
+    min-width: 0; max-width: 100%; min-height: 2.75rem; height: auto;
+    padding-block: .625rem; line-height: 1.6;
+}
+.cad-content-area :is(.cad-btn, .btn) { height: auto; line-height: 1.6; overflow-wrap: anywhere; }
+.cad-page-heading, .cad-dash-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.cad-page-heading > div { min-width: 0; flex: 1 1 16rem; }
+.cad-page-heading h1, .cad-dash-title { flex-wrap: wrap; overflow-wrap: anywhere; }
+.cad-table-actions { flex-wrap: wrap; gap: var(--ui-control-gap); }
+.table-responsive { max-width: 100%; overflow-x: auto; padding-bottom: .25rem; }
+.cad-table-container { padding-bottom: .25rem; }
+.cad-table td { overflow-wrap: anywhere; }
+.cad-filter-bar { gap: 1rem; }
+.cad-middle-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.cad-tables-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Grid gaps separate cards; card margins must not double the gutters. */
+.emergency-console .grid > :is(section, .card, .cad-panel) { margin-block: 0; }
+.emergency-console :is(section, .card) { padding: var(--ui-panel-space); margin-block: 1.25rem; }
+.emergency-console .form-card { margin-block: 0; }
+.emergency-console .grid { gap: 1.25rem; margin-block: 1.25rem; }
+.emergency-console .form-actions { display: flex; flex-wrap: wrap; gap: var(--ui-control-gap); }
+.emergency-console form button + button { margin-left: 0; }
+.emergency-console :is(button, .button) { white-space: normal; overflow-wrap: anywhere; }
+.emergency-console :is(button, .button) + :is(button, .button),
+.emergency-console .button + form { margin-inline-start: .5rem; }
+.emergency-console .form-actions > :is(button, .button, form) { margin: 0; }
+.emergency-console section > form:not(.notice-form) > button { margin-block-start: .75rem; }
+.emergency-console .notice-form { display: inline-block; margin: .25rem .5rem; }
+.emergency-console .filters { margin-block: 0 1.25rem; }
+.emergency-console .filters label { display: flex; flex-direction: column; gap: .375rem; }
+.emergency-console .filters :is(input, select) { margin-top: 0; }
+.emergency-console .location-tools { padding: var(--ui-panel-space); }
+.stations-header, .scrollable-view { padding: var(--ui-page-space); }
+.stations-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); gap: 1.25rem; }
+.station-card { padding: var(--ui-panel-space); min-width: 0; }
+.station-tabs { flex-wrap: wrap; gap: .5rem; }
+.tab-btn { min-height: 2.75rem; }
+.cad-list-search { flex-wrap: wrap; gap: var(--ui-control-gap); }
+.cad-list-search > div { flex: 1 1 12rem; min-width: 0; }
+.landmark-sidebar { min-width: 0; padding: var(--ui-panel-space); flex-shrink: 0; }
+.map-container { min-width: 0; min-height: 0; }
+.auth-card { padding: clamp(1.25rem, 4vw, 2rem); }
+.auth-input { padding-block: .625rem; line-height: 1.6; }
+.auth-header { margin-bottom: 1.5rem; }
+.auth-card .form-group { margin-bottom: 1.25rem; }
+.quick-roles-grid { gap: .75rem; }
+@media (max-width: 1200px) {
+    .cad-middle-grid, .cad-tables-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+    .map-page-layout { overflow-y: auto; min-height: 0; }
+    .landmark-sidebar { height: auto; min-height: 16rem; flex: 1 0 16rem; }
+    .map-container { flex: 0 0 45dvh; min-height: 15rem; }
+}
+@media (max-width: 480px) {
+    .cad-list-search > :is(button, a) { flex: 1 1 auto; }
+    .emergency-console .filters > * { flex-basis: 100%; }
+    .emergency-console .form-actions > * { width: 100%; }
+    .cad-modal-header { flex-wrap: wrap; gap: .75rem; padding: 1rem; }
+}
+
+.cad-confirm-panel { padding: var(--ui-panel-space); }
+.cad-list-search .search-input-wrapper { flex: 1 1 12rem !important; }

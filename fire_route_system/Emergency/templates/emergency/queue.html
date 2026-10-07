@@ -1,12 +1,12 @@
 {% extends 'emergency/base.html' %}
 {% block content %}
-<h1>စိစစ်ရန် ဖြစ်စဉ် Queue</h1>
-<p>စောစောသတင်းပို့ထားသည့် ဖြစ်စဉ်ကို အရင်ပြထားပါသည်။ စိစစ်အတည်ပြုခြင်းနှင့် စေလွှတ်အမိန့်ကို သီးခြားဆောင်ရွက်ပါ။</p>
+<h1>စိစစ်ရန်ဖြစ်စဉ်များ</h1>
+<p data-ui-copy>စောစောသတင်းပို့ထားသည့် ဖြစ်စဉ်ကို အရင်ပြထားပါသည်။ စိစစ်အတည်ပြုခြင်းနှင့် စေလွှတ်အမိန့်ကို သီးခြားဆောင်ရွက်ပါ။</p>
 <form class="filters"><label>ရှာရန်<input name="q" value="{{ request.GET.q }}"></label><button>ရှာရန်</button></form>
 <div id="queue-results">
 {% include 'emergency/queue_results.html' %}
 </div>
-<p><a href="{% url 'emergency:incidents' %}">ဖြစ်စဉ်အားလုံး ကြည့်ရန်</a></p>
+<p><a href="{% url 'emergency:incidents' %}" data-ui-copy>ဖြစ်စဉ်အားလုံး ကြည့်ရန်</a></p>
 {% endblock %}
 {% block poll_query %}?{{ request.GET.urlencode }}&scope=queue{% endblock %}
 {% block scripts %}<script>
