@@ -549,6 +549,33 @@
         .cad-icon-blue { stroke: #38BDF8; }
         .cad-icon-muted { stroke: var(--text-muted); }
     </style>
+    <style>
+        /* Soft / neumorphic components (same kit as dashboard/css/neumorphic.css) */
+        :root { --nm-bg:#EAEEF4; --nm-hi:rgba(255,255,255,.95); --nm-lo:rgba(139,154,178,.50);
+            --nm-raise:7px 7px 16px var(--nm-lo),-7px -7px 16px var(--nm-hi);
+            --nm-raise-sm:4px 4px 9px var(--nm-lo),-4px -4px 9px var(--nm-hi);
+            --nm-raise-xs:2px 2px 5px var(--nm-lo),-2px -2px 5px var(--nm-hi);
+            --nm-inset:inset 4px 4px 9px var(--nm-lo),inset -4px -4px 9px var(--nm-hi);
+            --nm-inset-sm:inset 2px 2px 5px var(--nm-lo),inset -2px -2px 5px var(--nm-hi); }
+        [data-theme="dark"] { --nm-bg:#0C1824; --nm-hi:rgba(52,82,118,.26); --nm-lo:rgba(0,0,0,.58); }
+        body { background: var(--nm-bg); }
+        .auth-card { background: var(--nm-bg); border: 0; border-radius: 26px; box-shadow: 14px 14px 32px var(--nm-lo), -12px -12px 28px var(--nm-hi); }
+        .auth-telemetry, .auth-icon-btn { background: var(--nm-bg); border: 0; box-shadow: var(--nm-raise-sm); }
+        .auth-icon-btn:hover { box-shadow: var(--nm-inset-sm); }
+        .emblem-wrapper { border-radius: 50%; box-shadow: var(--nm-raise); background: var(--nm-bg); }
+        .brand-badge { background: var(--nm-bg); border: 0; box-shadow: var(--nm-inset-sm); }
+        .auth-input { background: var(--nm-bg); border: 0; border-radius: 14px; box-shadow: var(--nm-inset); }
+        .auth-input:focus { box-shadow: var(--nm-inset), 0 0 0 2px rgba(245,158,11,.35); }
+        .auth-submit-btn { border: 0; border-radius: 14px; box-shadow: 6px 6px 14px rgba(253,0,1,.30), -4px -4px 10px var(--nm-hi); }
+        .auth-submit-btn:hover { box-shadow: 8px 8px 18px rgba(253,0,1,.38), -4px -4px 10px var(--nm-hi); }
+        .auth-submit-btn:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,.3); transform: none; }
+        .auth-alert { border-radius: 14px; box-shadow: var(--nm-raise-sm); }
+        .quick-roles-section { border-top: 1px dashed var(--card-border); }
+        .quick-role-card { background: var(--nm-bg); border: 0; border-radius: 14px; box-shadow: var(--nm-raise-sm); }
+        .quick-role-card:hover { background: var(--nm-bg); box-shadow: var(--nm-inset-sm); transform: none; }
+        .quick-roles-hint { border-radius: 999px; box-shadow: var(--nm-raise-xs); background: var(--nm-bg); }
+        .emergency-link-box { background: var(--nm-bg); border: 0; border-radius: 14px; box-shadow: var(--nm-inset-sm); }
+    </style>
 </head>
 <body>
     {% include 'cad_icons.html' %}

@@ -42,3 +42,17 @@
 .cad-topbar-left{min-width:0}.cad-topbar-right{flex-shrink:0}#cad-logout-text{white-space:nowrap}
 @media(max-width:1100px){.cad-topbar .cad-breadcrumb>span:not(.cad-breadcrumb-active){display:none}}
 @media(max-width:600px){.cad-topbar .cad-breadcrumb{display:none}#cad-logout-text{display:none}}
+
+/* Logo map pointers (see map_pins.js) */
+.fire-pin-wrap{background:none;border:0}
+.fire-pin{position:relative;width:100%;height:100%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.35));transition:transform .2s;transform-origin:50% 100%}
+.fire-pin:hover{transform:scale(1.12)}
+.fire-pin-head{position:absolute;left:0;top:0;width:100%;aspect-ratio:1;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(145deg,#ff3a3b,#c30010);border:2px solid #fff;display:grid;place-items:center;overflow:hidden}
+.fire-pin-station .fire-pin-head{background:linear-gradient(145deg,#7a000b,#c30010);border-color:var(--cad-gold-primary)}
+.fire-pin-head img{width:68%;height:68%;object-fit:contain;transform:rotate(45deg);pointer-events:none;background:#fff;border-radius:50%;padding:2px}
+.fire-pin-pulse{position:absolute;left:50%;top:38%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:rgba(253,0,1,.35);animation:firePinPulse 1.8s infinite ease-out}
+@keyframes firePinPulse{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.9);opacity:0}}
+.lg-pin{width:12px!important;height:12px!important;border-radius:50% 50% 50% 0!important;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.lg-station{background:#c30010!important;border-color:var(--cad-gold-primary)!important}
+.lg-incident{background:#fd0001!important}
+@media(prefers-reduced-motion:reduce){.fire-pin-pulse{animation:none}}

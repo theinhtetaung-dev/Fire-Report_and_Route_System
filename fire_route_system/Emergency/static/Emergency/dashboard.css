@@ -19,12 +19,14 @@
 .emergency-console .dx-card-head h2{margin:0;font-size:.9rem;font-weight:700;color:var(--cad-text-main)}
 .dx-dots{letter-spacing:2px;color:var(--cad-text-muted);font-weight:800}
 
-/* stat cards */
-.dx-stat{display:flex;align-items:center;gap:.9rem;flex:1}
-.dx-stat-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;color:#fff;background:var(--c);box-shadow:0 6px 14px color-mix(in srgb,var(--c) 40%,transparent)}
-.dx-stat-icon svg{width:22px;height:22px}
-.dx-stat-value{display:block;font-size:1.65rem;font-weight:800;line-height:1.1;color:var(--cad-text-main);font-feature-settings:'tnum' 1}
-.dx-stat-label{display:block;font-size:.75rem;color:var(--cad-text-muted);line-height:1.5}
+/* stat blocks (soft card + solid value block, as in the component kit) */
+.dx-col-left{gap:1rem}
+.dx-stat{flex:1;min-height:76px}
+.dx-stat .nm-stat-main{padding:.7rem .9rem}
+.dx-stat .nm-icon-btn{flex-shrink:0}
+.dx-stat-label{display:block;font-size:.78rem;font-weight:600;color:var(--cad-text-secondary);line-height:1.5}
+.dx-stat .nm-stat-value{min-width:64px;font-size:1.45rem}
+.dx-lists .nm-progress{display:block;margin-top:.45rem}
 
 /* hero map */
 .dx-map-card{display:flex;flex-direction:column;padding:0;overflow:hidden}
@@ -36,13 +38,14 @@
 
 /* donuts */
 .dx-donut-card{text-align:center;flex:1}
-.dx-donut{position:relative;width:128px;height:128px;margin:.2rem auto .5rem}
-.dx-donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.dx-donut{position:relative;width:132px;height:132px;margin:.2rem auto .6rem;border-radius:50%;background:var(--nm-bg);box-shadow:var(--nm-raise-sm);padding:10px}
+.dx-donut::after{content:"";position:absolute;inset:26px;border-radius:50%;box-shadow:var(--nm-inset-sm)}
+.dx-donut svg{width:100%;height:100%;transform:rotate(-90deg);position:relative;z-index:1}
 .dx-donut circle{fill:none;stroke-width:3.4;stroke-linecap:round}
 .dx-donut .track{stroke:var(--dx-track)}
 .dx-donut .bar{stroke:var(--c);stroke-dasharray:0 100;animation:dxFill 1.1s .15s ease-out forwards;filter:drop-shadow(0 0 2px color-mix(in srgb,var(--c) 55%,transparent))}
 @keyframes dxFill{to{stroke-dasharray:var(--p) 100}}
-.dx-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.dx-donut-center{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
 .dx-donut-center strong{font-size:1.4rem;font-weight:800;color:var(--cad-text-main)}
 .dx-donut-center span{font-size:.7rem;color:var(--cad-text-muted)}
 .dx-donut-title{font-size:.8rem;font-weight:700;color:var(--cad-text-main)}
@@ -50,13 +53,13 @@
 
 /* bar charts */
 .dx-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem;margin-top:1.1rem}
-.dx-bars{display:flex;align-items:flex-end;gap:.55rem;height:170px;padding:.4rem 0 0;border-bottom:1px solid var(--cad-border);background:repeating-linear-gradient(to top,transparent 0,transparent 33px,var(--dx-track) 33px,var(--dx-track) 34px)}
+.dx-bars{display:flex;align-items:flex-end;gap:.55rem;height:170px;padding:.7rem .7rem 0;border-radius:14px;background:var(--nm-bg);box-shadow:var(--nm-inset)}
 .dx-bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
 .dx-bar b{font-size:.7rem;color:var(--cad-text-muted);margin-bottom:.2rem}
-.dx-bar span{display:block;width:100%;max-width:34px;border-radius:7px 7px 0 0;background:linear-gradient(to top,var(--c1),var(--c2));height:0;animation:dxGrow .8s ease-out forwards;animation-delay:calc(var(--i)*70ms)}
+.dx-bar span{display:block;width:100%;max-width:12px;border-radius:999px;background:linear-gradient(to top,var(--c1),var(--c2));height:0;animation:dxGrow .8s ease-out forwards;animation-delay:calc(var(--i)*70ms)}
 @keyframes dxGrow{to{height:var(--h)}}
 .dx-bar:hover span{filter:brightness(1.15)}
-.dx-labels{display:flex;gap:.55rem;margin-top:.35rem}
+.dx-labels{display:flex;gap:.55rem;margin-top:.5rem;padding:0 .7rem}
 .dx-labels em{flex:1;font-style:normal;text-align:center;font-size:.66rem;color:var(--cad-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .dx-empty{color:var(--cad-text-muted);font-size:.8rem;margin:2rem 0;text-align:center}
 

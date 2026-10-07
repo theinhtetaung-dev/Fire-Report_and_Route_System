@@ -53,8 +53,8 @@ home.addEventListener('change',planLead);level.addEventListener('change',planLea
   if(points.length<2)return;
   const color='#fd0001';
   L.polyline(points,{color,weight:5}).addTo(group);
-  L.circleMarker(points[0],{color,radius:7,fillOpacity:1}).bindTooltip('ထွက်ခွာစခန်း').addTo(group);
-  L.circleMarker(points[points.length-1],{color:'#fd0001',radius:8,fillOpacity:1}).bindTooltip('မီးလောင်ရာ').addTo(group);
+  L.marker(points[0],{icon:firePin('station')}).bindTooltip('ထွက်ခွာစခန်း').addTo(group);
+  L.marker(points[points.length-1],{icon:firePin('incident')}).bindTooltip('မီးလောင်ရာ').addTo(group);
  if(group.getBounds().isValid())map.fitBounds(group.getBounds(),{padding:[30,30],maxZoom:16});
  else {map.setView([21.975,96.083],12);document.getElementById('route-map-status').textContent='လမ်းကြောင်း coordinate မပြည့်စုံပါ။';}
  }

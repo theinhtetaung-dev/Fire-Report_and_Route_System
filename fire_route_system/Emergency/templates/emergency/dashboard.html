@@ -15,28 +15,16 @@
 
   <div class="dx-grid">
     <div class="dx-col dx-col-left">
-      <article class="dx-card dx-stat" style="--c:var(--cad-red-primary)">
-        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-flame"/></svg></div>
-        <div><span class="dx-stat-value">{{ active_count }}</span><span class="dx-stat-label">လက်ရှိဖြစ်စဉ်</span></div>
-      </article>
-      <article class="dx-card dx-stat" style="--c:var(--cad-gold-primary)">
-        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-alert"/></svg></div>
-        <div><span class="dx-stat-value">{{ high_severity_fires }}</span><span class="dx-stat-label">အဆင့် ၅ ဖြစ်စဉ်</span></div>
-      </article>
-      <article class="dx-card dx-stat" style="--c:var(--cad-green-active)">
-        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-station"/></svg></div>
-        <div><span class="dx-stat-value">{{ available_stations }}</span><span class="dx-stat-label">အသင့်ရှိစခန်း</span></div>
-      </article>
-      <article class="dx-card dx-stat" style="--c:var(--cad-blue-info)">
-        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg></div>
-        <div><span class="dx-stat-value">{{ total_dispatches_today }}</span><span class="dx-stat-label">ယနေ့စေလွှတ်အမိန့်</span></div>
-      </article>
+      <article class="nm-stat dx-stat" style="--c:var(--cad-red-primary)"><div class="nm-stat-main"><span class="nm-icon-btn" style="color:var(--cad-red-primary)"><svg class="cad-icon"><use href="#cad-icon-flame"/></svg></span><span class="dx-stat-label">လက်ရှိဖြစ်စဉ်</span></div><div class="nm-stat-value">{{ active_count }}</div></article>
+      <article class="nm-stat dx-stat" style="--c:var(--cad-gold-primary)"><div class="nm-stat-main"><span class="nm-icon-btn" style="color:var(--cad-gold-primary)"><svg class="cad-icon"><use href="#cad-icon-alert"/></svg></span><span class="dx-stat-label">အဆင့် ၅ ဖြစ်စဉ်</span></div><div class="nm-stat-value">{{ high_severity_fires }}</div></article>
+      <article class="nm-stat dx-stat" style="--c:var(--cad-green-active)"><div class="nm-stat-main"><span class="nm-icon-btn" style="color:var(--cad-green-active)"><svg class="cad-icon"><use href="#cad-icon-station"/></svg></span><span class="dx-stat-label">အသင့်ရှိစခန်း</span></div><div class="nm-stat-value">{{ available_stations }}</div></article>
+      <article class="nm-stat dx-stat" style="--c:var(--cad-blue-info)"><div class="nm-stat-main"><span class="nm-icon-btn" style="color:var(--cad-blue-info)"><svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg></span><span class="dx-stat-label">ယနေ့စေလွှတ်အမိန့်</span></div><div class="nm-stat-value">{{ total_dispatches_today }}</div></article>
     </div>
 
     <section class="dx-card dx-map-card">
       <div class="dx-card-head"><h2>စခန်းနှင့် လက်ရှိဖြစ်စဉ်မြေပုံ</h2><span class="dx-dots">•••</span></div>
       <div id="dashboard-map" class="map"></div>
-      <div class="dx-legend"><span><i style="background:#c30010"></i>မီးသတ်စခန်း</span><span><i style="background:#fd0001"></i>မီးလောင်ရာ</span></div>
+      <div class="dx-legend"><span><i class="lg-pin lg-station"></i>မီးသတ်စခန်း</span><span><i class="lg-pin lg-incident"></i>မီးလောင်ရာ</span></div>
     </section>
 
     <div class="dx-col dx-col-right">
@@ -85,7 +73,7 @@
   </div>
 
   <div class="dx-lists">
-    <article class="dx-card"><div class="dx-card-head"><h2>လက်ရှိဖြစ်စဉ်</h2></div><strong class="dx-big">{{ active_count }}</strong>{% for row in counts %}<p>{{ row.status_display }}: {{ row.total }}</p>{% endfor %}</article>
+    <article class="dx-card"><div class="dx-card-head"><h2>လက်ရှိဖြစ်စဉ်</h2></div><strong class="dx-big">{{ active_count }}</strong>{% for row in counts %}<p>{{ row.status_display }}: <strong>{{ row.total }}</strong><span class="nm-progress"><span style="--w:{% widthratio row.total total_incidents 100 %}%"></span></span></p>{% endfor %}</article>
     <article class="dx-card"><div class="dx-card-head"><h2>မိမိတာဝန်ချိန်</h2></div>{% for duty in duties %}<p>{{ duty.task }}<br><small>{{ duty.starts_at|date:"d/m/Y h:i A" }} → {{ duty.ends_at|date:"d/m/Y h:i A" }}</small></p>{% empty %}<p>တာဝန်စာရင်းမရှိသေးပါ။</p>{% endfor %}</article>
     <article class="dx-card"><div class="dx-card-head"><h2>အသိပေးချက်</h2></div><div id="live-notices">{% for notice in notices %}<p><a href="{% url 'emergency:incident' notice.incident_id %}">{{ notice.message }}</a> {% if not notice.read_at %}<form method="post" action="{% url 'emergency:poll' %}" class="notice-form">{% csrf_token %}<input type="hidden" name="notice" value="{{ notice.pk }}"><button>ဖတ်ပြီး</button></form>{% else %}ဖတ်ပြီး{% endif %}</p>{% empty %}<p>အသိပေးချက်မရှိပါ။</p>{% endfor %}</div><small>ဖတ်ပြီးခြင်းသည် စေလွှတ်အမိန့်လက်ခံခြင်း မဟုတ်ပါ။</small></article>
     <article class="dx-card"><div class="dx-card-head"><h2>နောက်ဆုံးဖြစ်စဉ်များ</h2></div><div id="live-incidents">{% for i in incidents %}<p><a href="{% url 'emergency:incident' i.pk %}">#{{ i.pk }} · {{ i.address|default:'GPS နေရာ' }}</a> — {{ i.status_display }}</p>{% empty %}<p>ဖြစ်စဉ်မရှိသေးပါ။</p>{% endfor %}</div></article>
@@ -107,6 +95,6 @@ window.addEventListener('emergency-update',e=>{
 });</script><script>
 const dashboardMap=L.map('dashboard-map').setView([21.975,96.083],12),pins=L.layerGroup().addTo(dashboardMap);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(dashboardMap);
-async function refreshDashboardMap(){try{const r=await fetch('{% url "emergency:map_data" %}');if(!r.ok)return;const d=await r.json();pins.clearLayers();for(const [entries,color] of [[d.stations,'#c30010'],[d.incidents,'#fd0001']])entries.forEach(item=>{const label=document.createElement('span');label.textContent=item.name||'#'+item.id+' '+(item.address||'မီးလောင်ရာ');L.circleMarker([item.latitude,item.longitude],{color,radius:7}).bindPopup(label).addTo(pins);});}catch(e){}}
+async function refreshDashboardMap(){try{const r=await fetch('{% url "emergency:map_data" %}');if(!r.ok)return;const d=await r.json();pins.clearLayers();for(const [entries,kind] of [[d.stations,'station'],[d.incidents,'incident']])entries.forEach(item=>{const label=document.createElement('span');label.textContent=item.name||'#'+item.id+' '+(item.address||'မီးလောင်ရာ');L.marker([item.latitude,item.longitude],{icon:firePin(kind)}).bindPopup(label).addTo(pins);});}catch(e){}}
 refreshDashboardMap();setInterval(refreshDashboardMap,5000);
 </script>{% endblock %}

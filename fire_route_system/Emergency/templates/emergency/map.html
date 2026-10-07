@@ -103,7 +103,7 @@ const group=L.layerGroup().addTo(map),list=document.getElementById('map-location
 function filterLocations(){const term=search.value.trim().toLowerCase();list.querySelectorAll('.location-item-card').forEach(card=>{card.hidden=!card.textContent.toLowerCase().includes(term);});}
 search.addEventListener('input',filterLocations);
 function addLocation(point,title,description,isIncident){const label=document.createElement('span');label.textContent=title;
- const marker=L.circleMarker(point,{color:isIncident?'#fd0001':'#c30010',fillOpacity:.8,radius:isIncident?9:7}).bindPopup(label).addTo(group);
+ const marker=L.marker(point,{icon:firePin(isIncident?'incident':'station')}).bindPopup(label).addTo(group);
  const card=document.createElement('button');card.type='button';card.className='location-item-card';const heading=document.createElement('h4'),detail=document.createElement('p');heading.textContent=title;detail.textContent=description;card.append(heading,detail);card.addEventListener('click',()=>{map.flyTo(point,15);marker.openPopup();});list.append(card);}
 async function updateMap(){try{const r=await fetch('{% url "emergency:map_data" %}');if(!r.ok)return;const d=await r.json();group.clearLayers();list.replaceChildren();document.getElementById('map-sidebar-count').textContent='စခန်း '+d.stations.length;
  d.incidents.forEach(i=>addLocation([i.latitude,i.longitude],'#'+i.id+' · '+(i.address||'မီးလောင်ရာ'),i.scale_display+' · '+i.status_display,true));

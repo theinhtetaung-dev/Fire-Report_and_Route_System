@@ -30,6 +30,9 @@
     <link rel="stylesheet" href="{% static 'dashboard/css/cad_theme.css' %}">
     
     {% block extra_css %}{% endblock %}
+
+    <!-- Soft / neumorphic component layer (must load after page CSS) -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/neumorphic.css' %}?v=nm-1">
 </head>
 <body>
     <!-- CAD Vector Icon Sprite -->
