@@ -17,7 +17,7 @@
 {% if can_final %}<section><h2>ဦးဆောင်စခန်း နောက်ဆုံးအစီရင်ခံစာ</h2>{% if not incident.closed_at %}<form method="post" action="{% url 'emergency:action' incident.pk 'final' %}">{% csrf_token %}<label>ဖြစ်ပွားပုံနှင့် စုစည်းအစီရင်ခံချက်<textarea name="narrative" required>{{ incident.final_report.narrative }}</textarea></label><button>စခန်းစာရင်းများ စုစည်းပြီးတင်ရန်</button></form>{% endif %}{% if incident.final_report %}<p>{{ incident.final_report.state }} · {{ incident.final_report.review_note }}</p><p>စုစုပေါင်း ရေဂါလန် {{ incident.final_report.snapshot.water_gallons }}</p>{% endif %}
 {% if user.is_admin and not incident.closed_at and incident.final_report.state == 'Submitted' %}<form method="post" action="{% url 'emergency:action' incident.pk 'review-final' %}">{% csrf_token %}<label>စိစစ်မှတ်ချက်<textarea name="note"></textarea></label><button name="decision" value="Approved">အတည်ပြုပြီး စာရင်းပိတ်</button><button name="decision" value="Revision">ပြန်ပြင်ခိုင်း</button></form>{% endif %}</section>{% endif %}
 <section><h2>အခြေအနေမှတ်တမ်း</h2><div id="updates">{% for update in updates %}<p>{{ update.created_at|date:"d/m/Y h:i A" }} · {{ update.station|default:'ဗဟို' }} · {{ update.message }}</p>{% empty %}<p>မှတ်တမ်းမရှိပါ။</p>{% endfor %}</div></section>{% endblock %}
-{% block scripts %}<script>
+{% block poll_query %}?scope=incident&incident={{ incident.pk }}{% endblock %}{% block scripts %}<script>
 window.addEventListener('emergency-update',e=>{
  const d=e.detail;if(d.incident){document.getElementById('incident-state').textContent=d.incident.status_display;}
  (d.deployments||[]).forEach(row=>{const el=document.getElementById('deployment-state-'+row.id);if(el)el.textContent=row.state;});
@@ -25,8 +25,16 @@ window.addEventListener('emergency-update',e=>{
 });
 {% if form %}
 const home=document.getElementById('id_home_station'),level=document.getElementById('id_fire_scale'),lead=document.getElementById('id_lead_station');
-async function planLead(){const r=await fetch('{% url "emergency:plan_preview" %}?station='+encodeURIComponent(home.value)+'&level='+level.value);if(r.ok){const d=await r.json();if(d.lead_station)lead.value=d.lead_station;}}
-home.addEventListener('change',planLead);level.addEventListener('change',planLead);
+let planTimer,planRequest;
+async function planLead(){
+ const station=home.value,scale=level.value;if(!station)return;
+ const controller=new AbortController();planRequest=controller;
+ try{const r=await fetch('{% url "emergency:plan_preview" %}?station='+encodeURIComponent(station)+'&level='+encodeURIComponent(scale),{signal:controller.signal});
+ if(r.ok){const d=await r.json();if(!controller.signal.aborted&&home.value===station&&level.value===scale&&d.lead_station)lead.value=d.lead_station;}}
+ catch(error){if(error.name!=='AbortError')console.warn('Plan preview unavailable');}
+}
+function schedulePlanLead(){clearTimeout(planTimer);if(planRequest)planRequest.abort();planTimer=setTimeout(planLead,200);}
+home.addEventListener('change',schedulePlanLead);level.addEventListener('change',schedulePlanLead);
 {% endif %}
 </script>{% if routes %}<script>
 (()=>{

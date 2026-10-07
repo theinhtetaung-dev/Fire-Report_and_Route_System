@@ -2,6 +2,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from DataAccess.models import FireReport
+from DataAccess.api_pagination import list_response
 
 def serialize_firereport(report):
     return {
@@ -20,7 +21,7 @@ def serialize_firereport(report):
 def firereport_list_create(request):
     if request.method == 'GET':
         reports = FireReport.objects.all()
-        return JsonResponse([serialize_firereport(r) for r in reports], safe=False)
+        return list_response(request, reports, serialize_firereport)
 
     elif request.method == 'POST':
         try:

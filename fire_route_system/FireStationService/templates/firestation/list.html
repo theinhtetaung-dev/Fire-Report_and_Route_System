@@ -471,8 +471,19 @@
         });
 
         // Load active Fire Stations via API
-        fetch('/api/firestations/')
-            .then(res => res.json())
+        async function loadMapStations() {
+            const stations = [];
+            let page = 1, totalPages = 1;
+            do {
+                const response = await fetch('/api/firestations/?page_size=100&page=' + page);
+                if (!response.ok) throw new Error('Station map unavailable');
+                stations.push(...await response.json());
+                totalPages = Number(response.headers.get('X-Total-Pages') || 1);
+                page++;
+            } while (page <= totalPages);
+            return stations;
+        }
+        loadMapStations()
             .then(stations => {
                 stationsData = stations;
                 stations.forEach(station => {

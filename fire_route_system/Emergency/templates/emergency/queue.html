@@ -4,23 +4,15 @@
 <p>စောစောသတင်းပို့ထားသည့် ဖြစ်စဉ်ကို အရင်ပြထားပါသည်။ စိစစ်အတည်ပြုခြင်းနှင့် စေလွှတ်အမိန့်ကို သီးခြားဆောင်ရွက်ပါ။</p>
 <form class="filters"><label>ရှာရန်<input name="q" value="{{ request.GET.q }}"></label><button>ရှာရန်</button></form>
 <div id="queue-results">
-<p>စိစစ်ရန် စုစုပေါင်း {{ page_obj.paginator.count }} ခု · ၅ စက္ကန့်ခြား update</p>
-<div class="table-wrap"><table>
-<thead><tr><th>ဖြစ်စဉ်</th><th>လိပ်စာ</th><th>သတင်းပို့ချိန်</th><th>လုပ်ဆောင်ရန်</th></tr></thead>
-<tbody>{% for incident in page_obj %}<tr><td>#{{ incident.pk }}</td><td>{{ incident.address|default:'GPS နေရာ' }}</td><td>{{ incident.reported_at|date:'d/m/Y h:i A' }}</td><td><a class="button" href="{% url 'emergency:incident' incident.pk %}">စိစစ် / အတည်ပြုရန်</a></td></tr>{% empty %}<tr><td colspan="4">စိစစ်ရန် ဖြစ်စဉ် မရှိပါ။</td></tr>{% endfor %}</tbody>
-</table></div>
-{% include 'emergency/pagination.html' %}
+{% include 'emergency/queue_results.html' %}
 </div>
 <p><a href="{% url 'emergency:incidents' %}">ဖြစ်စဉ်အားလုံး ကြည့်ရန်</a></p>
 {% endblock %}
+{% block poll_query %}?{{ request.GET.urlencode }}&scope=queue{% endblock %}
 {% block scripts %}<script>
-let queueRefreshing=false;
-window.addEventListener('emergency-update',async()=>{
- if(queueRefreshing)return;queueRefreshing=true;
- try{const response=await fetch(location.href);if(!response.ok)return;
- const documentCopy=new DOMParser().parseFromString(await response.text(),'text/html');
- const updated=documentCopy.getElementById('queue-results');
- if(updated)document.getElementById('queue-results').replaceChildren(...updated.childNodes);
- }catch(error){console.warn('Queue update unavailable');}finally{queueRefreshing=false;}
+window.addEventListener('emergency-update',event=>{
+ if(event.detail.queue_html===undefined)return;
+ const documentCopy=new DOMParser().parseFromString(event.detail.queue_html,'text/html');
+ document.getElementById('queue-results').replaceChildren(...documentCopy.body.childNodes);
 });
 </script>{% endblock %}

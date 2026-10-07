@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction,IntegrityError
-from django.db.models import Q,Count,Sum
+from django.db.models import Q,Count,Sum,Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
@@ -47,12 +47,12 @@ def dashboard(request):
 
 
 def scope(request,kind):
-    user=request.user;model,_=FORM_TYPES[kind];query=model.objects.all();ids=managed_station_ids(user)
+    user=request.user;model,_=FORM_TYPES[kind];query=model.objects.all()
+    if user.is_admin:return query
+    ids=managed_station_ids(user)
     if kind=='posts':
-        if user.is_admin:return query
         if ids:return query.filter(author=user)
         raise PermissionDenied
-    if user.is_admin:return query
     if kind=='staff':return query.filter(station_id__in=ids) if ids else query.filter(pk=user.pk)
     if kind=='vehicles':return query.filter(station_id__in=ids or [user.station_id])
     if kind=='duties' or kind=='leaves':return query.filter(employee__station_id__in=ids) if ids else query.filter(employee=user)
@@ -79,6 +79,8 @@ def listing(request,kind):
         if township:query=query.filter(home_station__township=township)
         query=query.select_related('home_station','lead_station').order_by('home_station__township','level','pk')
     else:query=query.order_by('-pk')
+    related={'staff':('station','role'),'vehicles':('station','kind'),'requirements':('plan__home_station','station','kind'),'duties':('employee__role',),'leaves':('employee__role',),'posts':('station',)}
+    if kind in related:query=query.select_related(*related[kind])
     page=Paginator(query,20).get_page(request.GET.get('page'))
     can_create=request.user.is_admin or kind=='leaves' or (bool(managed_station_ids(request.user)) and kind in ['staff','duties','posts'])
     template='emergency/plans.html' if kind=='plans' else 'emergency/list.html'
@@ -135,7 +137,7 @@ def edit(request,kind,pk=None):
 
 
 def posts(request):
-    query=posts_for(request.user)
+    query=posts_for(request.user).select_related('station')
     if request.GET.get('q'):query=query.filter(Q(title__icontains=request.GET['q'])|Q(body__icontains=request.GET['q']))
     return render(request,'emergency/posts.html',{'page_obj':Paginator(query.order_by('-pk'),20).get_page(request.GET.get('page'))})
 
@@ -171,9 +173,14 @@ def filter_incidents(request):
 @login_required
 def incident_queue(request):
     if not request.user.is_admin:raise PermissionDenied
+    return render(request,'emergency/queue.html',queue_context(request))
+
+
+def queue_context(request):
     query=filter_incidents(request).filter(status='Pending',closed_at__isnull=True).order_by('reported_at','pk')
-    filters=request.GET.copy();filters.pop('page',None)
-    return render(request,'emergency/queue.html',{'page_obj':Paginator(query,20).get_page(request.GET.get('page')),'filter_query':filters.urlencode()})
+    filters=request.GET.copy()
+    for key in ['page','scope','map','incident']:filters.pop(key,None)
+    return {'page_obj':Paginator(query,20).get_page(request.GET.get('page')),'filter_query':filters.urlencode()}
 
 
 @login_required
@@ -184,7 +191,8 @@ def incidents(request):
 
 @login_required
 def incident(request,pk):
-    obj=get_object_or_404(incidents_for(request.user),pk=pk)
+    obj=get_object_or_404(incidents_for(request.user).select_related('home_station','lead_station','final_report'),pk=pk)
+    managed_ids=managed_station_ids(request.user)
     can_manage=request.user.is_admin
     form=ConfirmForm(instance=obj) if can_manage and not obj.closed_at else None
     nearest=None
@@ -192,18 +200,20 @@ def incident(request,pk):
         stations=list(FireStation.objects.filter(status='Active'))
         if stations:nearest=min(stations,key=lambda s:services.distance((s.latitude,s.longitude),(obj.latitude,obj.longitude)))
     plan,rows=services.preview(obj)
-    deployments=obj.deployments.select_related('station')
+    deployments=obj.deployments.select_related('station','station_report').prefetch_related(
+        Prefetch('vehicles',queryset=VehicleParticipation.objects.select_related('vehicle__kind')),
+        Prefetch('personnel',queryset=StaffParticipation.objects.select_related('employee')))
     if not request.user.is_admin:
-        deployments=deployments.filter(station_id__in=managed_station_ids(request.user)+([request.user.station_id] if request.user.is_firefighter else []))
+        deployments=deployments.filter(station_id__in=managed_ids+([request.user.station_id] if request.user.is_firefighter else []))
     for d in deployments:
-        d.can_manage=request.user.is_admin or d.station_id in managed_station_ids(request.user)
+        d.can_manage=request.user.is_admin or d.station_id in managed_ids
         d.eligible=services.eligible_staff(d) if d.can_manage else User.objects.none()
     routes=[dict(d.route,station_name=d.station.name) for d in deployments if d.route.get('coordinates')]
     route_error=''
     route_stations=FireStation.objects.none()
     can_view_routes=request.user.is_admin or request.user.is_station_admin or request.user.is_firefighter
     if can_view_routes:
-        route_stations=FireStation.objects.all() if request.user.is_admin else FireStation.objects.filter(pk__in=managed_station_ids(request.user)+([request.user.station_id] if request.user.station_id else []))
+        route_stations=FireStation.objects.all() if request.user.is_admin else FireStation.objects.filter(pk__in=managed_ids+([request.user.station_id] if request.user.station_id else []))
         selected=request.GET.get('route_station','')
         route_station=route_stations.filter(pk=int(selected)).first() if selected.isdigit() else None
         if selected and route_station is None:raise PermissionDenied
@@ -226,7 +236,7 @@ def incident(request,pk):
     return render(request,'emergency/incident.html',{'incident':obj,'form':form,'nearest':nearest,'plan':plan,'requirements':rows,
         'available':Vehicle.objects.filter(status='Available',station__status='Active').select_related('station','kind') if can_manage else [],
         'deployments':deployments,'updates':obj.updates.select_related('author','station').order_by('-pk')[:50] if request.user.is_admin or request.user.is_station_admin or request.user.is_firefighter else [],
-        'routes':routes,'road_background':road_background,'route_error':route_error,'route_stations':route_stations,'can_view_routes':can_view_routes,'can_final':request.user.is_admin or obj.lead_station_id in managed_station_ids(request.user)})
+        'routes':routes,'road_background':road_background,'route_error':route_error,'route_stations':route_stations,'can_view_routes':can_view_routes,'can_final':request.user.is_admin or obj.lead_station_id in managed_ids})
 
 
 @login_required
