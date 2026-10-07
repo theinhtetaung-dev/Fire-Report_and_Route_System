@@ -1,1 +1,1 @@
-<p>{% if page_obj.has_previous %}<a href="?{{ filter_query }}&page={{ page_obj.previous_page_number }}">ရှေ့စာမျက်နှာ</a>{% endif %} · {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} · {{ page_obj.paginator.count }} ခု {% if page_obj.has_next %}<a href="?{{ filter_query }}&page={{ page_obj.next_page_number }}">နောက်စာမျက်နှာ</a>{% endif %}</p>
+{% load pagination_ui %}{% compact_pagination %}
