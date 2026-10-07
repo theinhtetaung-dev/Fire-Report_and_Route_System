@@ -1,0 +1,73 @@
+/* Dashboard layout inspired by the "Dashboard" concept by Maha Babar (Dribbble):
+   stat cards on the left, hero map in the centre, donut gauges on the right,
+   and a row of bar charts underneath. Uses the existing CAD theme variables so
+   light/dark mode keeps working. */
+.dx{--dx-accent:var(--cad-red-primary);--dx-teal:var(--cad-green-active);--dx-deep:var(--cad-blue-info);--dx-gold:var(--cad-gold-primary);
+  --dx-track:color-mix(in srgb,var(--cad-text-muted) 18%,transparent)}
+.dx-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.dx-top h1{display:flex;align-items:center;gap:.6rem;margin:0;font-size:1.5rem}
+.dx-top .cad-dash-subtitle{margin:.15rem 0 0}
+.dx-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.emergency-console .dx-pill{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,var(--dx-accent),color-mix(in srgb,var(--dx-accent) 70%,#000));color:#fff;border-radius:999px;padding:.5rem 1.1rem;font-size:.8rem;font-weight:700;box-shadow:0 6px 16px color-mix(in srgb,var(--dx-accent) 35%,transparent);transition:transform .2s,box-shadow .2s}
+.emergency-console .dx-pill:hover{transform:translateY(-2px);text-decoration:none;box-shadow:0 10px 22px color-mix(in srgb,var(--dx-accent) 45%,transparent)}
+
+.dx-grid{display:grid;grid-template-columns:240px minmax(0,1fr) 250px;gap:1.1rem;align-items:stretch}
+.dx-col{display:flex;flex-direction:column;gap:1.1rem;min-width:0}
+.dx-card{background:var(--cad-card-bg);border:1px solid var(--cad-border);border-radius:16px;box-shadow:var(--cad-shadow-sm);padding:1.1rem 1.2rem;transition:transform .25s,box-shadow .25s;min-width:0}
+.dx-card:hover{transform:translateY(-3px);box-shadow:var(--cad-shadow-md)}
+.dx-card-head{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.emergency-console .dx-card-head h2{margin:0;font-size:.9rem;font-weight:700;color:var(--cad-text-main)}
+.dx-dots{letter-spacing:2px;color:var(--cad-text-muted);font-weight:800}
+
+/* stat cards */
+.dx-stat{display:flex;align-items:center;gap:.9rem;flex:1}
+.dx-stat-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;color:#fff;background:var(--c);box-shadow:0 6px 14px color-mix(in srgb,var(--c) 40%,transparent)}
+.dx-stat-icon svg{width:22px;height:22px}
+.dx-stat-value{display:block;font-size:1.65rem;font-weight:800;line-height:1.1;color:var(--cad-text-main);font-feature-settings:'tnum' 1}
+.dx-stat-label{display:block;font-size:.75rem;color:var(--cad-text-muted);line-height:1.5}
+
+/* hero map */
+.dx-map-card{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.dx-map-card .dx-card-head{padding:1rem 1.2rem 0;margin:0}
+.dx-map-card .dx-card-head a{font-size:.8rem;font-weight:600}
+.emergency-console .dx-map-card .map{flex:1;height:auto;min-height:380px;border:0;border-radius:0;margin-top:.6rem}
+.dx-legend{display:flex;gap:1rem;font-size:.75rem;color:var(--cad-text-muted);padding:.6rem 1.2rem;border-top:1px solid var(--cad-border)}
+.dx-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.35rem}
+
+/* donuts */
+.dx-donut-card{text-align:center;flex:1}
+.dx-donut{position:relative;width:128px;height:128px;margin:.2rem auto .5rem}
+.dx-donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.dx-donut circle{fill:none;stroke-width:3.4;stroke-linecap:round}
+.dx-donut .track{stroke:var(--dx-track)}
+.dx-donut .bar{stroke:var(--c);stroke-dasharray:0 100;animation:dxFill 1.1s .15s ease-out forwards;filter:drop-shadow(0 0 2px color-mix(in srgb,var(--c) 55%,transparent))}
+@keyframes dxFill{to{stroke-dasharray:var(--p) 100}}
+.dx-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.dx-donut-center strong{font-size:1.4rem;font-weight:800;color:var(--cad-text-main)}
+.dx-donut-center span{font-size:.7rem;color:var(--cad-text-muted)}
+.dx-donut-title{font-size:.8rem;font-weight:700;color:var(--cad-text-main)}
+.dx-donut-sub{font-size:.72rem;color:var(--cad-text-muted)}
+
+/* bar charts */
+.dx-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem;margin-top:1.1rem}
+.dx-bars{display:flex;align-items:flex-end;gap:.55rem;height:170px;padding:.4rem 0 0;border-bottom:1px solid var(--cad-border);background:repeating-linear-gradient(to top,transparent 0,transparent 33px,var(--dx-track) 33px,var(--dx-track) 34px)}
+.dx-bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.dx-bar b{font-size:.7rem;color:var(--cad-text-muted);margin-bottom:.2rem}
+.dx-bar span{display:block;width:100%;max-width:34px;border-radius:7px 7px 0 0;background:linear-gradient(to top,var(--c1),var(--c2));height:0;animation:dxGrow .8s ease-out forwards;animation-delay:calc(var(--i)*70ms)}
+@keyframes dxGrow{to{height:var(--h)}}
+.dx-bar:hover span{filter:brightness(1.15)}
+.dx-labels{display:flex;gap:.55rem;margin-top:.35rem}
+.dx-labels em{flex:1;font-style:normal;text-align:center;font-size:.66rem;color:var(--cad-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.dx-empty{color:var(--cad-text-muted);font-size:.8rem;margin:2rem 0;text-align:center}
+
+/* lists */
+.dx-lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;margin-top:1.1rem}
+.dx-lists .dx-card p{margin:.5rem 0;font-size:.85rem;padding-bottom:.5rem;border-bottom:1px dashed var(--cad-border)}
+.dx-lists .dx-card p:last-child{border-bottom:0}
+.dx-lists .dx-big{font-size:2rem;font-weight:800;color:var(--dx-accent)}
+.dx-lists .dx-card{max-height:340px;overflow:auto}
+
+@media(max-width:1280px){.dx-grid{grid-template-columns:220px minmax(0,1fr)}.dx-col-right{grid-column:1/-1;flex-direction:row}.dx-col-right .dx-card{flex:1}}
+@media(max-width:900px){.dx-grid{grid-template-columns:1fr}.dx-col-left{display:grid;grid-template-columns:repeat(2,1fr)}.dx-charts{grid-template-columns:1fr}.dx-col-right{flex-direction:column}}
+@media(max-width:520px){.dx-col-left{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.dx-bar span,.dx-donut .bar{animation-duration:.01ms;animation-delay:0s}}

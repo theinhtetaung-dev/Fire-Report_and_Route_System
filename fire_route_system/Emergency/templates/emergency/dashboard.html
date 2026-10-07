@@ -1,4 +1,98 @@
-{% extends 'emergency/base.html' %}{% load static %}{% block page_css %}<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">{% endblock %}{% block content %}<div class="cad-dash-header"><div class="cad-dash-title-group"><h1 class="cad-dash-title"><svg class="cad-icon cad-icon-gold cad-icon-lg"><use href="#cad-icon-dashboard"/></svg>{{ user.role_name }} Dashboard</h1><p class="cad-dash-subtitle">မန္တလေးတိုင်းဒေသကြီး ကွပ်ကဲမှုဗဟို · မီးဘေးအရေးပေါ်စနစ်</p></div><div class="cad-dash-live-badge"><span class="cad-pulse-dot"></span><span class="cad-live-text">CAD SYSTEM LIVE</span></div></div><div class="cad-kpi-grid"><div class="cad-kpi-card cad-kpi-danger"><div class="cad-kpi-icon-wrap"><svg class="cad-icon cad-icon-xl"><use href="#cad-icon-flame"/></svg></div><div class="cad-kpi-data"><span class="cad-kpi-label">လက်ရှိဖြစ်စဉ်</span><div class="cad-kpi-value">{{ active_count }}</div><span class="cad-kpi-trend">ဆိုင်းငံ့ / စိစစ်ဆဲနှင့် မြေပြင်ဖြစ်စဉ်</span></div></div><div class="cad-kpi-card cad-kpi-warning"><div class="cad-kpi-icon-wrap"><svg class="cad-icon cad-icon-xl"><use href="#cad-icon-alert"/></svg></div><div class="cad-kpi-data"><span class="cad-kpi-label">အဆင့် ၅ ဖြစ်စဉ်</span><div class="cad-kpi-value">{{ high_severity_fires }}</div><span class="cad-kpi-trend">အရေးပေါ် မီးလောင်မှုအဆင့်</span></div></div><div class="cad-kpi-card cad-kpi-success"><div class="cad-kpi-icon-wrap"><svg class="cad-icon cad-icon-xl"><use href="#cad-icon-station"/></svg></div><div class="cad-kpi-data"><span class="cad-kpi-label">အသင့်ရှိစခန်း</span><div class="cad-kpi-value">{{ available_stations }}</div><span class="cad-kpi-trend">စေလွှတ်နိုင်သောစခန်းများ</span></div></div><div class="cad-kpi-card cad-kpi-info"><div class="cad-kpi-icon-wrap"><svg class="cad-icon cad-icon-xl"><use href="#cad-icon-dispatch"/></svg></div><div class="cad-kpi-data"><span class="cad-kpi-label">ယနေ့စေလွှတ်အမိန့်</span><div class="cad-kpi-value">{{ total_dispatches_today }}</div><span class="cad-kpi-trend">သက်ဆိုင်ရာဖြစ်စဉ်များအတွက်</span></div></div></div><div class="cad-panel"><div class="cad-panel-header"><h2 class="cad-panel-title"><svg class="cad-icon cad-icon-gold"><use href="#cad-icon-map"/></svg>စခန်းနှင့် လက်ရှိဖြစ်စဉ်မြေပုံ</h2><a href="{% url 'emergency:map' %}">မြေပုံအပြည့်ကြည့်ရန်</a></div><div id="dashboard-map" class="map"></div></div><div class="grid"><div class="cad-panel"><div class="cad-panel-body"><h2>လက်ရှိဖြစ်စဉ်</h2><strong>{{ active_count }}</strong>{% for row in counts %}<p>{{ row.status_display }}: {{ row.total }}</p>{% endfor %}</div></div><div class="cad-panel"><div class="cad-panel-body"><h2>မိမိတာဝန်ချိန်</h2>{% for duty in duties %}<p>{{ duty.task }}<br>{{ duty.starts_at|date:"d/m/Y h:i A" }} → {{ duty.ends_at|date:"d/m/Y h:i A" }}</p>{% empty %}<p>တာဝန်စာရင်းမရှိသေးပါ။</p>{% endfor %}</div></div></div><div class="cad-panel"><div class="cad-panel-body"><h2>အသိပေးချက်</h2><div id="live-notices">{% for notice in notices %}<p><a href="{% url 'emergency:incident' notice.incident_id %}">{{ notice.message }}</a> {% if not notice.read_at %}<form method="post" action="{% url 'emergency:poll' %}" class="notice-form">{% csrf_token %}<input type="hidden" name="notice" value="{{ notice.pk }}"><button>ဖတ်ပြီး</button></form>{% else %}ဖတ်ပြီး{% endif %}</p>{% empty %}<p>အသိပေးချက်မရှိပါ။</p>{% endfor %}</div><small>ဖတ်ပြီးခြင်းသည် စေလွှတ်အမိန့်လက်ခံခြင်း မဟုတ်ပါ။</small></div></div><div class="cad-panel"><div class="cad-panel-body"><h2>နောက်ဆုံးဖြစ်စဉ်များ</h2><div id="live-incidents">{% for i in incidents %}<p><a href="{% url 'emergency:incident' i.pk %}">#{{ i.pk }} · {{ i.address|default:'GPS နေရာ' }}</a> — {{ i.status_display }}</p>{% empty %}<p>ဖြစ်စဉ်မရှိသေးပါ။</p>{% endfor %}</div></div></div>{% endblock %}{% block scripts %}<script>
+{% extends 'emergency/base.html' %}{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}"><link rel="stylesheet" href="{% static 'Emergency/dashboard.css' %}?v=dx-1">{% endblock %}
+{% block content %}
+<div class="dx">
+  <header class="dx-top">
+    <div>
+      <h1><svg class="cad-icon cad-icon-gold cad-icon-lg"><use href="#cad-icon-dashboard"/></svg>{{ user.role_name }} Dashboard</h1>
+      <p class="cad-dash-subtitle">မန္တလေးတိုင်းဒေသကြီး ကွပ်ကဲမှုဗဟို · မီးဘေးအရေးပေါ်စနစ်</p>
+    </div>
+    <div class="dx-actions">
+      <div class="cad-dash-live-badge"><span class="cad-pulse-dot"></span><span class="cad-live-text">CAD SYSTEM LIVE</span></div>
+      <a class="dx-pill" href="{% url 'emergency:map' %}"><svg class="cad-icon"><use href="#cad-icon-map"/></svg>မြေပုံအပြည့်ကြည့်ရန်</a>
+    </div>
+  </header>
+
+  <div class="dx-grid">
+    <div class="dx-col dx-col-left">
+      <article class="dx-card dx-stat" style="--c:var(--cad-red-primary)">
+        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-flame"/></svg></div>
+        <div><span class="dx-stat-value">{{ active_count }}</span><span class="dx-stat-label">လက်ရှိဖြစ်စဉ်</span></div>
+      </article>
+      <article class="dx-card dx-stat" style="--c:var(--cad-gold-primary)">
+        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-alert"/></svg></div>
+        <div><span class="dx-stat-value">{{ high_severity_fires }}</span><span class="dx-stat-label">အဆင့် ၅ ဖြစ်စဉ်</span></div>
+      </article>
+      <article class="dx-card dx-stat" style="--c:var(--cad-green-active)">
+        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-station"/></svg></div>
+        <div><span class="dx-stat-value">{{ available_stations }}</span><span class="dx-stat-label">အသင့်ရှိစခန်း</span></div>
+      </article>
+      <article class="dx-card dx-stat" style="--c:var(--cad-blue-info)">
+        <div class="dx-stat-icon"><svg class="cad-icon"><use href="#cad-icon-dispatch"/></svg></div>
+        <div><span class="dx-stat-value">{{ total_dispatches_today }}</span><span class="dx-stat-label">ယနေ့စေလွှတ်အမိန့်</span></div>
+      </article>
+    </div>
+
+    <section class="dx-card dx-map-card">
+      <div class="dx-card-head"><h2>စခန်းနှင့် လက်ရှိဖြစ်စဉ်မြေပုံ</h2><span class="dx-dots">•••</span></div>
+      <div id="dashboard-map" class="map"></div>
+      <div class="dx-legend"><span><i style="background:#c30010"></i>မီးသတ်စခန်း</span><span><i style="background:#fd0001"></i>မီးလောင်ရာ</span></div>
+    </section>
+
+    <div class="dx-col dx-col-right">
+      <article class="dx-card dx-donut-card" style="--c:var(--cad-green-active)">
+        <div class="dx-donut" style="--p:{{ resolved_donut.pct }}">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="track" cx="18" cy="18" r="15.9155" pathLength="100"/><circle class="bar" cx="18" cy="18" r="15.9155" pathLength="100"/></svg>
+          <div class="dx-donut-center"><strong>{{ resolved_donut.pct }}%</strong><span>{{ resolved_donut.part }} / {{ resolved_donut.whole }}</span></div>
+        </div>
+        <div class="dx-donut-title">ဖြေရှင်းပြီး ဖြစ်စဉ်</div><div class="dx-donut-sub">Resolution rate</div>
+      </article>
+      <article class="dx-card dx-donut-card" style="--c:var(--cad-red-primary)">
+        <div class="dx-donut" style="--p:{{ active_donut.pct }}">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="track" cx="18" cy="18" r="15.9155" pathLength="100"/><circle class="bar" cx="18" cy="18" r="15.9155" pathLength="100"/></svg>
+          <div class="dx-donut-center"><strong>{{ active_donut.pct }}%</strong><span>{{ active_donut.part }} / {{ active_donut.whole }}</span></div>
+        </div>
+        <div class="dx-donut-title">လက်ရှိဖြစ်စဉ်အချိုး</div><div class="dx-donut-sub">Active share</div>
+      </article>
+      <article class="dx-card dx-donut-card" style="--c:var(--cad-blue-info)">
+        <div class="dx-donut" style="--p:{{ station_donut.pct }}">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="track" cx="18" cy="18" r="15.9155" pathLength="100"/><circle class="bar" cx="18" cy="18" r="15.9155" pathLength="100"/></svg>
+          <div class="dx-donut-center"><strong>{{ station_donut.pct }}%</strong><span>{{ station_donut.part }} / {{ station_donut.whole }}</span></div>
+        </div>
+        <div class="dx-donut-title">စခန်းအသင့်အနေအထား</div><div class="dx-donut-sub">Station readiness</div>
+      </article>
+    </div>
+  </div>
+
+  <div class="dx-charts">
+    <article class="dx-card">
+      <div class="dx-card-head"><h2>နောက်ဆုံး ၇ ရက် ဖြစ်စဉ်</h2><span class="dx-dots">•••</span></div>
+      <div class="dx-bars">{% for b in trend_bars %}<div class="dx-bar" title="{{ b.label }}: {{ b.value }}"><b>{{ b.value }}</b><span style="--h:{{ b.height }}%;--i:{{ forloop.counter0 }};--c1:#0e9f8e;--c2:#34d8c0"></span></div>{% endfor %}</div>
+      <div class="dx-labels">{% for b in trend_bars %}<em>{{ b.label }}</em>{% endfor %}</div>
+    </article>
+    <article class="dx-card">
+      <div class="dx-card-head"><h2>အခြေအနေအလိုက်</h2><span class="dx-dots">•••</span></div>
+      {% if status_bars %}
+      <div class="dx-bars">{% for b in status_bars %}<div class="dx-bar" title="{{ b.label }}: {{ b.value }}"><b>{{ b.value }}</b><span style="--h:{{ b.height }}%;--i:{{ forloop.counter0 }};--c1:#9f0012;--c2:#ff4d4f"></span></div>{% endfor %}</div>
+      <div class="dx-labels">{% for b in status_bars %}<em title="{{ b.label }}">{{ b.label }}</em>{% endfor %}</div>
+      {% else %}<p class="dx-empty">ဖြစ်စဉ်မရှိသေးပါ။</p>{% endif %}
+    </article>
+    <article class="dx-card">
+      <div class="dx-card-head"><h2>မီးလောင်မှုအဆင့်အလိုက်</h2><span class="dx-dots">•••</span></div>
+      <div class="dx-bars">{% for b in scale_bars %}<div class="dx-bar" title="{{ b.label }}: {{ b.value }}"><b>{{ b.value }}</b><span style="--h:{{ b.height }}%;--i:{{ forloop.counter0 }};--c1:#b86e00;--c2:#ffc54d"></span></div>{% endfor %}</div>
+      <div class="dx-labels">{% for b in scale_bars %}<em>{{ b.label }}</em>{% endfor %}</div>
+    </article>
+  </div>
+
+  <div class="dx-lists">
+    <article class="dx-card"><div class="dx-card-head"><h2>လက်ရှိဖြစ်စဉ်</h2></div><strong class="dx-big">{{ active_count }}</strong>{% for row in counts %}<p>{{ row.status_display }}: {{ row.total }}</p>{% endfor %}</article>
+    <article class="dx-card"><div class="dx-card-head"><h2>မိမိတာဝန်ချိန်</h2></div>{% for duty in duties %}<p>{{ duty.task }}<br><small>{{ duty.starts_at|date:"d/m/Y h:i A" }} → {{ duty.ends_at|date:"d/m/Y h:i A" }}</small></p>{% empty %}<p>တာဝန်စာရင်းမရှိသေးပါ။</p>{% endfor %}</article>
+    <article class="dx-card"><div class="dx-card-head"><h2>အသိပေးချက်</h2></div><div id="live-notices">{% for notice in notices %}<p><a href="{% url 'emergency:incident' notice.incident_id %}">{{ notice.message }}</a> {% if not notice.read_at %}<form method="post" action="{% url 'emergency:poll' %}" class="notice-form">{% csrf_token %}<input type="hidden" name="notice" value="{{ notice.pk }}"><button>ဖတ်ပြီး</button></form>{% else %}ဖတ်ပြီး{% endif %}</p>{% empty %}<p>အသိပေးချက်မရှိပါ။</p>{% endfor %}</div><small>ဖတ်ပြီးခြင်းသည် စေလွှတ်အမိန့်လက်ခံခြင်း မဟုတ်ပါ။</small></article>
+    <article class="dx-card"><div class="dx-card-head"><h2>နောက်ဆုံးဖြစ်စဉ်များ</h2></div><div id="live-incidents">{% for i in incidents %}<p><a href="{% url 'emergency:incident' i.pk %}">#{{ i.pk }} · {{ i.address|default:'GPS နေရာ' }}</a> — {{ i.status_display }}</p>{% empty %}<p>ဖြစ်စဉ်မရှိသေးပါ။</p>{% endfor %}</div></article>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>
 const notices=document.getElementById('live-notices');
 notices.addEventListener('submit',async e=>{if(!e.target.matches('.notice-form'))return;e.preventDefault();const r=await fetch(e.target.action,{method:'POST',body:new FormData(e.target)});if(r.ok)poll();});
 window.addEventListener('emergency-update',e=>{

@@ -1,5 +1,6 @@
 import csv
 import json
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -30,20 +31,52 @@ def register(request):
     return render(request,'emergency/form.html',{'form':form,'title':'Citizen အကောင့်ဖွင့်ရန်'})
 
 
+def _bars(items):
+    """Turn (label, value) pairs into dicts with a 0-100 bar height for CSS charts."""
+    peak=max([v for _,v in items] or [0]) or 1
+    return [{'label':l,'value':v,'height':max(4,round(v*100/peak)) if v else 2} for l,v in items]
+
+
+def _donut(part,whole):
+    """Percent for an SVG donut (r=15.9155 gives a circumference of 100)."""
+    pct=round(part*100/whole) if whole else 0
+    return {'part':part,'whole':whole,'pct':pct}
+
+
 @login_required
 def dashboard(request):
     user=request.user
     incidents=incidents_for(user)
     counts=list(incidents.values('status').annotate(total=Count('pk')))
     for row in counts:row['status_display']=dict(FireReport.STATUS_CHOICES).get(row['status'],row['status'])
+    total_incidents=incidents.count()
+    active_count=incidents.exclude(status__in=['Resolved','False Alarm']).count()
+    resolved_count=incidents.filter(status='Resolved').count()
+    total_stations=FireStation.objects.count()
+    available_stations=FireStation.objects.filter(status='Active').count()
+    dispatches_today=Deployment.objects.filter(incident__in=incidents,ordered_at__date=timezone.localdate()).count()
+    today=timezone.localdate()
+    days=[today-timedelta(days=n) for n in range(6,-1,-1)]
+    per_day={d:0 for d in days}
+    for reported in incidents.filter(reported_at__date__gte=days[0]).values_list('reported_at',flat=True):
+        key=timezone.localtime(reported).date()
+        if key in per_day:per_day[key]+=1
+    scale_counts=dict(incidents.order_by().values_list('fire_scale').annotate(total=Count('pk')))
     return render(request,'emergency/dashboard.html',{'incidents':incidents.order_by('-reported_at')[:10],
-        'counts':counts,'active_count':incidents.exclude(status__in=['Resolved','False Alarm']).count(),
+        'counts':counts,'active_count':active_count,
         'duties':Duty.objects.filter(employee=user,ends_at__gt=timezone.now()).order_by('starts_at')[:10],
         'notices':Notice.objects.filter(recipient=user).order_by('-pk')[:20],
         'managed_stations':managed_station_ids(user),'titles':TITLES,
         'high_severity_fires':incidents.filter(fire_scale=5).exclude(status__in=['Resolved','False Alarm']).count(),
-        'available_stations':FireStation.objects.filter(status='Active').count(),
-        'total_dispatches_today':Deployment.objects.filter(incident__in=incidents,ordered_at__date=timezone.localdate()).count()})
+        'available_stations':available_stations,
+        'total_dispatches_today':dispatches_today,
+        'total_incidents':total_incidents,'total_stations':total_stations,
+        'resolved_donut':_donut(resolved_count,total_incidents),
+        'active_donut':_donut(active_count,total_incidents),
+        'station_donut':_donut(available_stations,total_stations),
+        'status_bars':_bars([(row['status_display'],row['total']) for row in counts]),
+        'scale_bars':_bars([('L%d'%n,scale_counts.get(n,0)) for n in range(6)]),
+        'trend_bars':_bars([(d.strftime('%d/%m'),per_day[d]) for d in days])})
 
 
 def scope(request,kind):
