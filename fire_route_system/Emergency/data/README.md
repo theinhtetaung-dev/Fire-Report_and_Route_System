@@ -1,5 +1,51 @@
 # Mandalay real-world reference seed
 
+## Historical Myanmar fire incidents, 2024–2026
+
+`myanmar_historical_fires_2024_2026.json` contains ten selected news-reported fires:
+three in 2024, four in 2025, and three in 2026. This is a small reference sample,
+not national coverage. The four 2025 events occurred on 10 January and share a
+single article; each has its own stable event key. Sources include Global New
+Light of Myanmar, Ministry of Information, and Myanmar International TV reports.
+Every record retains its source URL and publication date, Myanmar summary,
+location, occurrence time in Myanmar time, and reported casualty figures.
+
+```powershell
+$env:DB_ENGINE='sqlite' # Use the database used by your server.
+..\.venv\Scripts\python.exe -B manage.py migrate
+..\.venv\Scripts\python.exe -B manage.py seed_myanmar_incidents --dry-run
+..\.venv\Scripts\python.exe -B manage.py seed_myanmar_incidents
+# Optional: select individual years.
+..\.venv\Scripts\python.exe -B manage.py seed_myanmar_incidents --years 2024 2025
+```
+
+The importer preserves the source-reported occurrence time in `reported_at`;
+the article publication date stays in source metadata. It matches by unique
+`history:mm:<date>:<event>` keys and preserves local edits and dates on reruns.
+Invalid dates, levels, coordinates, source URLs, and duplicate keys roll back the
+whole import. `--file` accepts a replacement JSON snapshot in the same format.
+
+Imported references are `Resolved` and closed as an archive policy, so they do
+not enter the live map, pending queue, or active-incident counts. `closed_at` is
+the archive import time, **not** a claimed extinguishing time or official approval.
+Source-reported extinguishing/control times are stored separately in metadata.
+No reporters, notifications, deployments, vehicles, staff assignments, or final
+reports are invented. Sources do not establish dispatch plans or station ownership.
+
+Unknown fire levels are stored as `null` and displayed as unknown, not Level 0.
+Unknown GPS and casualty values also remain `null`. A source's mention of Level
+1/2 fire vehicles does not establish the incident's official level. A responding
+station's township does not establish the incident's township. Approximate
+times remain labelled in metadata. Pyinmana market reports disagree about the
+start/extinguishing times; the seed retains both reports, uses the GNLM/MOI start
+time, and leaves the extinguishing time unknown. Other events do not have exact
+extinguishing times inferred from durations or control times.
+
+Find the imported records at `/emergency/incidents/?source=historical` and use
+start/end dates to select a year. Incident details show the source and archive
+label. History appears in reports by its original year. These news-based records
+still require review against official fire-service records for operational use.
+
 ## Township and town references
 
 `mandalay_locations_mimu.json` contains 28 township and 35 town records extracted

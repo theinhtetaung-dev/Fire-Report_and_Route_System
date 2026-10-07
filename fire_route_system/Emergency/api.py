@@ -13,6 +13,9 @@ def serialize(incident,private=False):
     data['closed']=bool(incident.closed_at)
     data['status_display']=incident.status_display
     data['scale_display']=incident.scale_display
+    if incident.source_key and incident.source_key.startswith('history:'):
+        data['historical']=True
+        data['source_url']=incident.source_data.get('url')
     if private:data.update(reporter_phone=incident.reporter_phone,user_id=incident.user_id)
     return data
 

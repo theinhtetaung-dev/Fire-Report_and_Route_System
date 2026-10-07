@@ -160,6 +160,7 @@ def report(request):
 
 def filter_incidents(request):
     query=incidents_for(request.user)
+    if request.GET.get('source')=='historical':query=query.filter(source_key__startswith='history:')
     if request.GET.get('q'):query=query.filter(Q(address__icontains=request.GET['q'])|Q(reporter_phone__icontains=request.GET['q']))
     if request.GET.get('status'):query=query.filter(status=request.GET['status'])
     if request.GET.get('level','') in ['0','1','2','3','4','5']:query=query.filter(fire_scale=int(request.GET['level']))
