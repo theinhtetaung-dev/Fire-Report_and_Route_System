@@ -4,6 +4,27 @@ from django.db.models import Q
 from DataAccess.models import User, FireStation, FireReport
 
 
+class MyanmarLocation(models.Model):
+    pcode = models.CharField(max_length=20, unique=True)
+    kind = models.CharField(max_length=10, choices=[('township', 'Township'), ('town', 'Town')])
+    name_en = models.CharField(max_length=150)
+    name_my = models.CharField(max_length=150, blank=True)
+    region_pcode = models.CharField(max_length=20)
+    region_name_en = models.CharField(max_length=100)
+    district_pcode = models.CharField(max_length=20)
+    district_name_en = models.CharField(max_length=100)
+    township_pcode = models.CharField(max_length=20)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    source_data = models.JSONField(default=dict)
+
+    class Meta:
+        ordering = ['kind', 'name_en']
+
+    def __str__(self):
+        return f'{self.name_my or self.name_en} ({self.pcode})'
+
+
 class VehicleType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     def __str__(self): return self.name

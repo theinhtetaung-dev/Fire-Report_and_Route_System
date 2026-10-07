@@ -105,6 +105,10 @@ def edit(request,kind,pk=None):
     if kind=='leaves':obj.employee=user
     if kind=='posts' and not pk:obj.author=user;obj.station_id=user.station_id or (ids[0] if ids else None)
     form=form_type(request.POST or None,instance=obj)
+    townships=[]
+    if kind=='stations':
+        form.fields['township'].widget.attrs['list']='myanmar-townships'
+        townships=MyanmarLocation.objects.filter(kind='township').only('name_my','name_en','pcode')
     if kind=='posts' and not user.is_admin:
         form.fields['station'].queryset=FireStation.objects.filter(pk__in=ids)
     if kind=='staff' and not user.is_admin:
@@ -133,7 +137,7 @@ def edit(request,kind,pk=None):
                 saved.full_clean();saved.save();services.audit(user,'save',saved)
             messages.success(request,'သိမ်းဆည်းပြီးပါပြီ။');return redirect('emergency:list',kind=kind)
         except (ValidationError,IntegrityError) as error:form.add_error(None,error if isinstance(error,ValidationError) else 'ဒေတာထပ်နေသည်။')
-    return render(request,'emergency/form.html',{'form':form,'title':TITLES[kind]})
+    return render(request,'emergency/form.html',{'form':form,'title':TITLES[kind],'township_references':townships})
 
 
 def posts(request):
