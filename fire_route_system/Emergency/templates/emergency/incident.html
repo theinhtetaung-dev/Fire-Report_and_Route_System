@@ -3,19 +3,25 @@
 
 {% block content %}
 <div class="cad-dash-header" style="margin-bottom: 1.5rem;">
-  <div>
-    <h1 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-      <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
-      မီးလောင်မှုဖြစ်စဉ် ID: {{ incident.pk }}
-    </h1>
-    <p class="cad-dash-subtitle">
-      {{ incident.address|default:'GPS တည်နေရာ' }} · {{ incident.scale_display }} · 
-      <span id="incident-state" class="cad-badge {% if incident.status == 'Dispatched' %}cad-badge-scale-4{% elif incident.status == 'Confirmed' %}cad-badge-scale-2{% elif incident.status == 'Resolved' %}cad-badge-active{% elif incident.status == 'False Alarm' %}cad-badge-scale-1{% else %}cad-badge-scale-0{% endif %}">
-        {{ incident.status_display }}
-      </span>
-      {% if incident.closed_at %} · စာရင်းပိတ်ချိန်: {{ incident.closed_at|date:"d-m-Y h:i A" }}{% endif %}
-      {% if incident.reporter_phone %} · သတင်းပို့သူဖုန်း: <a href="tel:{{ incident.reporter_phone }}" style="font-weight: 600;">{{ incident.reporter_phone }}</a>{% endif %}
-    </p>
+  <div style="display: flex; align-items: center; gap: 0.85rem;">
+    <a href="{% url 'emergency:incident_list' %}" onclick="if(window.history.length>1){window.history.back();return false;}" class="cad-btn cad-btn-secondary cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.8rem; font-weight: 600; text-decoration: none;" title="နောက်သို့ (Back)">
+      <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-arrow-left"/></svg>
+      <span>နောက်သို့</span>
+    </a>
+    <div>
+      <h1 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+        <svg class="cad-icon cad-icon-emergency"><use href="#cad-icon-flame"/></svg>
+        မီးလောင်မှုဖြစ်စဉ် ID: {{ incident.pk }}
+      </h1>
+      <p class="cad-dash-subtitle">
+        {{ incident.address|default:'GPS တည်နေရာ' }} · {{ incident.scale_display }} · 
+        <span id="incident-state" class="cad-badge {% if incident.status == 'Dispatched' %}cad-badge-scale-4{% elif incident.status == 'Confirmed' %}cad-badge-scale-2{% elif incident.status == 'Resolved' %}cad-badge-active{% elif incident.status == 'False Alarm' %}cad-badge-scale-1{% else %}cad-badge-scale-0{% endif %}">
+          {{ incident.status_display }}
+        </span>
+        {% if incident.closed_at %} · စာရင်းပိတ်ချိန်: {{ incident.closed_at|date:"d-m-Y h:i A" }}{% endif %}
+        {% if incident.reporter_phone %} · သတင်းပို့သူဖုန်း: <a href="tel:{{ incident.reporter_phone }}" style="font-weight: 600;">{{ incident.reporter_phone }}</a>{% endif %}
+      </p>
+    </div>
   </div>
   <div style="display: flex; gap: 0.5rem; align-items: center;">
     {% if user.is_admin or user.is_station_admin or user.is_firefighter %}

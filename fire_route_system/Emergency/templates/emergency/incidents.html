@@ -1,9 +1,15 @@
 {% extends 'emergency/base.html' %}
 {% block content %}
 <div class="cad-page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
-  <div>
-    <h1 style="margin: 0 0 0.25rem 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text-main);">မီးလောင်ဖြစ်စဉ်များ</h1>
-    <p style="margin: 0; color: var(--cad-text-muted); font-size: 0.9rem;">လက်ရှိနှင့် ယခင် မီးလောင်မှုဖြစ်စဉ်မှတ်တမ်းများ</p>
+  <div style="display: flex; align-items: center; gap: 0.85rem;">
+    <a href="javascript:history.back()" class="cad-btn cad-btn-secondary cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.8rem; font-weight: 600; text-decoration: none;" title="နောက်သို့ (Back)">
+      <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-arrow-left"/></svg>
+      <span>နောက်သို့</span>
+    </a>
+    <div>
+      <h1 style="margin: 0 0 0.25rem 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text-main);">မီးလောင်ဖြစ်စဉ်များ</h1>
+      <p style="margin: 0; color: var(--cad-text-muted); font-size: 0.9rem;">လက်ရှိနှင့် ယခင် မီးလောင်မှုဖြစ်စဉ်မှတ်တမ်းများ</p>
+    </div>
   </div>
   {% if user.is_admin %}
   <a class="cad-btn cad-btn-emergency" href="{% url 'emergency:queue' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">

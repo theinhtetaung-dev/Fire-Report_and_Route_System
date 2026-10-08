@@ -1,8 +1,14 @@
 {% extends 'emergency/base.html' %}
 {% block content %}
-<div class="cad-page-header" style="margin-bottom: 1.25rem;">
-  <h1 style="margin: 0 0 0.25rem 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text-main);">နေ့ / လ / နှစ် အစီရင်ခံစာ</h1>
-  <p style="margin: 0; color: var(--cad-text-muted); font-size: 0.9rem;">ကာလအလိုက် မီးလောင်မှုစာရင်းအင်း အစီရင်ခံစာ</p>
+<div class="cad-page-header" style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
+  <a href="javascript:history.back()" class="cad-btn cad-btn-secondary cad-btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.8rem; font-weight: 600; text-decoration: none;" title="နောက်သို့ (Back)">
+    <svg class="cad-icon cad-icon-sm"><use href="#cad-icon-arrow-left"/></svg>
+    <span>နောက်သို့</span>
+  </a>
+  <div>
+    <h1 style="margin: 0 0 0.25rem 0; font-size: 1.6rem; font-weight: 800; color: var(--cad-text-main);">နေ့ / လ / နှစ် အစီရင်ခံစာ</h1>
+    <p style="margin: 0; color: var(--cad-text-muted); font-size: 0.9rem;">ကာလအလိုက် မီးလောင်မှုစာရင်းအင်း အစီရင်ခံစာ</p>
+  </div>
 </div>
 
 {% include 'emergency/filters.html' %}

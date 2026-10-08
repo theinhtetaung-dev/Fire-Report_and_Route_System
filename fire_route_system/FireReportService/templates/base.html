@@ -213,6 +213,10 @@
                     <button class="cad-mobile-toggle" onclick="toggleCadSidebar()" aria-label="Open Navigation">
                         <svg class="cad-icon"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
+                    <button class="cad-btn cad-btn-secondary cad-btn-sm cad-topbar-back-btn" onclick="if(window.history.length>1){window.history.back();}else{window.location.href='/emergency/';}" title="နောက်သို့ (Back)" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.65rem; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none;">
+                        <svg class="cad-icon cad-icon-xs"><use href="#cad-icon-arrow-left"/></svg>
+                        <span id="topbar-back-text">နောက်သို့</span>
+                    </button>
                     <div class="cad-live-beacon-pill" title="Live CAD Operations System Online">
                         <span class="cad-beacon-dot"></span>
                         <span class="cad-beacon-label">LIVE</span>
