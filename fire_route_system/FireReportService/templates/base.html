@@ -741,6 +741,122 @@
                 window.updateUI();
             }
         });
+
+        // ── Responsive CAD Alert & Confirmation System (SweetAlert2) ──
+        window.cadAlert = function(title, text, icon) {
+            icon = icon || 'info';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            return Swal.fire({
+                title: title || '',
+                text: text || '',
+                icon: icon,
+                customClass: {
+                    popup: 'cad-swal-popup',
+                    title: 'cad-swal-title',
+                    htmlContainer: 'cad-swal-html',
+                    confirmButton: 'cad-swal-confirm-btn'
+                },
+                buttonsStyling: false,
+                background: isDark ? '#131d31' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#1e293b'
+            });
+        };
+
+        window.cadToast = function(title, icon) {
+            icon = icon || 'success';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'cad-swal-toast'
+                },
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#1e293b'
+            });
+            return Toast.fire({
+                icon: icon,
+                title: title
+            });
+        };
+
+        window.cadConfirm = function(options) {
+            options = options || {};
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const isMy = (localStorage.getItem('lang') || 'my') === 'my';
+            const defaults = {
+                title: isMy ? 'အတည်ပြုရန် လိုအပ်ပါသည်' : 'Confirmation Required',
+                text: isMy ? 'ဤလုပ်ဆောင်ချက်ကို ဆက်လက်လုပ်ဆောင်ရန် သေချာပါသလား။' : 'Are you sure you want to proceed with this action?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: isMy ? 'သေချာပါသည်' : 'Yes, Proceed',
+                cancelButtonText: isMy ? 'မလုပ်တော့ပါ' : 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'cad-swal-popup',
+                    title: 'cad-swal-title',
+                    htmlContainer: 'cad-swal-html',
+                    confirmButton: 'cad-swal-confirm-btn',
+                    cancelButton: 'cad-swal-cancel-btn'
+                },
+                buttonsStyling: false,
+                background: isDark ? '#131d31' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#1e293b'
+            };
+            return Swal.fire(Object.assign(defaults, options));
+        };
+
+        // Automatically replace native confirm() and intercept forms
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form[onsubmit*="confirm("]').forEach(form => {
+                const onsubmitAttr = form.getAttribute('onsubmit');
+                const match = onsubmitAttr.match(/confirm\(['"](.*?)['"]\)/);
+                const confirmMsg = match ? match[1] : 'Are you sure?';
+                form.removeAttribute('onsubmit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const isReject = confirmMsg.includes('Fake') || confirmMsg.includes('ပယ်ဖျက်') || confirmMsg.includes('Reject') || form.action.includes('reject');
+                    const isDelete = confirmMsg.includes('Delete') || confirmMsg.includes('ဖျက်') || form.action.includes('delete');
+                    const isMy = (localStorage.getItem('lang') || 'my') === 'my';
+                    
+                    let title = isMy ? 'အတည်ပြုရန်' : 'Confirm Action';
+                    if (isReject) title = isMy ? 'သတင်းမှားအဖြစ် ပယ်ဖျက်မည်' : 'Reject as Fake Report';
+                    else if (isDelete) title = isMy ? 'ပယ်ဖျက်ရန် အတည်ပြုပါ' : 'Confirm Deletion';
+
+                    cadConfirm({
+                        title: title,
+                        text: confirmMsg,
+                        icon: isReject || isDelete ? 'warning' : 'question',
+                        confirmButtonText: isMy ? (isReject ? 'ပယ်ဖျက်မည်' : (isDelete ? 'ဖျက်မည်' : 'သေချာပါသည်')) : (isReject ? 'Reject' : (isDelete ? 'Delete' : 'Confirm')),
+                        cancelButtonText: isMy ? 'မလုပ်တော့ပါ' : 'Cancel'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
     </script>
+    {% if messages %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for message in messages %}
+            {% if 'error' in message.tags %}
+                cadToast("{{ message|escapejs }}", "error");
+            {% elif 'warning' in message.tags %}
+                cadToast("{{ message|escapejs }}", "warning");
+            {% elif 'success' in message.tags %}
+                cadToast("{{ message|escapejs }}", "success");
+            {% else %}
+                cadToast("{{ message|escapejs }}", "info");
+            {% endif %}
+        {% endfor %}
+    });
+    </script>
+    {% endif %}
 </body>
 </html>

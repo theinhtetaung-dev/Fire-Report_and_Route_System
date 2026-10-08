@@ -1336,4 +1336,103 @@ html, body {
     box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.25) !important;
 }
 
+/* ==========================================================================
+   CAD SweetAlert2 Custom Responsive Theme
+   ========================================================================== */
+.cad-swal-popup {
+    border-radius: 16px !important;
+    padding: 1.5rem 1.25rem !important;
+    font-family: inherit !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    width: 90% !important;
+    max-width: 440px !important;
+}
+
+[data-theme="dark"] .cad-swal-popup {
+    background: #131d31 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.cad-swal-title {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: inherit !important;
+    padding: 0.5rem 0 0 !important;
+}
+
+.cad-swal-html {
+    font-size: 0.925rem !important;
+    color: var(--cad-text-secondary, #64748b) !important;
+    line-height: 1.5 !important;
+    margin: 0.75rem 0 1.25rem !important;
+}
+
+[data-theme="dark"] .cad-swal-html {
+    color: #94a3b8 !important;
+}
+
+.cad-swal-confirm-btn {
+    border-radius: 10px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.25rem !important;
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3) !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+.cad-swal-confirm-btn:hover {
+    background: #b91c1c !important;
+    transform: translateY(-1px) !important;
+}
+
+.cad-swal-cancel-btn {
+    border-radius: 10px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.25rem !important;
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+}
+
+[data-theme="dark"] .cad-swal-cancel-btn {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.cad-swal-cancel-btn:hover {
+    background: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .cad-swal-cancel-btn:hover {
+    background: #334155 !important;
+}
+
+/* CAD Toast Styling */
+.cad-swal-toast {
+    border-radius: 12px !important;
+    font-family: inherit !important;
+    padding: 0.75rem 1rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="dark"] .cad-swal-toast {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+
 
