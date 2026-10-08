@@ -393,12 +393,13 @@
 
         // Load active fire markers
         const fires = {{ fire_pins_json|safe }};
+        const INCIDENT_FLAME_ICON = '/static/dashboard/img/incident_flame.svg';
         fires.forEach(f => {
             const fireIcon = L.divIcon({
                 className: 'custom-marker-fire',
-                html: `<div class="marker-pin-fire scale-${f.fire_scale}"><span class="inner-dot"></span><span class="pulse-ring"></span></div>`,
-                iconSize: [32, 32],
-                iconAnchor: [16, 16]
+                html: `<div class="marker-pin-fire scale-${f.fire_scale}" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;position:relative;"><img src="${INCIDENT_FLAME_ICON}" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));"/></div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
             });
 
             const popupHTML = `
