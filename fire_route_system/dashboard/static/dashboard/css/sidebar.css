@@ -1,0 +1,31 @@
+/* Compact navigation with consistent label padding and clear group spacing. */
+:root { --sidebar-width: 256px; }
+.cad-sidebar { flex-shrink: 0; }
+.cad-sidebar .cad-brand-container { padding: 16px 16px 12px; gap: 10px; border-top-width: 3px; flex-shrink: 0; }
+.cad-sidebar .cad-brand-link { gap: 10px; }
+.cad-sidebar .cad-brand-emblem { width: 34px; height: 34px; flex-shrink: 0; }
+.cad-sidebar .cad-brand-title { font-size: 1rem; line-height: 1.4; }
+.cad-sidebar .cad-brand-subtitle { font-size: .65rem; letter-spacing: .04em; line-height: 1.8; }
+.cad-sidebar .cad-status-telemetry { padding: 6px 9px; border-radius: 8px; }
+.cad-sidebar .cad-live-status, .cad-sidebar .cad-live-clock { font-size: .6875rem; }
+.cad-sidebar .cad-nav-scroll { min-height: 0; padding: 12px 10px 16px; gap: 18px; scrollbar-width: thin; }
+.cad-sidebar [data-emergency-navigation] { display: flex; flex-direction: column; gap: 18px; }
+.cad-sidebar .cad-nav-section { gap: 2px; flex-shrink: 0; }
+.cad-sidebar .cad-nav-section-title { padding: 0 12px 6px; font-size: .6875rem; font-weight: 500; text-transform: none; letter-spacing: .02em; line-height: 1.8; }
+.cad-sidebar .cad-nav-item { min-height: 40px; margin: 0; padding: 7px 12px; gap: 8px; border: 1px solid transparent; border-radius: 20px; font-size: .8125rem; font-weight: 500; line-height: 1.8; box-shadow: none; }
+.cad-sidebar .cad-nav-item-content { min-width: 0; gap: 10px; }
+.cad-sidebar .cad-nav-item-content > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.cad-sidebar .cad-nav-icon { display: flex; align-items: center; justify-content: center; width: 18px; flex: 0 0 18px; }
+.cad-sidebar .cad-nav-icon .cad-icon { width: 18px; height: 18px; }
+.cad-sidebar .cad-nav-item.active { background: #ffffff16; color: #f3cf87; border-color: #ffffff12; box-shadow: none; }
+.cad-sidebar .cad-nav-emergency { border-radius: 12px; font-weight: 700; padding-block: 9px; background: var(--cad-red-primary); }
+.cad-sidebar .cad-nav-emergency:hover { background: var(--cad-red-hover); }
+.cad-sidebar .cad-badge { flex-shrink: 0; font-size: .6875rem; padding: 2px 6px; }
+.cad-sidebar .cad-sidebar-footer { flex-shrink: 0; flex-direction: row; padding: 10px; gap: 6px; }
+.cad-sidebar .cad-toggle-btn { min-width: 0; min-height: 40px; padding: 6px 8px; gap: 6px; font-size: .75rem; border-radius: 10px; line-height: 1.8; }
+@media (pointer: coarse) {
+    .cad-sidebar .cad-nav-item, .cad-sidebar .cad-toggle-btn { min-height: 44px; }
+}
+@media (max-width: 768px) {
+    .cad-sidebar { width: min(var(--sidebar-width), 88vw); min-width: 0; }
+}

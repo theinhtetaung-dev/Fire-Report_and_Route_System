@@ -1,0 +1,104 @@
+/* Compact default density: reduce layout space by ~20%, without scaling the
+   document. Keep the user's root font preference and existing breakpoints.
+   Body text >= 14px and supporting text >= 12px at a 16px browser default.
+   Controls retain 44px targets; Myanmar text retains generous line spacing. */
+:root {
+    --sidebar-width: 280px;
+    --density-space-1: .2rem;
+    --density-space-2: .4rem;
+    --density-space-3: .6rem;
+    --density-space-4: .8rem;
+    --density-space-5: 1rem;
+    --density-space-6: 1.2rem;
+    --density-space-7: 1.4rem;
+    --density-text: .875rem;
+    --density-small: .75rem;
+    --density-target: 2.75rem;
+}
+body { font-size: var(--density-text); }
+.cad-sidebar { flex-shrink: 0; }
+.cad-brand-container { padding: var(--density-space-6) var(--density-space-5) var(--density-space-5); }
+.cad-brand-emblem { width: 38px; height: 38px; }
+.cad-brand-title { font-size: 1rem; line-height: 1.5; }
+.cad-brand-subtitle, .cad-nav-section-title, .cad-live-status, .cad-live-clock,
+.cad-notification-pill, .cad-badge, .cad-input-hint, .cad-input-error,
+.cad-dash-subtitle, .cad-kpi-label, .cad-kpi-trend { font-size: var(--density-small); }
+.cad-status-telemetry { padding: var(--density-space-2) var(--density-space-3); flex-wrap: wrap; }
+.cad-nav-scroll { padding: var(--density-space-4) var(--density-space-3); gap: var(--density-space-5); }
+.cad-nav-item { min-height: var(--density-target); padding: var(--density-space-2) var(--density-space-3); margin-bottom: var(--density-space-1); }
+.cad-nav-item-content, .cad-brand-text { min-width: 0; }
+.cad-nav-item-content { gap: var(--density-space-2); overflow-wrap: anywhere; }
+.cad-sidebar-footer { padding: var(--density-space-4) var(--density-space-3); }
+.cad-topbar { min-height: 56px; padding: var(--density-space-2) var(--density-space-7); gap: var(--density-space-3); flex-wrap: wrap; }
+.cad-topbar-right { gap: var(--density-space-3); flex-wrap: wrap; max-width: 100%; }
+.cad-content-area { padding: var(--density-space-7); gap: var(--density-space-6); }
+.cad-panel-header { padding: var(--density-space-4) var(--density-space-5); flex-wrap: wrap; }
+.cad-panel-body, .cad-modal-body { padding: var(--density-space-5); }
+.cad-panel-title { font-size: 1rem; }
+.cad-dash-header { margin-bottom: var(--density-space-6); gap: var(--density-space-4); }
+.cad-dash-title, .emergency-console h1 { font-size: 1.4rem; line-height: 1.6; }
+.cad-kpi-grid, .cad-middle-grid, .cad-tables-grid { gap: var(--density-space-4); }
+.cad-kpi-grid { margin-bottom: var(--density-space-7); grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cad-kpi-card { padding: var(--density-space-6) var(--density-space-5); gap: var(--density-space-4); }
+.cad-kpi-icon-wrap { width: 42px; height: 42px; font-size: 1.3rem; }
+.cad-kpi-value { font-size: 1.8rem; margin: var(--density-space-2) 0; }
+.cad-table th, .cad-table td { padding: var(--density-space-3) var(--density-space-4); }
+.cad-filter-bar { padding: var(--density-space-4) var(--density-space-5); gap: var(--density-space-4); }
+.cad-search-input-group { min-width: min(100%, 12rem); }
+.cad-btn, .btn, .cad-toggle-btn, .cad-mobile-toggle, .cad-modal-close,
+.cad-topbar a, .cad-input, .cad-select, .cad-textarea, .cad-form-control {
+    min-height: var(--density-target);
+}
+.cad-btn, .btn, .cad-mobile-toggle, .cad-modal-close { min-width: var(--density-target); }
+.cad-btn, .btn { padding: var(--density-space-2) var(--density-space-4); font-size: var(--density-text); white-space: normal; }
+.cad-input, .cad-select, .cad-textarea, .cad-form-control { font-size: 1rem; }
+.emergency-console { font-size: var(--density-text); line-height: 1.85; }
+.emergency-console h2 { font-size: 1rem; }
+.emergency-console section, .emergency-console .card { padding: var(--density-space-6); margin-block: var(--density-space-4); }
+.emergency-console .page-heading { gap: var(--density-space-4); margin-bottom: var(--density-space-6); }
+.emergency-console .grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 208px), 1fr)); gap: var(--density-space-6); }
+.emergency-console .filters { padding: var(--density-space-4); gap: var(--density-space-4); }
+.emergency-console .filters > * { min-width: 0; }
+.emergency-console input:not([type=checkbox]), .emergency-console select,
+.emergency-console textarea { min-height: var(--density-target); padding: var(--density-space-2) var(--density-space-3); font-size: 1rem; }
+.emergency-console button, .emergency-console .button, .emergency-console .pagination a {
+    min-height: var(--density-target); min-width: var(--density-target);
+    padding: var(--density-space-2) var(--density-space-4); font-size: var(--density-text);
+}
+.emergency-console input[type=checkbox] { width: 24px; height: 24px; }
+.emergency-console summary { min-height: var(--density-target); padding-block: var(--density-space-2); }
+.emergency-console table { font-size: var(--density-text); }
+.emergency-console th, .emergency-console td { padding: var(--density-space-4) var(--density-space-5); }
+.emergency-console .field { margin-bottom: var(--density-space-5); }
+.emergency-console .form-actions { padding-top: var(--density-space-5); margin-top: var(--density-space-6); }
+.emergency-console .location-tools { padding: var(--density-space-4); margin-block: var(--density-space-6); }
+.emergency-console .table-wrap { margin-block: var(--density-space-4); }
+.emergency-console .page-eyebrow, .emergency-console .status-tag,
+.emergency-console small, .emergency-console .field .helptext { font-size: var(--density-small); }
+.auth-card { padding: 1.8rem 1.6rem; }
+.auth-header { margin-bottom: var(--density-space-6); }
+.brand-title { font-size: 1.15rem; }
+.brand-subtitle, .auth-alert, .form-label { font-size: var(--density-text); }
+.form-group { margin-bottom: var(--density-space-5); }
+.auth-input { font-size: 1rem; min-height: var(--density-target); height: auto; padding-block: var(--density-space-3); }
+.auth-icon-btn, .pwd-toggle-btn, .quick-role-card, .emergency-link { min-width: var(--density-target); min-height: var(--density-target); }
+.pwd-toggle-btn { width: var(--density-target); height: var(--density-target); }
+.quick-roles-section { padding-top: var(--density-space-5); }
+.brand-badge, .quick-roles-title, .quick-roles-hint, .role-name, .role-tag,
+.auth-footer, .auth-telemetry { font-size: var(--density-small); }
+@media (max-width: 1200px) {
+    .cad-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+    .cad-sidebar { width: min(var(--sidebar-width), 88vw); min-width: 0; }
+    .cad-topbar { padding: var(--density-space-2) var(--density-space-3); }
+    .cad-topbar-left, .cad-topbar-right { flex-shrink: 1; }
+    .cad-content-area { padding: var(--density-space-4); gap: var(--density-space-4); }
+    .cad-panel-header, .cad-panel-body, .emergency-console section,
+    .emergency-console .card { padding: var(--density-space-4); }
+    .emergency-console .grid { grid-template-columns: 1fr; gap: var(--density-space-4); }
+}
+@media (max-width: 640px) {
+    .cad-kpi-grid { grid-template-columns: 1fr; }
+    #notice-count { font-size: var(--density-small); overflow-wrap: anywhere; }
+}

@@ -1,0 +1,26 @@
+{% if page_obj %}
+<nav class="route-pagination" aria-label="Pagination">
+    <div class="route-pagination-bar">
+        {% if previous_url %}<a class="route-page-arrow" href="{{ previous_url }}" aria-label="Previous page">‹</a>{% else %}<span class="route-page-arrow" aria-disabled="true" aria-label="Previous page">‹</span>{% endif %}
+        <div class="route-page-numbers">
+            {% for item in pages %}
+                {% if item.current %}<span class="route-page-number route-page-current" aria-current="page" aria-label="Page {{ item.number }}"><span>{{ item.number }}</span></span>
+                {% elif item.url %}<a class="route-page-number" href="{{ item.url }}" aria-label="Page {{ item.number }}">{{ item.number }}</a>
+                {% else %}<span class="route-page-ellipsis" aria-hidden="true">…</span>{% endif %}
+            {% endfor %}
+        </div>
+        {% if next_url %}<a class="route-page-arrow" href="{{ next_url }}" aria-label="Next page">›</a>{% else %}<span class="route-page-arrow" aria-disabled="true" aria-label="Next page">›</span>{% endif %}
+        <form class="route-page-jump" method="get">
+            {% for key, value in query_pairs %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+            <label><span data-pg-en="Go to page" data-pg-my="စာမျက်နှာသို့">Go to page</span><input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" required inputmode="numeric" aria-label="Go to page" autocomplete="off"></label>
+            <button type="submit"><span data-pg-en="Go" data-pg-my="သွားရန်">Go</span><span aria-hidden="true"> ›</span></button>
+        </form>
+    </div>
+    <div class="route-pagination-meta">
+        <span>{{ page_obj.start_index }}–{{ page_obj.end_index }} / {{ page_obj.paginator.count }} <span data-pg-en="records" data-pg-my="ခု">records</span></span>
+        {% if show_per_page %}<label><span data-pg-en="Per page" data-pg-my="စာမျက်နှာတစ်ခုလျှင်">Per page</span><select data-pagination-size aria-label="Records per page">
+            <option value="5" {% if per_page == 5 %}selected{% endif %}>5</option><option value="10" {% if per_page == 10 %}selected{% endif %}>10</option><option value="20" {% if per_page == 20 %}selected{% endif %}>20</option><option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+        </select></label>{% endif %}
+    </div>
+</nav>
+{% endif %}
