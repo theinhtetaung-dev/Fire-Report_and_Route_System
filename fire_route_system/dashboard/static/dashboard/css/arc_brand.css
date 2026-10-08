@@ -1,0 +1,117 @@
+/* Arc-inspired surfaces and controls; shared by the existing Django flows. */
+:root {
+    --cad-red-primary: #b91c32;
+    --cad-red-hover: #991b2c;
+    --cad-red-subtle: #b91c3210;
+    --cad-gold-primary: #c28b27;
+    --cad-gold-hover: #a36d12;
+    --cad-gold-subtle: #c28b2718;
+    --cad-bg-canvas: #f7f5f1;
+    --cad-card-header-bg: #fcfbf8;
+    --cad-border: #e8e3da;
+    --cad-border-subtle: #f2eee7;
+    --cad-text-main: #29221f;
+    --cad-text-secondary: #625851;
+    --cad-text-muted: #756b63;
+    --cad-table-header-bg: #f8f5ef;
+    --cad-table-hover-bg: #fcf9f3;
+    --cad-input-border: #d8d0c5;
+    --sidebar-bg: #30151b;
+    --sidebar-surface: #421f27;
+    --sidebar-border: #ffffff16;
+    --sidebar-muted: #c2a8ae;
+    --sidebar-width: 280px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --font-sans: Inter, "Noto Sans Myanmar", "Myanmar Text", sans-serif;
+    --cad-shadow-sm: 0 2px 6px #38231a05;
+    --cad-shadow-md: 0 8px 24px #38231a0c;
+    --transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+[data-theme="dark"] {
+    color-scheme: dark;
+    --cad-bg-canvas: #1c1718;
+    --cad-card-bg: #282122;
+    --cad-card-header-bg: #302728;
+    --cad-border: #443638;
+    --cad-border-subtle: #372c2e;
+    --cad-text-main: #f8f1e9;
+    --cad-text-secondary: #ddd0c6;
+    --cad-text-muted: #b8a8a0;
+    --cad-table-header-bg: #302728;
+    --cad-table-hover-bg: #352b2c;
+    --cad-input-bg: #221b1d;
+    --cad-input-border: #59464a;
+    --cad-red-subtle: #e34b6420;
+    --cad-gold-primary: #e5b75c;
+    --cad-gold-subtle: #e5b75c18;
+}
+html, body, .cad-app-shell { width: 100%; height: 100dvh; }
+/* Keep Leaflet panes and controls inside the content stacking context so
+   the mobile backdrop and navigation always cover the complete map. */
+.cad-main-wrapper { min-width: 0; height: 100dvh; isolation: isolate; z-index: 0; }
+.cad-sidebar { height: 100dvh; }
+.cad-brand-container { padding: 24px 20px 20px; border-top: 4px solid var(--cad-gold-primary); background: none; }
+.cad-brand-title { letter-spacing: -.8px; }
+.cad-brand-emblem { width: 48px; height: 48px; }
+.cad-brand-subtitle { line-height: 1.8; font-size: .72rem; }
+.cad-status-telemetry { border-radius: 10px; background: #ffffff08; padding: 10px 12px; }
+.cad-nav-section-title { color: #cbb7a4; letter-spacing: .04em; line-height: 1.8; }
+.cad-nav-item { margin-bottom: 5px; border-radius: 10px; min-height: 46px; transition: var(--transition); }
+.cad-nav-item:hover { background: #ffffff0d; }
+.cad-nav-item.active { background: #e5b75c18; color: #f3cf87; border-left-color: #e5b75c; }
+.cad-nav-item.active .cad-nav-icon { color: #f3cf87; }
+.cad-nav-emergency { background: var(--cad-red-primary); box-shadow: none; border: 1px solid #ffffff16; }
+.cad-sidebar-footer { gap: 8px; }
+.cad-toggle-btn { min-height: 44px; border-radius: 10px; }
+.cad-topbar { min-height: 68px; height: auto; padding: 12px 28px; gap: 12px; border-top: 3px solid var(--cad-gold-primary); }
+.cad-topbar-left, .cad-breadcrumb { min-width: 0; }
+.cad-topbar-right { gap: 12px; }
+.cad-content-area { padding: 28px; scrollbar-gutter: stable; scroll-behavior: smooth; }
+.cad-panel { border-radius: 16px; box-shadow: var(--cad-shadow-sm); }
+.cad-panel-header { padding: 18px 22px; }
+.cad-panel-body { padding: 22px; }
+.cad-dash-header { border-bottom: none; padding: 0; margin-bottom: 24px; }
+.cad-dash-title { letter-spacing: -.5px; line-height: 1.6; }
+.cad-dash-live-badge { background: var(--cad-gold-subtle); border-color: var(--cad-gold-primary); }
+.cad-dash-live-badge .cad-live-text { color: var(--cad-text-secondary); letter-spacing: 0; }
+.cad-kpi-grid { gap: 16px; }
+.cad-kpi-card { align-items: flex-start; padding: 24px 20px; border-radius: 16px; }
+.cad-kpi-card:hover { transform: none; }
+.cad-kpi-card::before { top: 20px; bottom: 20px; border-radius: 0 4px 4px 0; width: 3px; }
+.cad-kpi-data { min-width: 0; }
+.cad-kpi-label { font-size: .85rem; text-transform: none; letter-spacing: 0; line-height: 1.8; }
+.cad-kpi-value { font-size: 2.25rem; margin: 10px 0; font-variant-numeric: tabular-nums; }
+.cad-kpi-trend { line-height: 1.8; }
+.cad-btn, .btn { min-height: 44px; border-radius: 10px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--cad-gold-primary); outline-offset: 3px; }
+.cad-mobile-toggle { min-width: 44px; min-height: 44px; border-radius: 10px; }
+.cad-skip-link { position: fixed; top: -100px; left: 16px; z-index: 1000; padding: 12px 18px; background: var(--cad-card-bg); color: var(--cad-text-main); border-radius: 8px; }
+.cad-skip-link:focus { top: 12px; }
+@media (max-width: 1100px) {
+    .cad-topbar-right .cad-operator-badge > span:not(.cad-operator-avatar) { display: none; }
+    .cad-breadcrumb > span:not(.cad-breadcrumb-active) { display: none; }
+    .cad-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+    .cad-sidebar { width: min(280px, 88vw); min-width: 0; transition: left .2s ease; }
+    .cad-sidebar:not(.open) { visibility: hidden; }
+    .cad-sidebar.open { visibility: visible; }
+    .cad-topbar { padding: 8px 12px; min-height: 64px; }
+    .cad-content-area { padding: 16px; scrollbar-gutter: auto; }
+    .cad-panel-header, .cad-panel-body { padding: 16px; }
+    .cad-breadcrumb { display: none; }
+    .cad-topbar-right { gap: 8px; }
+    #cad-logout-text { display: none; }
+    .cad-modal-container { max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); }
+}
+@media (max-width: 480px) {
+    .cad-kpi-grid { grid-template-columns: 1fr; }
+    .cad-kpi-card { padding: 20px; }
+    .cad-dash-title { font-size: 1.35rem; }
+    #notice-count { max-width: 130px; white-space: normal; font-size: .7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

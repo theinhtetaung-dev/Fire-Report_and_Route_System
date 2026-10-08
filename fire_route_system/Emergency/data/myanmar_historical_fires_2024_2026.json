@@ -1,0 +1,138 @@
+{
+  "description": "Selected publicly reported Myanmar fires, not a complete national incident register.",
+  "researched_on": "2026-10-07",
+  "incidents": [
+    {
+      "key": "history:mm:2024-02-05:aung-mingala-terminal",
+      "title_my": "အောင်မင်္ဂလာ အဝေးပြေးဝင်း မီးလောင်မှု",
+      "region": "Yangon", "township": "",
+      "address": "အောင်မင်္ဂလာ အဝေးပြေးယာဉ်ရပ်နားစခန်း၊ ရန်ကုန်",
+      "occurred_at": "2024-02-05T05:00:00+06:30",
+      "extinguished_at": null, "controlled_at": "2024-02-05T05:48:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null,
+      "deaths_reported": 3, "injuries_reported": null,
+      "summary_my": "အဝေးပြေးဝင်းရှိ ယာဉ်လိုင်းဂိတ်များ မီးလောင်ခဲ့ပြီး လူသုံးဦး သေဆုံးကြောင်း သတင်းဖော်ပြထားသည်။",
+      "notes_my": "ရင်းမြစ်တွင် မီးထိန်းချုပ်ချိန်သာ ဖော်ပြထားသည်။ မီးလောင်မှုအဆင့်နှင့် တိကျသော GPS ကို မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2024-02-06",
+      "url": "https://www.gnlm.com.mm/fire-at-aung-mingala-coach-terminal-kills-3-men-destroys-some-bus-stations/"
+    },
+    {
+      "key": "history:mm:2024-03-02:kanthaya-house",
+      "title_my": "ကန်သာယာရပ်ကွက် နေအိမ်မီးလောင်မှု",
+      "region": "Mandalay", "township": "Chanmyathazi",
+      "address": "၅၉ လမ်း၊ ကန်သာယာရပ်ကွက်၊ ချမ်းမြသာစည်မြို့နယ်၊ မန္တလေး",
+      "occurred_at": "2024-03-02T05:10:00+06:30",
+      "extinguished_at": "2024-03-02T05:37:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null,
+      "deaths_reported": 1, "injuries_reported": null,
+      "summary_my": "နေအိမ်မီးလောင်မှုကြောင့် အိမ်သုံးလုံး ပျက်စီးပြီး အသက် ၁၄ နှစ်အရွယ် မိန်းကလေးတစ်ဦး သေဆုံးကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "မီးလောင်မှုအဆင့်နှင့် တိကျသော GPS ကို ရင်းမြစ်တွင် မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2024-03-13",
+      "url": "https://www.gnlm.com.mm/mandalay-experiences-35-fires-in-two-month-period/"
+    },
+    {
+      "key": "history:mm:2024-09-13:ahlon-ybs22",
+      "title_my": "အလုံမြို့နယ် YBS ၂၂ ယာဉ်မီးလောင်မှု",
+      "region": "Yangon", "township": "Ahlon",
+      "address": "အောက်ကြည့်မြင်တိုင်လမ်း၊ အလုံမီးပွိုင့်အနီး၊ အလုံမြို့နယ်၊ ရန်ကုန်",
+      "occurred_at": "2024-09-13T10:42:00+06:30",
+      "extinguished_at": null, "fire_scale": null, "latitude": null, "longitude": null,
+      "deaths_reported": 0, "injuries_reported": 0,
+      "summary_my": "YBS ၂၂ ဘတ်စ်ကား မီးလောင်ပျက်စီးခဲ့သော်လည်း ခရီးသည်များ လွတ်မြောက်ခဲ့ပြီး ထိခိုက်သေဆုံးမှုမရှိကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ရင်းမြစ်တွင် ငြှိမ်းသတ်ရန် ၈–၁၀ မိနစ်ခန့် ကြာကြောင်းသာ ဖော်ပြထားသဖြင့် အပြီးသတ်ချိန်ကို မခန့်မှန်းထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2024-09-13",
+      "url": "https://www.gnlm.com.mm/235307-2/"
+    },
+    {
+      "key": "history:mm:2025-01-10:east-dagon-kaytumadi",
+      "title_my": "ဒဂုံအရှေ့ပိုင်း ကေတုမတီလမ်း မီးလောင်မှု",
+      "region": "Yangon", "township": "Dagon Myothit (East)",
+      "address": "ကေတုမတီလမ်း၊ ၁၃ ရပ်ကွက်၊ ဒဂုံမြို့သစ်အရှေ့ပိုင်းမြို့နယ်၊ ရန်ကုန်",
+      "occurred_at": "2025-01-10T11:30:00+06:30", "extinguished_at": "2025-01-10T11:40:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": null,
+      "summary_my": "ကေတုမတီလမ်းတွင် မီးလောင်မှုဖြစ်ပွားခဲ့ပြီး မြို့နယ်မီးသတ်တပ်ဖွဲ့နှင့် ပရဟိတအဖွဲ့များက ငြှိမ်းသတ်ခဲ့ကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ထိခိုက်သေဆုံးမှု၊ မီးလောင်မှုအဆင့်နှင့် GPS ကို မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2025-01-11",
+      "url": "https://www.gnlm.com.mm/yangon-faces-4-fire-breakouts-in-a-single-day/"
+    },
+    {
+      "key": "history:mm:2025-01-10:htantabin-kyaungkone",
+      "title_my": "ကျောင်းကုန်းရွာ မီးလောင်မှု",
+      "region": "Yangon", "township": "", "responding_station_township": "Htantabin",
+      "address": "ရန်ကုန်–ပုသိမ်လမ်းဘေး ကျောင်းကုန်းရွာ၊ ရန်ကုန်တိုင်း",
+      "occurred_at": "2025-01-10T12:45:00+06:30", "extinguished_at": "2025-01-10T13:00:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": null,
+      "summary_my": "ကျောင်းကုန်းရွာ မီးလောင်မှုကို ထန်းတပင်မြို့နယ်မှ မီးသတ်ယာဉ်က ငြှိမ်းသတ်ခဲ့ကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "မြို့နယ်အမည်သည် ရင်းမြစ်တွင် ဖော်ပြသော တုံ့ပြန်မီးသတ်စခန်းကို ရည်ညွှန်းသည်။ GPS မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2025-01-11",
+      "url": "https://www.gnlm.com.mm/yangon-faces-4-fire-breakouts-in-a-single-day/"
+    },
+    {
+      "key": "history:mm:2025-01-10:mayangon-bayintnaung",
+      "title_my": "ဘုရင့်နောင် ကုန်စည်ဒိုင် မီးလောင်မှု",
+      "region": "Yangon", "township": "Mayangon",
+      "address": "ဘုရင့်နောင် ကုန်စည်ဒိုင်၊ မရမ်းကုန်းမြို့နယ်၊ ရန်ကုန်",
+      "occurred_at": "2025-01-10T21:00:00+06:30", "extinguished_at": "2025-01-10T21:12:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": null,
+      "summary_my": "ဘုရင့်နောင် ကုန်စည်ဒိုင်အတွင်း မီးလောင်မှုကို မြို့နယ်မီးသတ်စခန်းက ငြှိမ်းသတ်ခဲ့ကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ထိခိုက်သေဆုံးမှု၊ မီးလောင်မှုအဆင့်နှင့် GPS ကို မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2025-01-11",
+      "url": "https://www.gnlm.com.mm/yangon-faces-4-fire-breakouts-in-a-single-day/"
+    },
+    {
+      "key": "history:mm:2025-01-10:north-okkalapa",
+      "title_my": "မြောက်ဥက္ကလာပ မီးလောင်မှု",
+      "region": "Yangon", "township": "North Okkalapa",
+      "address": "မြောက်ဥက္ကလာပမြို့နယ်၊ ရန်ကုန်",
+      "occurred_at": "2025-01-10T21:25:00+06:30", "extinguished_at": "2025-01-10T21:35:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": null,
+      "summary_my": "မြောက်ဥက္ကလာပမြို့နယ် မီးလောင်မှုကို မြို့နယ်မီးသတ်တပ်ဖွဲ့က ငြှိမ်းသတ်ခဲ့ကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "လမ်းနှင့်ရပ်ကွက်၊ ထိခိုက်သေဆုံးမှု၊ မီးလောင်မှုအဆင့်နှင့် GPS ကို မဖော်ပြထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2025-01-11",
+      "url": "https://www.gnlm.com.mm/yangon-faces-4-fire-breakouts-in-a-single-day/"
+    },
+    {
+      "key": "history:mm:2026-01-23:thanbayakan-refinery",
+      "title_my": "သံပရာကန် ရေနံချက်စက်ရုံ မီးလောင်မှု",
+      "region": "Magway", "township": "Minhla",
+      "address": "Mann Thanbayakan ရေနံချက်စက်ရုံ၊ မင်းလှမြို့နယ်၊ မကွေးတိုင်း",
+      "occurred_at": "2026-01-23T06:30:00+06:30", "extinguished_at": "2026-01-23T07:30:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": 0,
+      "summary_my": "ရေနံချက်စက်ရုံရှိ ရေနံသိုလှောင်ကန် ပိုက်လိုင်းများ မီးလောင်ခဲ့ပြီး ထိခိုက်ဒဏ်ရာမရှိကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ဖြစ်ပွားချိန်နှင့် ငြှိမ်းသတ်ချိန်ကို ရင်းမြစ်က ခန့်မှန်းအချိန်အဖြစ် ဖော်ပြထားသည်။ GPS နှင့် မီးလောင်မှုအဆင့် မဖော်ပြထားပါ။",
+      "publisher": "Myanmar International TV / President's Office Ministries", "published_on": "2026-01-24",
+      "url": "https://presoffministry.gov.mm/en/news/23137",
+      "corroborating_url": "https://www.gnlm.com.mm/thanbayakan-petrochemical-plant-back-to-normal-operations-after-fire/",
+      "time_precision": "approximate"
+    },
+    {
+      "key": "history:mm:2026-02-18:shwepyitha-garment",
+      "title_my": "ရွှေပြည်သာ အထည်ချုပ်စက်ရုံ မီးလောင်မှု",
+      "region": "Yangon", "township": "Shwepyitha",
+      "address": "ဝါးတရာစက်မှုဇုန်ရှိ Straightex အထည်ချုပ်စက်ရုံ၊ ရွှေပြည်သာမြို့နယ်၊ ရန်ကုန်",
+      "occurred_at": "2026-02-18T12:20:00+06:30", "extinguished_at": "2026-02-19T01:30:00+06:30",
+      "controlled_at": "2026-02-18T13:38:00+06:30",
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": null, "injuries_reported": null,
+      "summary_my": "ဝါးတရာစက်မှုဇုန်ရှိ အထည်ချုပ်စက်ရုံမီးလောင်မှုကို နောက်နေ့မနက် အပြီးသတ်ငြှိမ်းသတ်ခဲ့ကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ရင်းမြစ်တွင် Level 1/2 ယာဉ်များကို ဖော်ပြခြင်းသည် ဖြစ်စဉ်၏ တရားဝင် မီးလောင်မှုအဆင့်ဟု မသတ်မှတ်ထားပါ။",
+      "publisher": "Global New Light of Myanmar", "published_on": "2026-02-19",
+      "url": "https://www.gnlm.com.mm/shwepyitha-garment-factory-fire-put-out-13-hours-later/"
+    },
+    {
+      "key": "history:mm:2026-02-25:pyinmana-ahara-thukha",
+      "title_my": "ပျဉ်းမနား အာဟာရသုခဈေး မီးလောင်မှု",
+      "region": "Nay Pyi Taw", "township": "Pyinmana",
+      "address": "အာဟာရသုခဈေး၊ Kinpuntan ကျေးရွာ၊ ပျဉ်းမနားမြို့နယ်၊ နေပြည်တော်",
+      "occurred_at": "2026-02-25T20:46:00+06:30", "extinguished_at": null,
+      "fire_scale": null, "latitude": null, "longitude": null, "deaths_reported": 0, "injuries_reported": null,
+      "summary_my": "အာဟာရသုခဈေးရှိ ဆိုင်ခန်းများ မီးလောင်ခဲ့ပြီး အသက်ဆုံးရှုံးမှုမရှိကြောင်း ဖော်ပြထားသည်။",
+      "notes_my": "ရင်းမြစ်များ၌ ဖြစ်ပွားချိန်နှင့် ငြှိမ်းသတ်ချိန်များ ကွဲလွဲနေသည်။ GNLM/MOI ၏ ၂၀:၄၆ ဖြစ်ပွားချိန်ကို ပြထားပြီး အပြီးသတ်ချိန်ကို မသတ်မှတ်ထားပါ။",
+      "publisher": "Global New Light of Myanmar / Ministry of Information", "published_on": "2026-02-27",
+      "url": "https://moi.gov.mm/moi%3Aeng/news/20372",
+      "alternative_reports": [
+        {"url":"https://www.myanmarinternationaltv.com/news/market-fire-240-market-stalls-destroyed-fire-incident-pyinmana","occurred_at":"2026-02-25T20:40:00+06:30","extinguished_at":"2026-02-25T22:00:00+06:30"},
+        {"url":"https://moi.gov.mm/moi%3Aeng/news/20372","occurred_at":"2026-02-25T20:46:00+06:30","extinguished_at":"2026-02-25T21:31:00+06:30"}
+      ]
+    }
+  ]
+}

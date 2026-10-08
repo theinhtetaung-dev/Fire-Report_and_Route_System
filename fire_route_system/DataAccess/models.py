@@ -211,6 +211,8 @@ class FireStation(models.Model):
 
 
 class FireReport(models.Model):
+    source_key = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    source_data = models.JSONField(default=dict, blank=True)
     home_station = models.ForeignKey(FireStation, null=True, blank=True, on_delete=models.PROTECT, related_name='local_incidents')
     lead_station = models.ForeignKey(FireStation, null=True, blank=True, on_delete=models.PROTECT, related_name='led_incidents')
     reporter_latitude = models.FloatField(null=True, blank=True)
@@ -237,6 +239,7 @@ class FireReport(models.Model):
 
     @property
     def scale_display(self):
+        if self.fire_scale is None:return 'အဆင့် မသိရသေး'
         scale_map = {
             0: 'နယ်မြေခံ',
             1: 'အဆင့် ၁',
@@ -287,6 +290,7 @@ class FireReport(models.Model):
     )
     fire_scale = models.IntegerField(
         choices=FIRE_SCALE_CHOICES,
+        null=True,
         help_text="Severity Scale: 0=နယ်မြေခံ, 1=Level 1, 2=Level 2, 3=Level 3, 4=Level 4, 5=Level 5"
     )
     photo_url = models.URLField(
